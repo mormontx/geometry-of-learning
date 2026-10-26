@@ -5,6 +5,7 @@ A teaching portfolio in five moments, told through Physics, Computer Science and
 | Page | What it is |
 | --- | --- |
 | [index.html](index.html) | The Geometry of Learning, version 2: five self-playing drafting animations |
+| [geometry-v3.html](geometry-v3.html) | The Geometry of Learning, version 3: the same plates drawn in pure CSS, with no SVG or JavaScript |
 | [geometry-v1.html](geometry-v1.html) | The Geometry of Learning, version 1: plates with signals and notes |
 | [notebook.html](notebook.html) | Where the Waves Overlap: the notebook edition |
 | [drawing-set.html](drawing-set.html) | The architect's drawing set with a magnifier |
