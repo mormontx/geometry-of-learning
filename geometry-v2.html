@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#F9F8F6">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%23A85D6B' stroke-width='2'/%3E%3Cpath d='M16 3 A13 13 0 0 1 29 16 L16 16 Z' fill='%23A85D6B'/%3E%3C/svg%3E">
+  <title>I — V · Celestial Atlas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=IBM+Plex+Mono:wght@300;400&display=swap');
+
+    :root {
+      --background: #07070F;
+      --foreground: #E8E4F0;
+      --muted-foreground: #8B86A0;
+      --border: #2A2740;
+      --card: #0D0D1A;
+      --primary: #F2C14E; /* celestial gold */
+    }
+
+    .font-serif-arch { font-family: 'Cormorant Garamond', Georgia, serif; }
+    .font-mono-arch { font-family: 'IBM Plex Mono', monospace; }
+
+    /* Subtle cotton paper grain via SVG noise filter */
+    .paper-surface {
+      background-color: var(--background);
+      position: relative;
+    }
+
+    /* Cotton paper grain overlay (fixed, non-interactive) */
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.5;
+      background-image:
+        radial-gradient(1px 1px at 12% 22%, rgba(232,228,240,0.8), transparent 100%),
+        radial-gradient(1px 1px at 33% 9%, rgba(232,228,240,0.5), transparent 100%),
+        radial-gradient(1.4px 1.4px at 51% 28%, rgba(242,193,78,0.8), transparent 100%),
+        radial-gradient(1px 1px at 68% 14%, rgba(232,228,240,0.6), transparent 100%),
+        radial-gradient(1px 1px at 84% 31%, rgba(232,228,240,0.45), transparent 100%),
+        radial-gradient(1.2px 1.2px at 21% 62%, rgba(232,228,240,0.5), transparent 100%),
+        radial-gradient(1px 1px at 42% 78%, rgba(127,212,230,0.6), transparent 100%),
+        radial-gradient(1px 1px at 61% 66%, rgba(232,228,240,0.5), transparent 100%),
+        radial-gradient(1.3px 1.3px at 78% 74%, rgba(242,193,78,0.7), transparent 100%),
+        radial-gradient(1px 1px at 90% 52%, rgba(232,228,240,0.5), transparent 100%),
+        radial-gradient(1px 1px at 8% 86%, rgba(232,228,240,0.45), transparent 100%),
+        radial-gradient(1px 1px at 29% 93%, rgba(232,228,240,0.4), transparent 100%),
+        radial-gradient(1.1px 1.1px at 55% 92%, rgba(127,212,230,0.55), transparent 100%),
+        radial-gradient(1px 1px at 73% 90%, rgba(232,228,240,0.4), transparent 100%);
+      background-repeat: no-repeat;
+    }
+
+    body {
+      background-color: var(--background);
+      background-image:
+        radial-gradient(ellipse 130% 80% at 18% -12%, rgba(242,193,78,0.08), transparent 55%),
+        radial-gradient(ellipse 120% 90% at 82% 112%, rgba(127,212,230,0.07), transparent 55%),
+        radial-gradient(ellipse 70% 55% at 50% 42%, rgba(130,90,180,0.07), transparent 70%);
+    }
+
+    ::selection {
+      background: #A85D6B;
+      color: #1A1A1A;
+    }
+
+    /* Visible keyboard focus ring (quiet, on-theme) */
+    :focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 3px;
+    }
+
+    .hairline { border: 1px solid var(--border); }
+    .hairline-t { border-top: 1px solid var(--border); }
+    .hairline-b { border-bottom: 1px solid var(--border); }
+
+    /* Blind emboss seal dynamic lighting */
+    #embossSeal {
+      transition: transform 0.2s ease-out, box-shadow 0.15s ease-out;
+    }
+
+    /* Optical Loupe Styling */
+    #opticalLoupe {
+      pointer-events: none;
+      width: 240px;
+      height: 240px;
+      border-radius: 9999px;
+      position: absolute;
+      overflow: hidden;
+      z-index: 40;
+      box-shadow: 
+        0 12px 32px -4px rgba(0, 0, 0, 0.22),
+        inset 0 0 18px rgba(0, 0, 0, 0.12);
+      border: 1.5px solid var(--foreground);
+      background-color: var(--card);
+      transform: translate(-50%, -50%) scale(0.95);
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    #opticalLoupe.active {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    /* Tracing paper (Calque) amber/blueprint tint */
+    .calque-active #plateStage {
+      background-image: 
+        linear-gradient(to right, rgba(232, 228, 240, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(232, 228, 240, 0.06) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+
+    /* Backlight (Light table) effect */
+    .backlight-active #plateStage {
+      box-shadow: inset 0 0 90px rgba(180, 180, 160, 0.18);
+    }
+
+    /* Smooth fade transitions between plates */
+    .plate-fade {
+      animation: fadePlate 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    @keyframes fadePlate {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Subtle pulse on cover seal */
+    @keyframes breathe {
+      0%, 100% { transform: scale(1); opacity: 0.35; }
+      50% { transform: scale(1.06); opacity: 0.65; }
+    }
+    .pulse-ring {
+      animation: breathe 5s ease-in-out infinite;
+      transform-origin: center;
+    }
+
+    /* Reduced motion: calm the instrument down */
+    @media (prefers-reduced-motion: reduce) {
+      .pulse-ring {
+        animation: none;
+      }
+      .plate-fade {
+        animation: none;
+      }
+    }
+
+    /* Print: architectural plates at full detail, no chrome */
+    @media print {
+      header,
+      #footerControls,
+      #coverView,
+      body::after {
+        display: none !important;
+      }
+      #plateStage {
+        width: 100% !important;
+        max-width: 100% !important;
+        border: none !important;
+        box-shadow: none !important;
+      }
+      .micro-layer,
+      .calque-layer {
+        opacity: 1 !important;
+      }
+    }
+  </style>
+</head>
+<body class="paper-surface text-[var(--foreground)] antialiased min-h-screen flex flex-col justify-between select-none overflow-x-hidden">
+
+  <!-- ===================================================================== -->
+  <!-- VIEW 0: THE THRESHOLD (BLIND-EMBOSSED MONOLITH COVER)                 -->
+  <!-- ===================================================================== -->
+  <section id="coverView" class="fixed inset-0 z-50 bg-[var(--background)] flex flex-col justify-between p-8 sm:p-14 transition-opacity duration-700">
+    
+    <!-- Top Corner Crop Marks -->
+    <div class="flex justify-between items-start text-[var(--muted-foreground)] opacity-40 font-mono-arch text-xs">
+      <span>⌜</span>
+      <span class="tracking-widest">+0.00</span>
+      <span>⌝</span>
+    </div>
+
+    <!-- Center Blind-Embossed Architectural Glyph -->
+    <div class="my-auto flex flex-col items-center justify-center">
+      <button id="enterAtelierBtn" onclick="enterGallery()" class="group relative p-12 rounded-full cursor-pointer" aria-label="Enter Portfolio">
+        
+        <!-- Embossed Paper Medallion -->
+        <div id="embossSeal" class="w-56 h-56 sm:w-64 sm:h-64 rounded-full bg-[var(--background)] hairline flex items-center justify-center relative">
+          
+          <svg viewBox="0 0 200 200" class="w-44 h-44 text-[var(--foreground)] overflow-visible">
+            <!-- Outer subtle compass ring (appears on hover) -->
+            <circle cx="100" cy="100" r="84" fill="none" stroke="currentColor" stroke-width="0.4" stroke-dasharray="1 4" class="opacity-20 group-hover:opacity-70 transition-opacity duration-500" />
+            <circle cx="100" cy="100" r="72" fill="none" stroke="currentColor" stroke-width="0.3" class="pulse-ring" />
+
+            <!-- Registration ticks -->
+            <line x1="100" y1="8" x2="100" y2="18" stroke="currentColor" stroke-width="0.6" stroke-opacity="0.4" />
+            <line x1="100" y1="182" x2="100" y2="192" stroke="currentColor" stroke-width="0.6" stroke-opacity="0.4" />
+            <line x1="8" y1="100" x2="18" y2="100" stroke="currentColor" stroke-width="0.6" stroke-opacity="0.4" />
+            <line x1="182" y1="100" x2="192" y2="100" stroke="currentColor" stroke-width="0.6" stroke-opacity="0.4" />
+
+            <!-- Horizon Datum Line -->
+            <line x1="32" y1="100" x2="168" y2="100" stroke="currentColor" stroke-width="0.6" stroke-opacity="0.45" />
+
+            <!-- The Two Points (Teacher & Learner) -->
+            <circle cx="62" cy="100" r="2.2" fill="currentColor" />
+            <circle cx="138" cy="100" r="2.2" fill="currentColor" />
+
+            <!-- Faint Pentimenti Catenary Curves (Ghost attempts) -->
+            <path d="M 62 100 Q 100 118 138 100" fill="none" stroke="currentColor" stroke-width="0.35" stroke-dasharray="2 2" stroke-opacity="0.25" />
+            <path d="M 62 100 Q 100 132 138 100" fill="none" stroke="currentColor" stroke-width="0.35" stroke-dasharray="1 3" stroke-opacity="0.2" />
+
+            <!-- Primary Resonance Arch & Catenary Tension Chord -->
+            <path d="M 62 100 C 62 55, 138 55, 138 100" fill="none" stroke="currentColor" stroke-width="0.9" class="group-hover:stroke-[var(--primary)] transition-colors duration-500" />
+            <path d="M 62 100 Q 100 146 138 100" fill="none" stroke="currentColor" stroke-width="0.6" stroke-opacity="0.6" />
+
+            <!-- Vertical Plumb Line & Datum Triangle (∇) -->
+            <line x1="100" y1="42" x2="100" y2="136" stroke="currentColor" stroke-width="0.45" stroke-dasharray="2 2" stroke-opacity="0.5" />
+            <polygon points="100,100 96,93 104,93" fill="none" stroke="currentColor" stroke-width="0.7" />
+            
+            <!-- Golden Spiral Micro-detail at Center (visible on close inspection) -->
+            <circle cx="100" cy="66" r="1.2" fill="var(--primary)" class="opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          </svg>
+
+        </div>
+
+        <!-- Subtle Roman Numeral Sequence below seal -->
+        <div class="mt-8 text-center font-mono-arch text-xs tracking-[0.35em] text-[var(--muted-foreground)] opacity-50 group-hover:opacity-100 transition-opacity">
+          I · II · III · IV · V
+        </div>
+
+        <!-- Whisper-line beneath the sequence -->
+        <div class="mt-3 text-center font-serif-arch italic text-sm text-[var(--muted-foreground)] opacity-60 group-hover:opacity-100 transition-opacity">
+          Teaching lives in unrepeatable moments.
+        </div>
+
+        <!-- Architect-of-learning tagline beneath the whisper line -->
+        <div class="mt-2 text-center font-mono-arch text-[10.5px] tracking-[0.28em] text-[var(--muted-foreground)] opacity-[0.55] group-hover:opacity-100 transition-opacity">
+          AN ARCHITECT OF LEARNING — CELESTIAL ATLAS · PLATES I–V
+        </div>
+      </button>
+    </div>
+
+    <!-- Bottom Corner Crop Marks -->
+    <div class="flex justify-between items-end text-[var(--muted-foreground)] opacity-40 font-mono-arch text-xs">
+      <span>⌞</span>
+      <span class="tracking-widest">◯</span>
+      <span>⌟</span>
+    </div>
+  </section>
+
+
+  <!-- ===================================================================== -->
+  <!-- VIEW 1: THE LIGHT TABLE EXHIBITION (PLATES I — IV)                    -->
+  <!-- ===================================================================== -->
+  
+  <!-- Minimalist Top Datum Bar (Symbols & Numerals Only) -->
+  <header class="px-6 sm:px-12 py-4 flex flex-wrap justify-between items-center gap-x-4 gap-y-2 font-mono-arch text-xs text-[var(--muted-foreground)] hairline-b">
+    <div class="flex items-center gap-3">
+      <button onclick="returnToCover()" class="hover:text-[var(--foreground)] transition-colors px-2 py-1" title="Threshold">
+        ⌜ ∇ ⌟
+      </button>
+      <span class="opacity-30">|</span>
+      <span id="plateCoord" class="tracking-widest text-[var(--foreground)]">I / IV</span>
+    </div>
+
+    <!-- Plate Selector Numerals -->
+    <nav class="flex items-center gap-2 sm:gap-4">
+      <button onclick="selectPlate(0)" id="nav-0" class="plate-tab px-3 py-1 transition-all text-[var(--foreground)] font-medium border-b border-[var(--foreground)]" aria-current="true" title="Nothing to Explore">I</button>
+      <button onclick="selectPlate(1)" id="nav-1" class="plate-tab px-3 py-1 transition-all opacity-40 hover:opacity-100" title="The Recoil">II</button>
+      <button onclick="selectPlate(2)" id="nav-2" class="plate-tab px-3 py-1 transition-all opacity-40 hover:opacity-100" title="The Return">III</button>
+      <button onclick="selectPlate(3)" id="nav-3" class="plate-tab px-3 py-1 transition-all opacity-40 hover:opacity-100" title="Out and About">IV</button>
+      <button onclick="selectPlate(4)" id="nav-4" class="plate-tab px-3 py-1 transition-all opacity-40 hover:opacity-100" title="The Choice">V</button>
+    </nav>
+
+    <!-- Scale & Compass Bearing -->
+    <div class="hidden sm:flex items-center gap-4 tracking-widest opacity-60">
+      <span id="plateAzimuth">N 14° E</span>
+      <span>·</span>
+      <span id="plateScale">1 : 20</span>
+    </div>
+  </header>
+
+
+  <!-- CENTER EXHIBITION STAGE -->
+  <main class="flex-1 flex flex-col items-center justify-center px-4 sm:px-10 py-6">
+    
+    <!-- Matted Architectural Sheet -->
+    <div id="plateStage" role="img" aria-label="Plate I — Nothing to Explore, ink drawing" class="w-full max-w-5xl aspect-[4/5] sm:aspect-[16/10] bg-[var(--card)] hairline relative overflow-hidden shadow-sm cursor-none select-none">
+      
+      <!-- Corner Sheet Crop Ticks -->
+      <div class="absolute top-3 left-3 text-xs font-mono-arch opacity-25 pointer-events-none">⌜</div>
+      <div class="absolute top-3 right-3 text-xs font-mono-arch opacity-25 pointer-events-none">⌝</div>
+      <div class="absolute bottom-3 left-3 text-xs font-mono-arch opacity-25 pointer-events-none">⌞</div>
+      <div class="absolute bottom-3 right-3 text-xs font-mono-arch opacity-25 pointer-events-none">⌟</div>
+
+      <!-- PRIMARY SVG ARTWORK CONTAINER (1x Macro View) -->
+      <div id="macroContainer" class="w-full h-full flex items-center justify-center p-4 sm:p-8 plate-fade">
+        <!-- Injected dynamically from plate templates -->
+      </div>
+
+      <!-- THE OPTICAL LOUPE (3.5x Magnifier revealing Hidden Micro-Layer & Pentimenti) -->
+      <div id="opticalLoupe">
+        <div id="loupeInner" class="w-full h-full relative origin-top-left">
+          <!-- High-res magnified SVG clone injected here -->
+        </div>
+        <!-- Optical Loupe Reticle & Degree Bezel Overlay -->
+        <svg viewBox="0 0 240 240" class="absolute inset-0 w-full h-full pointer-events-none text-[var(--foreground)]">
+          <!-- Subtle glass vignette -->
+          <circle cx="120" cy="120" r="118" fill="none" stroke="currentColor" stroke-width="0.5" stroke-opacity="0.3" />
+          <!-- Degree ticks around bezel -->
+          <line x1="120" y1="0" x2="120" y2="8" stroke="currentColor" stroke-width="0.8" stroke-opacity="0.5" />
+          <line x1="120" y1="232" x2="120" y2="240" stroke="currentColor" stroke-width="0.8" stroke-opacity="0.5" />
+          <line x1="0" y1="120" x2="8" y2="120" stroke="currentColor" stroke-width="0.8" stroke-opacity="0.5" />
+          <line x1="232" y1="120" x2="240" y2="120" stroke="currentColor" stroke-width="0.8" stroke-opacity="0.5" />
+          <!-- Center optical crosshair -->
+          <line x1="114" y1="120" x2="126" y2="120" stroke="var(--primary)" stroke-width="0.5" stroke-opacity="0.6" />
+          <line x1="120" y1="114" x2="120" y2="126" stroke="var(--primary)" stroke-width="0.5" stroke-opacity="0.6" />
+          <circle cx="120" cy="120" r="24" fill="none" stroke="var(--primary)" stroke-width="0.35" stroke-dasharray="1 2" stroke-opacity="0.5" />
+          <text x="128" y="18" font-family="monospace" font-size="8" fill="currentColor" opacity="0.5">3.5×</text>
+        </svg>
+      </div>
+
+    </div>
+
+    <!-- SUBTLE ARCHITECTURAL FOOTER CONTROLS (SYMBOLS ONLY) -->
+    <div id="footerControls" class="w-full max-w-5xl mt-4 flex justify-between items-center font-mono-arch text-xs text-[var(--muted-foreground)]">
+      
+      <!-- Left: Plate Title, Datum & Time Stamp Symbol -->
+      <div class="flex items-center gap-3 sm:gap-4 opacity-70">
+        <span id="plateTitle" class="font-serif-arch italic text-sm text-[var(--muted-foreground)]">I. Nothing to Explore</span>
+        <span class="opacity-30">·</span>
+        <span id="plateDatum">∇ +0.00</span>
+        <span>·</span>
+        <span id="plateHour">07:45</span>
+      </div>
+
+      <!-- Center: Layer Inspection Toggles (Loupe, Calque Tracing Paper, Backlight) -->
+      <div class="flex items-center gap-3">
+        <!-- Loupe Toggle -->
+        <button id="btnLoupe" onclick="toggleLoupeMode()" aria-pressed="true" class="hairline px-3 py-1.5 flex items-center gap-2 bg-[var(--card)] text-[var(--foreground)] transition-all" title="Optical Loupe (3.5x)">
+          <span class="text-[var(--primary)]">◯</span>
+          <span>3.5×</span>
+        </button>
+
+        <!-- Calque (Tracing Paper Geometry) Toggle -->
+        <button id="btnCalque" onclick="toggleCalqueMode()" aria-pressed="false" class="hairline px-3 py-1.5 flex items-center gap-2 opacity-50 hover:opacity-100 transition-all" title="Calque / Tracing Paper Vectors">
+          <span>⧉</span>
+          <span>A—A'</span>
+        </button>
+
+        <!-- Backlight (Pentimenti X-Ray) Toggle -->
+        <button id="btnBacklight" onclick="toggleBacklightMode()" aria-pressed="false" class="hairline px-3 py-1.5 flex items-center gap-2 opacity-50 hover:opacity-100 transition-all" title="Light Table (Pentimenti)">
+          <span>☀</span>
+          <span>±</span>
+        </button>
+      </div>
+
+      <!-- Right: Next/Prev Plate Arrows -->
+      <div class="flex items-center gap-3">
+        <button onclick="stepPlate(-1)" class="hairline px-2.5 py-1 hover:bg-[var(--card)] hover:text-[var(--foreground)] transition-colors">←</button>
+        <button onclick="stepPlate(1)" class="hairline px-2.5 py-1 hover:bg-[var(--card)] hover:text-[var(--foreground)] transition-colors">→</button>
+      </div>
+    </div>
+
+  </main>
+
+
+  <!-- ===================================================================== -->
+  <!-- SVG TEMPLATES FOR PLATES I — IV                                       -->
+  <!-- Each SVG has 3 distinct layers:                                       -->
+  <!--   1. .macro-layer (Always visible, serene minimalist sketch)          -->
+  <!--   2. .micro-layer (Faint at 1x, razor-sharp inside 3.5x Loupe)        -->
+  <!--   3. .calque-layer (Hidden unless in Loupe or Calque A-A' mode)       -->
+  <!-- ===================================================================== -->
+  <div class="hidden">
+
+    <!-- =================================================================== -->
+    <!-- PLATE I: NOTHING TO EXPLORE (The Empty Amphitheater / 07:45)        -->
+    <!-- =================================================================== -->
+                <template id="tpl-plate-0">
+      <svg viewBox="0 0 1000 625" class="w-full h-full text-[var(--foreground)] overflow-visible">
+        <defs>
+          <filter id="p1-glow" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="2.2" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <pattern id="p1-hatch" width="7" height="7" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+            <line x1="0" y1="0" x2="0" y2="7" stroke="currentColor" stroke-width="0.3" stroke-opacity="0.35" />
+          </pattern>
+          <marker id="p1-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="var(--primary)" />
+          </marker>
+        </defs>
+        <g class="arch-grid-frame" stroke="currentColor" fill="none">
+          <rect x="60" y="32" width="880" height="560" stroke-width="0.4" stroke-opacity="0.3" />
+          <rect x="64" y="36" width="872" height="552" stroke-width="0.2" stroke-opacity="0.22" />
+          <line x1="150" y1="36" x2="150" y2="588" stroke-width="0.2" stroke-dasharray="2 4" stroke-opacity="0.4" />
+          <circle cx="150" cy="22" r="7.5" stroke-width="0.4" stroke-opacity="0.5" fill="var(--card)" />
+          <text x="150" y="25" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="6.5" fill="currentColor" stroke="none" opacity="0.6">1</text>
+          <line x1="290" y1="36" x2="290" y2="588" stroke-width="0.2" stroke-dasharray="2 4" stroke-opacity="0.4" />
+          <circle cx="290" cy="22" r="7.5" stroke-width="0.4" stroke-opacity="0.5" fill="var(--card)" />
+          <text x="290" y="25" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="6.5" fill="currentColor" stroke="none" opacity="0.6">2</text>
+          <line x1="430" y1="36" x2="430" y2="588" stroke-width="0.2" stroke-dasharray="2 4" stroke-opacity="0.4" />
+          <circle cx="430" cy="22" r="7.5" stroke-width="0.4" stroke-opacity="0.5" fill="var(--card)" />
+          <text x="430" y="25" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="6.5" fill="currentColor" stroke="none" opacity="0.6">3</text>
+          <line x1="570" y1="36" x2="570" y2="588" stroke-width="0.2" stroke-dasharray="2 4" stroke-opacity="0.4" />
+          <circle cx="570" cy="22" r="7.5" stroke-width="0.4" stroke-opacity="0.5" fill="var(--card)" />
+          <text x="570" y="25" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="6.5" fill="currentColor" stroke="none" opacity="0.6">4</text>
+          <line x1="710" y1="36" x2="710" y2="588" stroke-width="0.2" stroke-dasharray="2 4" stroke-opacity="0.4" />
+          <circle cx="710" cy="22" r="7.5" stroke-width="0.4" stroke-opacity="0.5" fill="var(--card)" />
+          <text x="710" y="25" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="6.5" fill="currentColor" stroke="none" opacity="0.6">5</text>
+          <line x1="850" y1="36" x2="850" y2="588" stroke-width="0.2" stroke-dasharray="2 4" stroke-opacity="0.4" />
+          <circle cx="850" cy="22" r="7.5" stroke-width="0.4" stroke-opacity="0.5" fill="var(--card)" />
+          <text x="850" y="25" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="6.5" fill="currentColor" stroke="none" opacity="0.6">6</text>
+          <line x1="64" y1="180" x2="936" y2="180" stroke-width="0.2" stroke-dasharray="1 5" stroke-opacity="0.2" />
+          <polygon points="942,180 948,175 936,175" stroke-width="0.4" stroke-opacity="0.5" />
+          <line x1="934" y1="180" x2="968" y2="180" stroke-width="0.4" stroke-opacity="0.5" />
+          <text x="942" y="173" font-family="IBM Plex Mono, monospace" font-size="6" fill="currentColor" stroke="none" opacity="0.5">+3.60</text>
+          <line x1="64" y1="360" x2="936" y2="360" stroke-width="0.2" stroke-dasharray="1 5" stroke-opacity="0.2" />
+          <polygon points="942,360 948,355 936,355" stroke-width="0.4" stroke-opacity="0.5" />
+          <line x1="934" y1="360" x2="968" y2="360" stroke-width="0.4" stroke-opacity="0.5" />
+          <text x="942" y="353" font-family="IBM Plex Mono, monospace" font-size="6" fill="currentColor" stroke="none" opacity="0.5">+1.20</text>
+          <line x1="64" y1="485" x2="936" y2="485" stroke-width="0.2" stroke-dasharray="1 5" stroke-opacity="0.2" />
+          <polygon points="942,485 948,480 936,480" stroke-width="0.4" stroke-opacity="0.5" />
+          <line x1="934" y1="485" x2="968" y2="485" stroke-width="0.4" stroke-opacity="0.5" />
+          <text x="942" y="478" font-family="IBM Plex Mono, monospace" font-size="6" fill="currentColor" stroke="none" opacity="0.5">±0.00</text>
+          <text x="80" y="574" font-family="Cormorant Garamond, Georgia, serif" font-size="15" font-style="italic" fill="currentColor" stroke="none" opacity="0.75">I.</text>
+          <text x="108" y="573" font-family="IBM Plex Mono, monospace" font-size="6.5" letter-spacing="1.5" fill="currentColor" stroke="none" opacity="0.5">NOTHING TO EXPLORE · CELESTIAL MOMENTUM CHART (1:20)</text>
+          <g transform="translate(810, 568)" stroke-opacity="0.5">
+            <rect x="0" y="0" width="20" height="3" fill="currentColor" stroke="none" opacity="0.5" />
+            <rect x="20" y="0" width="20" height="3" stroke-width="0.35" />
+            <rect x="40" y="0" width="40" height="3" fill="currentColor" stroke="none" opacity="0.5" />
+            <rect x="80" y="0" width="30" height="3" stroke-width="0.35" />
+            <text x="0" y="-3" font-family="IBM Plex Mono, monospace" font-size="5.5" fill="currentColor" stroke="none" opacity="0.5">0</text>
+            <text x="38" y="-3" font-family="IBM Plex Mono, monospace" font-size="5.5" fill="currentColor" stroke="none" opacity="0.5">1m</text>
+          </g>
+        </g>
+        <!-- MACRO -->
+        <g class="macro-layer" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <g fill="currentColor" stroke="none" opacity="0.5">
+            <circle cx="120" cy="86" r="0.5" /><circle cx="330" cy="70" r="0.8" /><circle cx="520" cy="96" r="0.5" />
+            <circle cx="680" cy="64" r="0.7" /><circle cx="860" cy="90" r="0.5" /><circle cx="205" cy="150" r="0.6" />
+            <circle cx="470" cy="140" r="0.5" /><circle cx="730" cy="170" r="0.8" /><circle cx="96" cy="300" r="0.6" />
+            <circle cx="910" cy="260" r="0.7" /><circle cx="160" cy="520" r="0.5" /><circle cx="640" cy="470" r="0.6" />
+            <circle cx="890" cy="420" r="0.5" /><circle cx="380" cy="540" r="0.7" />
+          </g>
+
+          <!-- empty orbit -->
+          <ellipse cx="405" cy="330" rx="250" ry="150" transform="rotate(-18 405 330)" fill="none" stroke="var(--primary)" stroke-width="0.7" stroke-dasharray="3 5" opacity="0.9" filter="url(#p1-glow)"/>
+          <!-- teacher planet -->
+          <circle cx="205" cy="494" r="30" fill="var(--card)" stroke-width="0.8"/>
+          <ellipse cx="205" cy="494" rx="52" ry="13" transform="rotate(-16 205 494)" fill="none" stroke="var(--primary)" stroke-width="0.5" stroke-dasharray="2 2"/>
+          <!-- teacher figure -->
+          <g stroke="currentColor" fill="var(--card)">
+            <circle cx="205" cy="408" r="8.5" fill="#E9E5F7" stroke-width="0.85"/>
+            <circle cx="202" cy="408" r="1.1" fill="currentColor" stroke="none"/>
+            <path d="M 212 405 L 217 408 L 212 411" fill="none" stroke-width="0.5"/>
+            <line x1="205" y1="416" x2="205" y2="422" stroke-width="0.7"/>
+            <polygon points="191,422 219,422 215,470 195,470" stroke-width="0.85"/>
+            <line x1="205" y1="422" x2="204" y2="470" stroke-width="0.4"/>
+            <line x1="197" y1="470" x2="199" y2="488" stroke-width="0.8"/>
+            <line x1="211" y1="470" x2="209" y2="488" stroke-width="0.8"/>
+            <polygon points="199,488 194,492 204,492" stroke-width="0.7"/>
+            <polygon points="209,488 206,492 216,492" stroke-width="0.7"/>
+            <polygon points="205,421 201,418 201,424" fill="#C9BFE8" stroke="none"/>
+            <polygon points="205,421 209,418 209,424" fill="#C9BFE8" stroke="none"/>
+          </g>
+          <!-- star-map slate (chalkboard) -->
+          <rect x="560" y="168" width="278" height="150" fill="var(--card)" stroke-width="0.8"/>
+          <rect x="560" y="168" width="278" height="150" fill="none" stroke="var(--primary)" stroke-width="0.5" filter="url(#p1-glow)"/>
+          <rect x="566" y="174" width="266" height="138" stroke-width="0.45"/>
+          <text x="576" y="196" font-family="IBM Plex Mono, monospace" font-size="9" fill="currentColor" stroke="none">p = mv</text>
+          <text x="576" y="216" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" stroke="none">Δp = F · Δt</text>
+          <text x="576" y="236" font-family="Cormorant Garamond, Georgia, serif" font-style="italic" font-size="7" fill="currentColor" stroke="none" opacity="0.8">N·s = kg·m/s</text>
+          <line x1="690" y1="228" x2="690" y2="262" stroke-width="0.4"/>
+          <line x1="690" y1="262" x2="810" y2="262" stroke-width="0.4"/>
+          <path d="M 694 262 L 694 240 L 722 240 L 722 262" stroke-width="0.6"/>
+          <path d="M 698 260 L 698 242 M 706 260 L 706 242 M 714 260 L 714 242" stroke-width="0.3" stroke-dasharray="1 1.2" opacity="0.7"/>
+          <text x="682" y="237" font-family="IBM Plex Mono, monospace" font-size="5.5" fill="currentColor" stroke="none">F</text>
+          <text x="812" y="266" font-family="IBM Plex Mono, monospace" font-size="5.5" fill="currentColor" stroke="none">t</text>
+          <text x="692" y="274" font-family="IBM Plex Mono, monospace" font-size="4.8" fill="currentColor" stroke="none">impulse = area</text>
+          <!-- empty desk-moons -->
+          <g>
+            <circle cx="585" cy="452" r="14" fill="var(--card)" stroke-width="0.7"/>
+            <ellipse cx="585" cy="452" rx="22" ry="5" transform="rotate(-14 585 452)" fill="none" stroke="var(--primary)" stroke-width="0.4"/>
+            <circle cx="685" cy="478" r="16" fill="var(--card)" stroke-width="0.7"/>
+            <ellipse cx="685" cy="478" rx="25" ry="6" transform="rotate(-12 685 478)" fill="none" stroke="var(--primary)" stroke-width="0.4"/>
+            <circle cx="770" cy="450" r="12" fill="var(--card)" stroke-width="0.7"/>
+            <ellipse cx="770" cy="450" rx="19" ry="4.5" transform="rotate(-16 770 450)" fill="none" stroke="var(--primary)" stroke-width="0.4"/>
+          </g>
+          <!-- lone decaying gravitational wave -->
+          <path d="M 120 428 q 24 -13 48 0 q 24 13 48 0 q 24 -10 48 0 q 24 10 48 0 q 24 -6 48 0 q 24 6 48 0 q 24 -3 48 0 q 24 3 48 0 l 90 0" stroke="var(--primary)" stroke-width="0.5" stroke-dasharray="2 3" opacity="0.55"/>
+          <g class="plate-legend" font-family="IBM Plex Mono, monospace" font-size="8" fill="currentColor" opacity="0.72">
+            <text x="640" y="525" fill="currentColor" stroke="none" letter-spacing="2" opacity="0.9">KEY</text>
+            <circle cx="646" cy="530" r="3.2" fill="#E9E5F7" stroke="currentColor" stroke-width="0.7" />
+            <polygon points="646,535 643,533 643,537" fill="#C9BFE8" stroke="none" />
+            <polygon points="646,535 649,533 649,537" fill="#C9BFE8" stroke="none" />
+            <text x="682" y="536" fill="currentColor" stroke="none">THE TEACHER</text>
+            <line x1="640" y1="544" x2="676" y2="544" stroke="currentColor" stroke-width="0.7" />
+            <text x="682" y="547" fill="currentColor" stroke="none">BODIES</text>
+            <line x1="640" y1="555" x2="676" y2="555" stroke="currentColor" stroke-width="0.7" stroke-dasharray="3 3" />
+            <text x="682" y="558" fill="currentColor" stroke="none">ATTENTION / SIGHT</text>
+            <line x1="640" y1="566" x2="676" y2="566" stroke="currentColor" stroke-width="0.7" stroke-dasharray="1.2 2.6" />
+            <text x="682" y="569" fill="currentColor" stroke="none">TRACES IN TIME</text>
+            <line x1="640" y1="577" x2="670" y2="577" stroke="currentColor" stroke-width="0.7" />
+            <polygon points="670,574 678,577 670,580" fill="currentColor" stroke="none" />
+            <text x="682" y="580" fill="currentColor" stroke="none">TRANSFER OF IDEAS</text>
+            <polygon points="652,586 658,586 655,592" fill="none" stroke="currentColor" stroke-width="0.7" />
+            <text x="682" y="590" fill="currentColor" stroke="none">CONFIDENCE (DATUM)</text>
+          </g>
+        </g>
+        <!-- MICRO -->
+        <g class="micro-layer transition-opacity duration-500" opacity="0.45">
+          <text x="576" y="256" font-family="IBM Plex Mono, monospace" font-size="5" fill="currentColor" stroke="none" opacity="0.7">a body at rest remains a question</text>
+          <circle cx="205" cy="494" r="64" fill="none" stroke="currentColor" stroke-width="0.25" stroke-dasharray="1.5 2" opacity="0.5"/>
+          <line x1="205" y1="408" x2="560" y2="196" stroke="currentColor" stroke-width="0.22" stroke-dasharray="2 4" opacity="0.4"/>
+        </g>
+        <!-- CALQUE -->
+        <g class="calque-layer transition-opacity duration-500" opacity="0.0">
+          <g stroke="var(--primary)" fill="none" stroke-width="0.35" stroke-dasharray="2 3" opacity="0.6">
+            <text x="150" y="60" font-family="IBM Plex Mono, monospace" font-size="8" fill="var(--primary)" stroke="none">ORBITAL GRID</text>
+            <ellipse cx="405" cy="330" rx="190" ry="110" transform="rotate(-18 405 330)"/>
+            <ellipse cx="405" cy="330" rx="300" ry="180" transform="rotate(-18 405 330)"/>
+            <line x1="405" y1="330" x2="205" y2="494" stroke-opacity="0.5"/>
+          </g>
+        </g>
+        </svg>
+    </template>
+
+        <template id="tpl-plate-1">
+      <svg viewBox="0 0 1000 625" class="w-full h-full text-[var(--foreground)] overflow-visible">
+        <defs>
+          <filter id="p2-glow" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="2.2" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <pattern id="p2-hatch" width="7" height="7" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+            <line x1="0" y1="0" x2="0" y2="7" stroke="currentColor" stroke-width="0.3" stroke-opacity="0.35" />
+          </pattern>
+          <marker id="p2-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="var(--primary)" />
+          </marker>
+        </defs>
+        <g class="arch-grid-frame" stroke="currentColor" fill="none">
+          <rect x="60" y="32" width="880" height="560" stroke-width="0.4" stroke-opacity="0.3" />
+          <rect x="64" y="36" width="872" height="552" stroke-width="0.2" stroke-opacity="0.22" />
+          <line x1="150" y1="36" x2="150" y2="588" stroke-width="0.2" stroke-dasharray="2 4" stroke-opacity="0.4" />
+          <circle cx="150" cy="22" r="7.5" stroke-width="0.4" stroke-opacity="0.5" fill="var(--card)" />
+          <text x="150" y="25" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="6.5" fill="currentColor" stroke="none" opacity="0.6">1</text>
+          <line x1="290" y1="36" x2="290" y2="588" stroke-width="0.2" stroke-dasharray="2 4" stroke-opacity="0.4" />
+          <circle cx="290" cy="22" r="7.5" stroke-width="0.4" stroke-opacity="0.5" fill="var(--card)" />
+          <text x="290" y="25" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="6.5" fill="currentColor" stroke="none" opacity="0.6">2</text>
+          <line x1="430" y1="36" x2="430" y2="588" stroke-width="0.2" stroke-dasharray="2 4" stroke-opacity="0.4" />
+          <circle cx="430" cy="22" r="7.5" stroke-width="0.4" stroke-opacity="0.5" fill="var(--card)" />
+          <text x="430" y="25" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="6.5" fill="currentColor" stroke="none" opacity="0.6">3</text>
+          <line x1="570" y1="36" x2="570" y2="588" stroke-width="0.2" stroke-dasharray="2 4" stroke-opacity="0.4" />
+          <circle cx="570" cy="22" r="7.5" stroke-width="0.4" stroke-opacity="0.5" fill="var(--card)" />
+          <text x="570" y="25" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="6.5" fill="currentColor" stroke="none" opacity="0.6">4</text>
+          <line x1="710" y1="36" x2="710" y2="588" stroke-width="0.2" stroke-dasharray="2 4" stroke-opacity="0.4" />
+          <circle cx="710" cy="22" r="7.5" stroke-width="0.4" stroke-opacity="0.5" fill="var(--card)" />
+          <text x="710" y="25" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="6.5" fill="currentColor" stroke="none" opacity="0.6">5</text>
+          <line x1="850" y1="36" x2="850" y2="588" stroke-width="0.2" stroke-dasharray="2 4" stroke-opacity="0.4" />
+          <circle cx="850" cy="22" r="7.5" stroke-width="0.4" stroke-opacity="0.5" fill="var(--card)" />
+          <text x="850" y="25" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="6.5" fill="currentColor" stroke="none" opacity="0.6">6</text>
+          <line x1="64" y1="180" x2="936" y2="180" stroke-width="0.2" stroke-dasharray="1 5" stroke-opacity="0.2" />
+          <polygon points="942,180 948,175 936,175" stroke-width="0.4" stroke-opacity="0.5" />
+          <line x1="934" y1="180" x2="968" y2="180" stroke-width="0.4" stroke-opacity="0.5" />
+          <text x="942" y="173" font-family="IBM Plex Mono, monospace" font-size="6" fill="currentColor" stroke="none" opacity="0.5">+3.60</text>
+          <line x1="64" y1="360" x2="936" y2="360" stroke-width="0.2" stroke-dasharray="1 5" stroke-opacity="0.2" />
+          <polygon points="942,360 948,355 936,355" stroke-width="0.4" stroke-opacity="0.5" />
+          <line x1="934" y1="360" x2="968" y2="360" stroke-width="0.4" stroke-opacity="0.5" />
+          <text x="942" y="353" font-family="IBM Plex Mono, monospace" font-size="6" fill="currentColor" stroke="none" opacity="0.5">+1.20</text>
+          <line x1="64" y1="485" x2="936" y2="485" stroke-width="0.2" stroke-dasharray="1 5" stroke-opacity="0.2" />
+          <polygon points="942,485 948,480 936,480" stroke-width="0.4" stroke-opacity="0.5" />
+          <line x1="934" y1="485" x2="968" y2="485" stroke-width="0.4" stroke-opacity="0.5" />
+          <text x="942" y="478" font-family="IBM Plex Mono, monospace" font-size="6" fill="currentColor" stroke="none" opacity="0.5">±0.00</text>
+          <text x="80" y="574" font-family="Cormorant Garamond, Georgia, serif" font-size="15" font-style="italic" fill="currentColor" stroke="none" opacity="0.75">II.</text>
+          <text x="108" y="573" font-family="IBM Plex Mono, monospace" font-size="6.5" letter-spacing="1.5" fill="currentColor" stroke="none" opacity="0.5">THE RECOIL · CONSERVATION NEBULA (1:5)</text>
+          <g transform="translate(810, 568)" stroke-opacity="0.5">
+            <rect x="0" y="0" width="20" height="3" fill="currentColor" stroke="none" opacity="0.5" />
+            <rect x="20" y="0" width="20" height="3" stroke-width="0.35" />
+            <rect x="40" y="0" width="40" height="3" fill="currentColor" stroke="none" opacity="0.5" />
+            <rect x="80" y="0" width="30" height="3" stroke-width="0.35" />
+            <text x="0" y="-3" font-family="IBM Plex Mono, monospace" font-size="5.5" fill="currentColor" stroke="none" opacity="0.5">0</text>
+            <text x="38" y="-3" font-family="IBM Plex Mono, monospace" font-size="5.5" fill="currentColor" stroke="none" opacity="0.5">1m</text>
+          </g>
+        </g>
+        <!-- MACRO -->
+        <g class="macro-layer" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <g fill="currentColor" stroke="none" opacity="0.5">
+            <circle cx="120" cy="86" r="0.5" /><circle cx="330" cy="70" r="0.8" /><circle cx="520" cy="96" r="0.5" />
+            <circle cx="680" cy="64" r="0.7" /><circle cx="860" cy="90" r="0.5" /><circle cx="205" cy="150" r="0.6" />
+            <circle cx="470" cy="140" r="0.5" /><circle cx="730" cy="170" r="0.8" /><circle cx="96" cy="300" r="0.6" />
+            <circle cx="910" cy="260" r="0.7" /><circle cx="160" cy="520" r="0.5" /><circle cx="640" cy="470" r="0.6" />
+            <circle cx="890" cy="420" r="0.5" /><circle cx="380" cy="540" r="0.7" />
+          </g>
+
+          <!-- conservation rings -->
+          <circle cx="530" cy="330" r="46" fill="none" stroke="var(--primary)" stroke-width="0.7" stroke-dasharray="3 4" filter="url(#p2-glow)"/>
+          <circle cx="530" cy="330" r="86" fill="none" stroke="var(--primary)" stroke-width="0.5" stroke-dasharray="2 4"/>
+          <circle cx="530" cy="330" r="126" fill="none" stroke="currentColor" stroke-width="0.35" stroke-dasharray="2 5" opacity="0.6"/>
+          <!-- the colliding body (basketball) -->
+          <circle cx="530" cy="330" r="17" fill="var(--card)" stroke-width="1.1"/>
+          <ellipse cx="530" cy="330" rx="17" ry="6.5" transform="rotate(-18 530 330)" stroke-width="0.5"/>
+          <ellipse cx="530" cy="330" rx="6.5" ry="17" transform="rotate(-18 530 330)" stroke-width="0.5"/>
+          <!-- student on scooter -->
+          <g stroke="currentColor" fill="var(--card)">
+            <circle cx="286" cy="300" r="9" stroke-width="0.85"/>
+            <circle cx="283" cy="300" r="1.1" fill="currentColor" stroke="none"/>
+            <path d="M 293 297 L 298 300 L 293 303" fill="none" stroke-width="0.5"/>
+            <line x1="285" y1="308" x2="283" y2="314" stroke-width="0.7"/>
+            <polygon points="264,314 300,312 294,382 270,380" stroke-width="0.85"/>
+            <line x1="278" y1="314" x2="276" y2="382" stroke-width="0.4"/>
+            <line x1="268" y1="382" x2="256" y2="432" stroke-width="0.8"/>
+            <line x1="288" y1="382" x2="310" y2="432" stroke-width="0.8"/>
+            <polygon points="256,432 252,436 264,436" stroke-width="0.7"/>
+            <polygon points="310,432 307,436 320,436" stroke-width="0.7"/>
+            <line x1="294" y1="318" x2="366" y2="316" stroke-width="0.8"/>
+            <polygon points="366,316 372,314 370,319" fill="currentColor" stroke="none"/>
+          </g>
+          <rect x="232" y="436" width="104" height="10" fill="var(--card)" stroke-width="0.9"/>
+          <circle cx="250" cy="454" r="7" fill="var(--card)" stroke-width="0.8"/>
+          <circle cx="322" cy="454" r="7" fill="var(--card)" stroke-width="0.8"/>
+          <!-- recoiling teacher -->
+          <g stroke="currentColor" fill="var(--card)">
+            <circle cx="748" cy="288" r="9" fill="#E9E5F7" stroke-width="0.85"/>
+            <circle cx="745" cy="288" r="1.1" fill="currentColor" stroke="none"/>
+            <path d="M 755 285 L 760 288 L 755 291" fill="none" stroke-width="0.5"/>
+            <line x1="747" y1="296" x2="745" y2="302" stroke-width="0.7"/>
+            <polygon points="733,302 761,302 765,388 729,388" stroke-width="0.85"/>
+            <line x1="747" y1="302" x2="750" y2="388" stroke-width="0.4"/>
+            <line x1="737" y1="388" x2="722" y2="470" stroke-width="0.8"/>
+            <line x1="761" y1="388" x2="780" y2="470" stroke-width="0.8"/>
+            <polygon points="722,470 716,474 728,474" stroke-width="0.7"/>
+            <polygon points="780,470 779,474 791,474" stroke-width="0.7"/>
+            <line x1="736" y1="308" x2="680" y2="318" stroke-width="0.8"/>
+            <polygon points="680,318 674,316 676,322" fill="currentColor" stroke="none"/>
+            <polygon points="745,303 741,300 741,306" fill="#C9BFE8" stroke="none"/>
+            <polygon points="745,303 749,300 749,306" fill="#C9BFE8" stroke="none"/>
+          </g>
+          <!-- halo of observer stars -->
+          <g fill="currentColor" stroke="none" opacity="0.8">
+            <circle cx="350" cy="120" r="1.6"/><circle cx="430" cy="96" r="1.4"/><circle cx="515" cy="88" r="1.6"/>
+            <circle cx="600" cy="98" r="1.4"/><circle cx="680" cy="122" r="1.6"/><circle cx="735" cy="160" r="1.3"/>
+            <circle cx="390" cy="170" r="1.3"/><circle cx="475" cy="150" r="1.5"/><circle cx="565" cy="150" r="1.5"/>
+            <circle cx="650" cy="180" r="1.3"/><circle cx="720" cy="205" r="1.4"/>
+          </g>
+          <g class="plate-legend" font-family="IBM Plex Mono, monospace" font-size="8" fill="currentColor" opacity="0.72">
+            <text x="640" y="525" fill="currentColor" stroke="none" letter-spacing="2" opacity="0.9">KEY</text>
+            <circle cx="646" cy="530" r="3.2" fill="#E9E5F7" stroke="currentColor" stroke-width="0.7" />
+            <polygon points="646,535 643,533 643,537" fill="#C9BFE8" stroke="none" />
+            <polygon points="646,535 649,533 649,537" fill="#C9BFE8" stroke="none" />
+            <text x="682" y="536" fill="currentColor" stroke="none">THE TEACHER</text>
+            <line x1="640" y1="544" x2="676" y2="544" stroke="currentColor" stroke-width="0.7" />
+            <text x="682" y="547" fill="currentColor" stroke="none">BODIES</text>
+            <line x1="640" y1="555" x2="676" y2="555" stroke="currentColor" stroke-width="0.7" stroke-dasharray="3 3" />
+            <text x="682" y="558" fill="currentColor" stroke="none">ATTENTION / SIGHT</text>
+            <line x1="640" y1="566" x2="676" y2="566" stroke="currentColor" stroke-width="0.7" stroke-dasharray="1.2 2.6" />
+            <text x="682" y="569" fill="currentColor" stroke="none">TRACES IN TIME</text>
+            <line x1="640" y1="577" x2="670" y2="577" stroke="currentColor" stroke-width="0.7" />
+            <polygon points="670,574 678,577 670,580" fill="currentColor" stroke="none" />
+            <text x="682" y="580" fill="currentColor" stroke="none">TRANSFER OF IDEAS</text>
+            <polygon points="652,586 658,586 655,592" fill="none" stroke="currentColor" stroke-width="0.7" />
+            <text x="682" y="590" fill="currentColor" stroke="none">CONFIDENCE (DATUM)</text>
+          </g>
+        </g>
+        <!-- MICRO -->
+        <g class="micro-layer transition-opacity duration-500" opacity="0.45">
+          <text x="520" y="300" font-family="IBM Plex Mono, monospace" font-size="5.5" fill="currentColor" stroke="none">m₁v₁ + m₂v₂ = 0</text>
+          <path d="M 385 352 Q 530 306 700 348" fill="none" stroke="currentColor" stroke-width="0.35" stroke-dasharray="3 2" opacity="0.5"/>
+          <circle cx="402" cy="349" r="2" fill="var(--primary)"/><circle cx="462" cy="342" r="2" fill="var(--primary)"/>
+          <circle cx="598" cy="340" r="2" fill="var(--primary)"/><circle cx="658" cy="346" r="2" fill="var(--primary)"/>
+        </g>
+        <!-- CALQUE -->
+        <g class="calque-layer transition-opacity duration-500" opacity="0.0">
+          <g stroke="var(--primary)" fill="none" stroke-width="0.35" stroke-dasharray="2 3" opacity="0.6">
+            <text x="150" y="60" font-family="IBM Plex Mono, monospace" font-size="8" fill="var(--primary)" stroke="none">CONSERVATION VECTORS</text>
+            <line x1="530" y1="330" x2="700" y2="330" stroke-width="0.8" marker-end="url(#p2-arrow)"/>
+            <line x1="286" y1="436" x2="150" y2="436" stroke-width="0.6" stroke-dasharray="5 3" marker-end="url(#p2-arrow)"/>
+            <circle cx="530" cy="330" r="150" fill="none"/>
+          </g>
+        </g>
+        </svg>
+    </template>
+
+        <template id="tpl-plate-2">
+      <svg viewBox="0 0 1000 625" class="w-full h-full text-[var(--foreground)] overflow-visible">
+        <defs>
+          <filter id="p3-glow" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="2.2" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <pattern id="p3-hatch" width="7" height="7" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+            <line x1="0" y1="0" x2="0" y2="7" stroke="currentColor" stroke-width="0.3" stroke-opacity="0.35" />
+          </pattern>
+          <marker id="p3-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="var(--primary)" />
+          </marker>
+        </defs>
+        <g class="arch-grid-frame" stroke="currentColor" fill="none">
+          <rect x="60" y="32" width="880" height="560" stroke-width="0.4" stroke-opacity="0.3" />
+          <rect x="64" y="36" width="872" height="552" stroke-width="0.2" stroke-opacity="0.22" />
+          <line x1="150" y1="36" x2="150" y2="588" stroke-width="0.2" stroke-dasharray="2 4" stroke-opacity="0.4" />
+          <circle cx="150" cy="22" r="7.5" stroke-width="0.4" stroke-opacity="0.5" fill="var(--card)" />
+          <text x="150" y="25" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="6.5" fill="currentColor" stroke="none" opacity="0.6">1</text>
+          <line x1="290" y1="36" x2="290" y2="588" stroke-width="0.2" stroke-dasharray="2 4" stroke-opacity="0.4" />
+          <circle cx="290" cy="22" r="7.5" stroke-width="0.4" stroke-opacity="0.5" fill="var(--card)" />
+          <text x="290" y="25" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="6.5" fill="currentColor" stroke="none" opacity="0.6">2</text>
+          <line x1="430" y1="36" x2="430" y2="588" stroke-width="0.2" stroke-dasharray="2 4" stroke-opacity="0.4" />
+          <circle cx="430" cy="22" r="7.5" stroke-width="0.4" stroke-opacity="0.5" fill="var(--card)" />
+          <text x="430" y="25" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="6.5" fill="currentColor" stroke="none" opacity="0.6">3</text>
+          <line x1="570" y1="36" x2="570" y2="588" stroke-width="0.2" stroke-dasharray="2 4" stroke-opacity="0.4" />
+          <circle cx="570" cy="22" r="7.5" stroke-width="0.4" stroke-opacity="0.5" fill="var(--card)" />
+          <text x="570" y="25" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="6.5" fill="currentColor" stroke="none" opacity="0.6">4</text>
+          <line x1="710" y1="36" x2="710" y2="588" stroke-width="0.2" stroke-dasharray="2 4" stroke-opacity="0.4" />
+          <circle cx="710" cy="22" r="7.5" stroke-width="0.4" stroke-opacity="0.5" fill="var(--card)" />
+          <text x="710" y="25" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="6.5" fill="currentColor" stroke="none" opacity="0.6">5</text>
+          <line x1="850" y1="36" x2="850" y2="588" stroke-width="0.2" stroke-dasharray="2 4" stroke-opacity="0.4" />
+          <circle cx="850" cy="22" r="7.5" stroke-width="0.4" stroke-opacity="0.5" fill="var(--card)" />
+          <text x="850" y="25" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="6.5" fill="currentColor" stroke="none" opacity="0.6">6</text>
+          <line x1="64" y1="180" x2="936" y2="180" stroke-width="0.2" stroke-dasharray="1 5" stroke-opacity="0.2" />
+          <polygon points="942,180 948,175 936,175" stroke-width="0.4" stroke-opacity="0.5" />
+          <line x1="934" y1="180" x2="968" y2="180" stroke-width="0.4" stroke-opacity="0.5" />
+          <text x="942" y="173" font-family="IBM Plex Mono, monospace" font-size="6" fill="currentColor" stroke="none" opacity="0.5">+3.60</text>
+          <line x1="64" y1="360" x2="936" y2="360" stroke-width="0.2" stroke-dasharray="1 5" stroke-opacity="0.2" />
+          <polygon points="942,360 948,355 936,355" stroke-width="0.4" stroke-opacity="0.5" />
+          <line x1="934" y1="360" x2="968" y2="360" stroke-width="0.4" stroke-opacity="0.5" />
+          <text x="942" y="353" font-family="IBM Plex Mono, monospace" font-size="6" fill="currentColor" stroke="none" opacity="0.5">+1.20</text>
+          <line x1="64" y1="485" x2="936" y2="485" stroke-width="0.2" stroke-dasharray="1 5" stroke-opacity="0.2" />
+          <polygon points="942,485 948,480 936,480" stroke-width="0.4" stroke-opacity="0.5" />
+          <line x1="934" y1="485" x2="968" y2="485" stroke-width="0.4" stroke-opacity="0.5" />
+          <text x="942" y="478" font-family="IBM Plex Mono, monospace" font-size="6" fill="currentColor" stroke="none" opacity="0.5">±0.00</text>
+          <text x="80" y="574" font-family="Cormorant Garamond, Georgia, serif" font-size="15" font-style="italic" fill="currentColor" stroke="none" opacity="0.75">III.</text>
+          <text x="108" y="573" font-family="IBM Plex Mono, monospace" font-size="6.5" letter-spacing="1.5" fill="currentColor" stroke="none" opacity="0.5">THE RETURN · ECLIPSE & ORBIT (1:10)</text>
+          <g transform="translate(810, 568)" stroke-opacity="0.5">
+            <rect x="0" y="0" width="20" height="3" fill="currentColor" stroke="none" opacity="0.5" />
+            <rect x="20" y="0" width="20" height="3" stroke-width="0.35" />
+            <rect x="40" y="0" width="40" height="3" fill="currentColor" stroke="none" opacity="0.5" />
+            <rect x="80" y="0" width="30" height="3" stroke-width="0.35" />
+            <text x="0" y="-3" font-family="IBM Plex Mono, monospace" font-size="5.5" fill="currentColor" stroke="none" opacity="0.5">0</text>
+            <text x="38" y="-3" font-family="IBM Plex Mono, monospace" font-size="5.5" fill="currentColor" stroke="none" opacity="0.5">1m</text>
+          </g>
+        </g>
+        <!-- MACRO -->
+        <g class="macro-layer" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <g fill="currentColor" stroke="none" opacity="0.5">
+            <circle cx="120" cy="86" r="0.5" /><circle cx="330" cy="70" r="0.8" /><circle cx="520" cy="96" r="0.5" />
+            <circle cx="680" cy="64" r="0.7" /><circle cx="860" cy="90" r="0.5" /><circle cx="205" cy="150" r="0.6" />
+            <circle cx="470" cy="140" r="0.5" /><circle cx="730" cy="170" r="0.8" /><circle cx="96" cy="300" r="0.6" />
+            <circle cx="910" cy="260" r="0.7" /><circle cx="160" cy="520" r="0.5" /><circle cx="640" cy="470" r="0.6" />
+            <circle cx="890" cy="420" r="0.5" /><circle cx="380" cy="540" r="0.7" />
+          </g>
+
+          <!-- eclipse diptych -->
+          <line x1="500" y1="42" x2="500" y2="535" stroke-width="0.5" stroke-dasharray="8 4 2 4" stroke-opacity="0.5"/>
+          <!-- t0 occluded disc (flat) -->
+          <circle cx="315" cy="330" r="120" fill="var(--card)" stroke-width="0.8"/>
+          <circle cx="315" cy="330" r="120" fill="none" stroke="currentColor" stroke-width="0.4" stroke-dasharray="2 3" opacity="0.5"/>
+          <circle cx="315" cy="330" r="70" fill="none" stroke="var(--primary)" stroke-width="0.5" stroke-dasharray="2 3"/>
+          <!-- t1 radiant disc (depth) -->
+          <circle cx="700" cy="300" r="108" fill="var(--card)" stroke="var(--primary)" stroke-width="1" filter="url(#p3-glow)"/>
+          <circle cx="700" cy="300" r="84" fill="none" stroke="currentColor" stroke-width="0.4" stroke-dasharray="2 3" opacity="0.6"/>
+          <!-- bowed student (t0) -->
+          <g stroke="currentColor" fill="var(--card)">
+            <circle cx="315" cy="316" r="8.5" stroke-width="0.85"/>
+            <line x1="315" y1="324" x2="315" y2="330" stroke-width="0.7"/>
+            <polygon points="299,332 331,332 327,380 303,380" stroke-width="0.85"/>
+            <line x1="315" y1="332" x2="314" y2="380" stroke-width="0.4"/>
+            <line x1="306" y1="380" x2="308" y2="400" stroke-width="0.8"/>
+            <line x1="322" y1="380" x2="320" y2="400" stroke-width="0.8"/>
+            <line x1="329" y1="334" x2="352" y2="352" stroke-width="0.8"/>
+            <polygon points="352,352 354,348 350,347" fill="currentColor" stroke="none"/>
+          </g>
+          <!-- upright student (t1) -->
+          <g stroke="currentColor" fill="var(--card)">
+            <circle cx="700" cy="208" r="9" stroke-width="0.85"/>
+            <circle cx="697" cy="208" r="1.1" fill="currentColor" stroke="none"/>
+            <path d="M 707 205 L 712 208 L 707 211" fill="none" stroke-width="0.5"/>
+            <line x1="700" y1="216" x2="700" y2="222" stroke-width="0.7"/>
+            <polygon points="686,222 714,222 716,280 684,280" stroke-width="0.85"/>
+            <line x1="700" y1="222" x2="700" y2="280" stroke-width="0.4"/>
+            <line x1="690" y1="280" x2="692" y2="332" stroke-width="0.8"/>
+            <line x1="708" y1="280" x2="706" y2="332" stroke-width="0.8"/>
+            <polygon points="692,332 687,336 697,336" stroke-width="0.7"/>
+            <polygon points="706,332 703,336 713,336" stroke-width="0.7"/>
+            <line x1="714" y1="226" x2="762" y2="250" stroke-width="0.8"/>
+          </g>
+          <!-- inquiry orbit -->
+          <circle cx="700" cy="300" r="62" fill="none" stroke="var(--primary)" stroke-width="0.5" stroke-dasharray="3 3" opacity="0.8"/>
+          <text x="700" y="180" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="7" fill="currentColor" stroke="none">100 / 100</text>
+          <g class="plate-legend" font-family="IBM Plex Mono, monospace" font-size="8" fill="currentColor" opacity="0.72">
+            <text x="640" y="525" fill="currentColor" stroke="none" letter-spacing="2" opacity="0.9">KEY</text>
+            <circle cx="646" cy="530" r="3.2" fill="#E9E5F7" stroke="currentColor" stroke-width="0.7" />
+            <polygon points="646,535 643,533 643,537" fill="#C9BFE8" stroke="none" />
+            <polygon points="646,535 649,533 649,537" fill="#C9BFE8" stroke="none" />
+            <text x="682" y="536" fill="currentColor" stroke="none">THE TEACHER</text>
+            <line x1="640" y1="544" x2="676" y2="544" stroke="currentColor" stroke-width="0.7" />
+            <text x="682" y="547" fill="currentColor" stroke="none">BODIES</text>
+            <line x1="640" y1="555" x2="676" y2="555" stroke="currentColor" stroke-width="0.7" stroke-dasharray="3 3" />
+            <text x="682" y="558" fill="currentColor" stroke="none">ATTENTION / SIGHT</text>
+            <line x1="640" y1="566" x2="676" y2="566" stroke="currentColor" stroke-width="0.7" stroke-dasharray="1.2 2.6" />
+            <text x="682" y="569" fill="currentColor" stroke="none">TRACES IN TIME</text>
+            <line x1="640" y1="577" x2="670" y2="577" stroke="currentColor" stroke-width="0.7" />
+            <polygon points="670,574 678,577 670,580" fill="currentColor" stroke="none" />
+            <text x="682" y="580" fill="currentColor" stroke="none">TRANSFER OF IDEAS</text>
+            <polygon points="652,586 658,586 655,592" fill="none" stroke="currentColor" stroke-width="0.7" />
+            <text x="682" y="590" fill="currentColor" stroke="none">CONFIDENCE (DATUM)</text>
+          </g>
+        </g>
+        <!-- MICRO -->
+        <g class="micro-layer transition-opacity duration-500" opacity="0.45">
+          <text x="315" y="270" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="7" fill="currentColor" stroke="none">52</text>
+          <text x="682" y="180" font-family="IBM Plex Mono, monospace" font-size="6" fill="currentColor" stroke="none">ASK · TEST · REVISE</text>
+          <path d="M 700 238 A 62 62 0 0 1 762 300" stroke-width="0.5"/>
+          <path d="M 762 300 A 62 62 0 0 1 700 362" stroke-width="0.5"/>
+          <path d="M 700 362 A 62 62 0 0 1 638 300" stroke-width="0.5"/>
+          <line x1="315" y1="450" x2="150" y2="450" stroke="currentColor" stroke-width="0.3" stroke-dasharray="4 3" opacity="0.5" marker-end="url(#p3-arrow)"/>
+        </g>
+        <!-- CALQUE -->
+        <g class="calque-layer transition-opacity duration-500" opacity="0.0">
+          <g stroke="var(--primary)" fill="none" stroke-width="0.35" stroke-dasharray="2 3" opacity="0.6">
+            <text x="500" y="52" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="8" fill="var(--primary)" stroke="none">UMBRA / PENUMBRA</text>
+            <ellipse cx="500" cy="330" rx="185" ry="150"/>
+            <line x1="150" y1="512" x2="850" y2="512" stroke-width="0.5" stroke-dasharray="7 3 2 3" marker-end="url(#p3-arrow)"/>
+            <text x="500" y="526" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="8" fill="var(--primary)" stroke="none">t₀ → t₁</text>
+          </g>
+        </g>
+        </svg>
+    </template>
+
+        <template id="tpl-plate-3">
+      <svg viewBox="0 0 1000 625" class="w-full h-full text-[var(--foreground)] overflow-visible">
+        <defs>
+          <filter id="p4-glow" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="2.2" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <pattern id="p4-hatch" width="7" height="7" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+            <line x1="0" y1="0" x2="0" y2="7" stroke="currentColor" stroke-width="0.3" stroke-opacity="0.35" />
+          </pattern>
+          <marker id="p4-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="var(--primary)" />
+          </marker>
+        </defs>
+        <g class="arch-grid-frame" stroke="currentColor" fill="none">
+          <rect x="60" y="32" width="880" height="560" stroke-width="0.4" stroke-opacity="0.3" />
+          <rect x="64" y="36" width="872" height="552" stroke-width="0.2" stroke-opacity="0.22" />
+          <line x1="150" y1="36" x2="150" y2="588" stroke-width="0.2" stroke-dasharray="2 4" stroke-opacity="0.4" />
+          <circle cx="150" cy="22" r="7.5" stroke-width="0.4" stroke-opacity="0.5" fill="var(--card)" />
+          <text x="150" y="25" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="6.5" fill="currentColor" stroke="none" opacity="0.6">1</text>
+          <line x1="290" y1="36" x2="290" y2="588" stroke-width="0.2" stroke-dasharray="2 4" stroke-opacity="0.4" />
+          <circle cx="290" cy="22" r="7.5" stroke-width="0.4" stroke-opacity="0.5" fill="var(--card)" />
+          <text x="290" y="25" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="6.5" fill="currentColor" stroke="none" opacity="0.6">2</text>
+          <line x1="430" y1="36" x2="430" y2="588" stroke-width="0.2" stroke-dasharray="2 4" stroke-opacity="0.4" />
+          <circle cx="430" cy="22" r="7.5" stroke-width="0.4" stroke-opacity="0.5" fill="var(--card)" />
+          <text x="430" y="25" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="6.5" fill="currentColor" stroke="none" opacity="0.6">3</text>
+          <line x1="570" y1="36" x2="570" y2="588" stroke-width="0.2" stroke-dasharray="2 4" stroke-opacity="0.4" />
+          <circle cx="570" cy="22" r="7.5" stroke-width="0.4" stroke-opacity="0.5" fill="var(--card)" />
+          <text x="570" y="25" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="6.5" fill="currentColor" stroke="none" opacity="0.6">4</text>
+          <line x1="710" y1="36" x2="710" y2="588" stroke-width="0.2" stroke-dasharray="2 4" stroke-opacity="0.4" />
+          <circle cx="710" cy="22" r="7.5" stroke-width="0.4" stroke-opacity="0.5" fill="var(--card)" />
+          <text x="710" y="25" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="6.5" fill="currentColor" stroke="none" opacity="0.6">5</text>
+          <line x1="850" y1="36" x2="850" y2="588" stroke-width="0.2" stroke-dasharray="2 4" stroke-opacity="0.4" />
+          <circle cx="850" cy="22" r="7.5" stroke-width="0.4" stroke-opacity="0.5" fill="var(--card)" />
+          <text x="850" y="25" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="6.5" fill="currentColor" stroke="none" opacity="0.6">6</text>
+          <line x1="64" y1="180" x2="936" y2="180" stroke-width="0.2" stroke-dasharray="1 5" stroke-opacity="0.2" />
+          <polygon points="942,180 948,175 936,175" stroke-width="0.4" stroke-opacity="0.5" />
+          <line x1="934" y1="180" x2="968" y2="180" stroke-width="0.4" stroke-opacity="0.5" />
+          <text x="942" y="173" font-family="IBM Plex Mono, monospace" font-size="6" fill="currentColor" stroke="none" opacity="0.5">+3.60</text>
+          <line x1="64" y1="360" x2="936" y2="360" stroke-width="0.2" stroke-dasharray="1 5" stroke-opacity="0.2" />
+          <polygon points="942,360 948,355 936,355" stroke-width="0.4" stroke-opacity="0.5" />
+          <line x1="934" y1="360" x2="968" y2="360" stroke-width="0.4" stroke-opacity="0.5" />
+          <text x="942" y="353" font-family="IBM Plex Mono, monospace" font-size="6" fill="currentColor" stroke="none" opacity="0.5">+1.20</text>
+          <line x1="64" y1="485" x2="936" y2="485" stroke-width="0.2" stroke-dasharray="1 5" stroke-opacity="0.2" />
+          <polygon points="942,485 948,480 936,480" stroke-width="0.4" stroke-opacity="0.5" />
+          <line x1="934" y1="485" x2="968" y2="485" stroke-width="0.4" stroke-opacity="0.5" />
+          <text x="942" y="478" font-family="IBM Plex Mono, monospace" font-size="6" fill="currentColor" stroke="none" opacity="0.5">±0.00</text>
+          <text x="80" y="574" font-family="Cormorant Garamond, Georgia, serif" font-size="15" font-style="italic" fill="currentColor" stroke="none" opacity="0.75">IV.</text>
+          <text x="108" y="573" font-family="IBM Plex Mono, monospace" font-size="6.5" letter-spacing="1.5" fill="currentColor" stroke="none" opacity="0.5">OUT AND ABOUT · EXOPLANET TRANSECT (1:50)</text>
+          <g transform="translate(810, 568)" stroke-opacity="0.5">
+            <rect x="0" y="0" width="20" height="3" fill="currentColor" stroke="none" opacity="0.5" />
+            <rect x="20" y="0" width="20" height="3" stroke-width="0.35" />
+            <rect x="40" y="0" width="40" height="3" fill="currentColor" stroke="none" opacity="0.5" />
+            <rect x="80" y="0" width="30" height="3" stroke-width="0.35" />
+            <text x="0" y="-3" font-family="IBM Plex Mono, monospace" font-size="5.5" fill="currentColor" stroke="none" opacity="0.5">0</text>
+            <text x="38" y="-3" font-family="IBM Plex Mono, monospace" font-size="5.5" fill="currentColor" stroke="none" opacity="0.5">1m</text>
+          </g>
+        </g>
+        <!-- MACRO -->
+        <g class="macro-layer" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <g fill="currentColor" stroke="none" opacity="0.5">
+            <circle cx="120" cy="86" r="0.5" /><circle cx="330" cy="70" r="0.8" /><circle cx="520" cy="96" r="0.5" />
+            <circle cx="680" cy="64" r="0.7" /><circle cx="860" cy="90" r="0.5" /><circle cx="205" cy="150" r="0.6" />
+            <circle cx="470" cy="140" r="0.5" /><circle cx="730" cy="170" r="0.8" /><circle cx="96" cy="300" r="0.6" />
+            <circle cx="910" cy="260" r="0.7" /><circle cx="160" cy="520" r="0.5" /><circle cx="640" cy="470" r="0.6" />
+            <circle cx="890" cy="420" r="0.5" /><circle cx="380" cy="540" r="0.7" />
+          </g>
+
+          <!-- sun -->
+          <g transform="translate(200,125)">
+            <circle r="34" fill="var(--card)" stroke="var(--primary)" stroke-width="0.9" filter="url(#p4-glow)"/>
+            <circle r="24" fill="none" stroke="currentColor" stroke-width="0.4" stroke-dasharray="2 3" opacity="0.6"/>
+            <line x1="-40" y1="0" x2="40" y2="0" stroke-width="0.4" opacity="0.5"/>
+            <line x1="0" y1="-40" x2="0" y2="40" stroke-width="0.4" opacity="0.5"/>
+          </g>
+          <!-- drone comet -->
+          <g stroke-width="0.7">
+            <rect x="618" y="126" width="34" height="12" fill="var(--card)" stroke-width="0.85"/>
+            <polygon points="618,126 652,126 668,117 634,117" fill="none" stroke-width="0.5" stroke-opacity="0.7"/>
+            <line x1="620" y1="131" x2="596" y2="124" stroke-width="0.8"/>
+            <line x1="650" y1="131" x2="674" y2="124" stroke-width="0.8"/>
+            <ellipse cx="596" cy="124" rx="15" ry="3" fill="var(--card)" stroke-width="0.6"/>
+            <ellipse cx="674" cy="124" rx="15" ry="3" fill="var(--card)" stroke-width="0.6"/>
+            <path d="M 585 121 A 15 3.5 0 0 1 607 121" fill="none" stroke-width="0.4" stroke-dasharray="2 1.5"/>
+            <path d="M 663 121 A 15 3.5 0 0 1 685 121" fill="none" stroke-width="0.4" stroke-dasharray="2 1.5"/>
+            <path d="M 668 126 L 700 138 L 716 160" fill="none" stroke="var(--primary)" stroke-width="0.4" stroke-dasharray="2 3" opacity="0.7"/>
+          </g>
+          <!-- runner -->
+          <g stroke="currentColor" fill="var(--card)">
+            <circle cx="540" cy="340" r="8" stroke-width="0.85"/>
+            <circle cx="537" cy="340" r="1.1" fill="currentColor" stroke="none"/>
+            <path d="M 546 337 L 551 340 L 546 343" fill="none" stroke-width="0.5"/>
+            <line x1="538" y1="348" x2="534" y2="353" stroke-width="0.7"/>
+            <polygon points="516,353 546,355 532,400 508,396" stroke-width="0.85"/>
+            <line x1="526" y1="354" x2="520" y2="398" stroke-width="0.4"/>
+            <line x1="508" y1="398" x2="486" y2="470" stroke-width="0.8"/>
+            <line x1="530" y1="400" x2="556" y2="452" stroke-width="0.8"/>
+            <polygon points="486,470 480,474 494,474" stroke-width="0.7"/>
+            <polygon points="556,452 552,456 562,454" stroke-width="0.7"/>
+            <line x1="542" y1="356" x2="566" y2="372" stroke-width="0.75"/>
+            <line x1="520" y1="356" x2="490" y2="370" stroke-width="0.75"/>
+          </g>
+          <!-- terrain arc -->
+          <path d="M 120 478 Q 400 450 700 462 Q 820 466 880 452" fill="none" stroke="currentColor" stroke-width="0.7"/>
+          <path d="M 120 478 Q 400 450 700 462 Q 820 466 880 452 L 880 500 L 120 500 Z" fill="url(#p4-hatch)" stroke="none" opacity="0.25"/>
+          <!-- surveyor (teacher) at telemetry -->
+          <g stroke="currentColor" fill="var(--card)">
+            <rect x="766" y="330" width="60" height="46" stroke-width="0.85"/>
+            <circle cx="847" cy="300" r="8.5" fill="#E9E5F7" stroke-width="0.85"/>
+            <circle cx="844" cy="300" r="1.1" fill="currentColor" stroke="none"/>
+            <path d="M 853 297 L 858 300 L 853 303" fill="none" stroke-width="0.5"/>
+            <line x1="846" y1="308" x2="844" y2="314" stroke-width="0.7"/>
+            <polygon points="834,314 860,314 861,376 833,376" stroke-width="0.85"/>
+            <line x1="847" y1="314" x2="849" y2="376" stroke-width="0.4"/>
+            <line x1="838" y1="376" x2="840" y2="440" stroke-width="0.8"/>
+            <line x1="855" y1="376" x2="853" y2="440" stroke-width="0.8"/>
+            <polygon points="840,440 835,444 845,444" stroke-width="0.7"/>
+            <polygon points="853,440 850,444 860,444" stroke-width="0.7"/>
+            <line x1="837" y1="320" x2="814" y2="346" stroke-width="0.75"/>
+            <polygon points="844,306 840,303 840,309" fill="#C9BFE8" stroke="none"/>
+            <polygon points="844,306 848,303 848,309" fill="#C9BFE8" stroke="none"/>
+          </g>
+          <g class="plate-legend" font-family="IBM Plex Mono, monospace" font-size="8" fill="currentColor" opacity="0.72">
+            <text x="640" y="525" fill="currentColor" stroke="none" letter-spacing="2" opacity="0.9">KEY</text>
+            <circle cx="646" cy="530" r="3.2" fill="#E9E5F7" stroke="currentColor" stroke-width="0.7" />
+            <polygon points="646,535 643,533 643,537" fill="#C9BFE8" stroke="none" />
+            <polygon points="646,535 649,533 649,537" fill="#C9BFE8" stroke="none" />
+            <text x="682" y="536" fill="currentColor" stroke="none">THE TEACHER</text>
+            <line x1="640" y1="544" x2="676" y2="544" stroke="currentColor" stroke-width="0.7" />
+            <text x="682" y="547" fill="currentColor" stroke="none">BODIES</text>
+            <line x1="640" y1="555" x2="676" y2="555" stroke="currentColor" stroke-width="0.7" stroke-dasharray="3 3" />
+            <text x="682" y="558" fill="currentColor" stroke="none">ATTENTION / SIGHT</text>
+            <line x1="640" y1="566" x2="676" y2="566" stroke="currentColor" stroke-width="0.7" stroke-dasharray="1.2 2.6" />
+            <text x="682" y="569" fill="currentColor" stroke="none">TRACES IN TIME</text>
+            <line x1="640" y1="577" x2="670" y2="577" stroke="currentColor" stroke-width="0.7" />
+            <polygon points="670,574 678,577 670,580" fill="currentColor" stroke="none" />
+            <text x="682" y="580" fill="currentColor" stroke="none">TRANSFER OF IDEAS</text>
+            <polygon points="652,586 658,586 655,592" fill="none" stroke="currentColor" stroke-width="0.7" />
+            <text x="682" y="590" fill="currentColor" stroke="none">CONFIDENCE (DATUM)</text>
+          </g>
+        </g>
+        <!-- MICRO -->
+        <g class="micro-layer transition-opacity duration-500" opacity="0.45">
+          <text x="360" y="330" font-family="IBM Plex Mono, monospace" font-size="5" fill="currentColor" stroke="none">Δt = 0.1 s</text>
+          <text x="770" y="312" font-family="IBM Plex Mono, monospace" font-size="5" fill="currentColor" stroke="none">x(t) = x₀ + v₀t + ½at²</text>
+          <circle cx="250" cy="412" r="2" fill="var(--primary)"/><circle cx="330" cy="408" r="2" fill="var(--primary)"/>
+          <circle cx="410" cy="404" r="2" fill="var(--primary)"/><circle cx="490" cy="400" r="2" fill="var(--primary)"/>
+          <path d="M 250 412 Q 400 396 540 400" fill="none" stroke="currentColor" stroke-width="0.35" stroke-dasharray="2 2" opacity="0.5"/>
+          <line x1="200" y1="125" x2="540" y2="340" stroke="currentColor" stroke-width="0.22" stroke-dasharray="3 4" opacity="0.35"/>
+        </g>
+        <!-- CALQUE -->
+        <g class="calque-layer transition-opacity duration-500" opacity="0.0">
+          <g stroke="var(--primary)" fill="none" stroke-width="0.35" stroke-dasharray="2 3" opacity="0.6">
+            <text x="130" y="62" font-family="IBM Plex Mono, monospace" font-size="8" fill="var(--primary)" stroke="none">FIELD TRANSECT</text>
+            <line x1="670" y1="132" x2="540" y2="340" stroke-width="0.5" stroke-dasharray="3 2"/>
+            <line x1="540" y1="340" x2="796" y2="353" stroke-width="0.5" stroke-dasharray="3 2" marker-end="url(#p4-arrow)"/>
+            <circle cx="200" cy="125" r="52" fill="none"/>
+            <circle cx="200" cy="125" r="70" fill="none"/>
+          </g>
+        </g>
+        </svg>
+    </template>
+
+        <template id="tpl-plate-4">
+      <svg viewBox="0 0 1000 625" class="w-full h-full text-[var(--foreground)] overflow-visible">
+        <defs>
+          <filter id="p5-glow" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="2.2" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <pattern id="p5-hatch" width="7" height="7" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+            <line x1="0" y1="0" x2="0" y2="7" stroke="currentColor" stroke-width="0.3" stroke-opacity="0.35" />
+          </pattern>
+          <marker id="p5-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="var(--primary)" />
+          </marker>
+        </defs>
+        <g class="arch-grid-frame" stroke="currentColor" fill="none">
+          <rect x="60" y="32" width="880" height="560" stroke-width="0.4" stroke-opacity="0.3" />
+          <rect x="64" y="36" width="872" height="552" stroke-width="0.2" stroke-opacity="0.22" />
+          <line x1="150" y1="36" x2="150" y2="588" stroke-width="0.2" stroke-dasharray="2 4" stroke-opacity="0.4" />
+          <circle cx="150" cy="22" r="7.5" stroke-width="0.4" stroke-opacity="0.5" fill="var(--card)" />
+          <text x="150" y="25" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="6.5" fill="currentColor" stroke="none" opacity="0.6">1</text>
+          <line x1="290" y1="36" x2="290" y2="588" stroke-width="0.2" stroke-dasharray="2 4" stroke-opacity="0.4" />
+          <circle cx="290" cy="22" r="7.5" stroke-width="0.4" stroke-opacity="0.5" fill="var(--card)" />
+          <text x="290" y="25" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="6.5" fill="currentColor" stroke="none" opacity="0.6">2</text>
+          <line x1="430" y1="36" x2="430" y2="588" stroke-width="0.2" stroke-dasharray="2 4" stroke-opacity="0.4" />
+          <circle cx="430" cy="22" r="7.5" stroke-width="0.4" stroke-opacity="0.5" fill="var(--card)" />
+          <text x="430" y="25" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="6.5" fill="currentColor" stroke="none" opacity="0.6">3</text>
+          <line x1="570" y1="36" x2="570" y2="588" stroke-width="0.2" stroke-dasharray="2 4" stroke-opacity="0.4" />
+          <circle cx="570" cy="22" r="7.5" stroke-width="0.4" stroke-opacity="0.5" fill="var(--card)" />
+          <text x="570" y="25" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="6.5" fill="currentColor" stroke="none" opacity="0.6">4</text>
+          <line x1="710" y1="36" x2="710" y2="588" stroke-width="0.2" stroke-dasharray="2 4" stroke-opacity="0.4" />
+          <circle cx="710" cy="22" r="7.5" stroke-width="0.4" stroke-opacity="0.5" fill="var(--card)" />
+          <text x="710" y="25" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="6.5" fill="currentColor" stroke="none" opacity="0.6">5</text>
+          <line x1="850" y1="36" x2="850" y2="588" stroke-width="0.2" stroke-dasharray="2 4" stroke-opacity="0.4" />
+          <circle cx="850" cy="22" r="7.5" stroke-width="0.4" stroke-opacity="0.5" fill="var(--card)" />
+          <text x="850" y="25" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="6.5" fill="currentColor" stroke="none" opacity="0.6">6</text>
+          <line x1="64" y1="180" x2="936" y2="180" stroke-width="0.2" stroke-dasharray="1 5" stroke-opacity="0.2" />
+          <polygon points="942,180 948,175 936,175" stroke-width="0.4" stroke-opacity="0.5" />
+          <line x1="934" y1="180" x2="968" y2="180" stroke-width="0.4" stroke-opacity="0.5" />
+          <text x="942" y="173" font-family="IBM Plex Mono, monospace" font-size="6" fill="currentColor" stroke="none" opacity="0.5">+3.60</text>
+          <line x1="64" y1="360" x2="936" y2="360" stroke-width="0.2" stroke-dasharray="1 5" stroke-opacity="0.2" />
+          <polygon points="942,360 948,355 936,355" stroke-width="0.4" stroke-opacity="0.5" />
+          <line x1="934" y1="360" x2="968" y2="360" stroke-width="0.4" stroke-opacity="0.5" />
+          <text x="942" y="353" font-family="IBM Plex Mono, monospace" font-size="6" fill="currentColor" stroke="none" opacity="0.5">+1.20</text>
+          <line x1="64" y1="485" x2="936" y2="485" stroke-width="0.2" stroke-dasharray="1 5" stroke-opacity="0.2" />
+          <polygon points="942,485 948,480 936,480" stroke-width="0.4" stroke-opacity="0.5" />
+          <line x1="934" y1="485" x2="968" y2="485" stroke-width="0.4" stroke-opacity="0.5" />
+          <text x="942" y="478" font-family="IBM Plex Mono, monospace" font-size="6" fill="currentColor" stroke="none" opacity="0.5">±0.00</text>
+          <text x="80" y="574" font-family="Cormorant Garamond, Georgia, serif" font-size="15" font-style="italic" fill="currentColor" stroke="none" opacity="0.75">V.</text>
+          <text x="108" y="573" font-family="IBM Plex Mono, monospace" font-size="6.5" letter-spacing="1.5" fill="currentColor" stroke="none" opacity="0.5">THE CHOICE · IGNITION (1:10)</text>
+          <g transform="translate(810, 568)" stroke-opacity="0.5">
+            <rect x="0" y="0" width="20" height="3" fill="currentColor" stroke="none" opacity="0.5" />
+            <rect x="20" y="0" width="20" height="3" stroke-width="0.35" />
+            <rect x="40" y="0" width="40" height="3" fill="currentColor" stroke="none" opacity="0.5" />
+            <rect x="80" y="0" width="30" height="3" stroke-width="0.35" />
+            <text x="0" y="-3" font-family="IBM Plex Mono, monospace" font-size="5.5" fill="currentColor" stroke="none" opacity="0.5">0</text>
+            <text x="38" y="-3" font-family="IBM Plex Mono, monospace" font-size="5.5" fill="currentColor" stroke="none" opacity="0.5">1m</text>
+          </g>
+        </g>
+        <!-- MACRO -->
+        <g class="macro-layer" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <g fill="currentColor" stroke="none" opacity="0.5">
+            <circle cx="120" cy="86" r="0.5" /><circle cx="330" cy="70" r="0.8" /><circle cx="520" cy="96" r="0.5" />
+            <circle cx="680" cy="64" r="0.7" /><circle cx="860" cy="90" r="0.5" /><circle cx="205" cy="150" r="0.6" />
+            <circle cx="470" cy="140" r="0.5" /><circle cx="730" cy="170" r="0.8" /><circle cx="96" cy="300" r="0.6" />
+            <circle cx="910" cy="260" r="0.7" /><circle cx="160" cy="520" r="0.5" /><circle cx="640" cy="470" r="0.6" />
+            <circle cx="890" cy="420" r="0.5" /><circle cx="380" cy="540" r="0.7" />
+          </g>
+
+          <!-- accretion threshold -->
+          <path d="M 130 470 Q 480 470 830 340" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.6"/>
+          <line x1="500" y1="42" x2="500" y2="535" stroke-width="0.4" stroke-dasharray="8 4 2 4" stroke-opacity="0.4"/>
+          <!-- blackboard slate -->
+          <rect x="450" y="196" width="180" height="92" fill="var(--card)" stroke="var(--primary)" stroke-width="0.7" filter="url(#p5-glow)"/>
+          <rect x="456" y="202" width="168" height="80" stroke-width="0.45"/>
+          <text x="466" y="222" font-family="IBM Plex Mono, monospace" font-size="9" fill="currentColor" stroke="none">?</text>
+          <text x="540" y="222" font-family="IBM Plex Mono, monospace" font-size="9" fill="currentColor" stroke="none">→</text>
+          <text x="560" y="222" font-family="IBM Plex Mono, monospace" font-size="9" fill="currentColor" stroke="none">!</text>
+          <line x1="466" y1="246" x2="606" y2="246" stroke-width="0.25" stroke-dasharray="2 3" opacity="0.5"/>
+          <!-- doorway threshold -->
+          <rect x="806" y="250" width="54" height="226" fill="var(--card)" stroke-width="0.8"/>
+          <ellipse cx="833" cy="360" rx="46" ry="130" fill="none" stroke="var(--primary)" stroke-width="0.5" stroke-dasharray="2 3" opacity="0.7"/>
+          <!-- bowed self (collapsing) -->
+          <g stroke="currentColor" fill="var(--card)">
+            <circle cx="292" cy="374" r="8" stroke-width="0.85"/>
+            <line x1="291" y1="382" x2="290" y2="388" stroke-width="0.7"/>
+            <polygon points="274,390 308,388 300,440 276,440" stroke-width="0.85"/>
+            <line x1="288" y1="390" x2="285" y2="440" stroke-width="0.4"/>
+            <line x1="278" y1="440" x2="280" y2="486" stroke-width="0.8"/>
+            <line x1="298" y1="440" x2="296" y2="486" stroke-width="0.8"/>
+            <polygon points="280,486 275,490 285,490" stroke-width="0.7"/>
+            <polygon points="296,486 293,490 303,490" stroke-width="0.7"/>
+            <line x1="306" y1="394" x2="330" y2="410" stroke-width="0.8"/>
+          </g>
+          <!-- working self -->
+          <g stroke="currentColor" fill="var(--card)">
+            <circle cx="540" cy="308" r="8.5" stroke-width="0.85"/>
+            <circle cx="537" cy="308" r="1.1" fill="currentColor" stroke="none"/>
+            <line x1="539" y1="316" x2="538" y2="322" stroke-width="0.7"/>
+            <polygon points="526,322 554,322 550,458 530,458" stroke-width="0.85"/>
+            <line x1="539" y1="322" x2="538" y2="458" stroke-width="0.4"/>
+            <line x1="532" y1="458" x2="534" y2="486" stroke-width="0.8"/>
+            <line x1="548" y1="458" x2="546" y2="486" stroke-width="0.8"/>
+            <polygon points="534,486 529,490 539,490" stroke-width="0.7"/>
+            <polygon points="546,486 543,490 553,490" stroke-width="0.7"/>
+            <line x1="552" y1="328" x2="580" y2="248" stroke-width="0.8"/>
+            <polygon points="580,248 584,245 582,250" fill="currentColor" stroke="none"/>
+          </g>
+          <!-- ignited self -->
+          <g stroke="currentColor" fill="var(--card)">
+            <circle cx="760" cy="292" r="9" stroke-width="0.85"/>
+            <circle cx="757" cy="292" r="1.1" fill="currentColor" stroke="none"/>
+            <path d="M 767 289 L 772 292 L 767 295" fill="none" stroke-width="0.5"/>
+            <line x1="759" y1="300" x2="758" y2="306" stroke-width="0.7"/>
+            <polygon points="746,306 774,306 778,432 742,432" stroke-width="0.85"/>
+            <line x1="760" y1="306" x2="762" y2="432" stroke-width="0.4"/>
+            <line x1="746" y1="432" x2="744" y2="486" stroke-width="0.8"/>
+            <line x1="774" y1="432" x2="782" y2="486" stroke-width="0.8"/>
+            <polygon points="744,486 739,490 750,490" stroke-width="0.7"/>
+            <polygon points="782,486 780,490 790,490" stroke-width="0.7"/>
+            <line x1="774" y1="312" x2="812" y2="356" stroke-width="0.75"/>
+            <polygon points="812,356 816,354 814,360" fill="currentColor" stroke="none"/>
+            <path d="M 772 272 L 772 264 M 763 277 L 757 273 M 781 277 L 787 273" stroke-width="0.4" stroke-opacity="0.7"/>
+          </g>
+          <!-- teacher ghost -->
+          <g stroke="currentColor" fill="var(--card)" opacity="0.5">
+            <circle cx="170" cy="326" r="8" fill="#E9E5F7" stroke-width="0.7"/>
+            <circle cx="167" cy="326" r="1" fill="currentColor" stroke="none"/>
+            <polygon points="160,336 180,336 178,468 162,468" stroke-width="0.7"/>
+            <polygon points="170,334 166,331 166,337" fill="#C9BFE8" stroke="none"/>
+            <polygon points="170,334 174,331 174,337" fill="#C9BFE8" stroke="none"/>
+          </g>
+          <!-- resonance build-up -->
+          <path d="M 200 470 q 30 -8 60 0 q 30 8 60 0 q 30 -12 60 0 q 30 12 60 0 q 30 -16 60 0 q 30 16 60 0 q 30 -20 60 0 q 30 20 60 0 q 30 -24 60 0 q 30 24 60 0" stroke="var(--primary)" stroke-width="0.5" stroke-dasharray="2 3" opacity="0.55" filter="url(#p5-glow)"/>
+          <g class="plate-legend" font-family="IBM Plex Mono, monospace" font-size="8" fill="currentColor" opacity="0.72">
+            <text x="640" y="525" fill="currentColor" stroke="none" letter-spacing="2" opacity="0.9">KEY</text>
+            <circle cx="646" cy="530" r="3.2" fill="#E9E5F7" stroke="currentColor" stroke-width="0.7" />
+            <polygon points="646,535 643,533 643,537" fill="#C9BFE8" stroke="none" />
+            <polygon points="646,535 649,533 649,537" fill="#C9BFE8" stroke="none" />
+            <text x="682" y="536" fill="currentColor" stroke="none">THE TEACHER</text>
+            <line x1="640" y1="544" x2="676" y2="544" stroke="currentColor" stroke-width="0.7" />
+            <text x="682" y="547" fill="currentColor" stroke="none">BODIES</text>
+            <line x1="640" y1="555" x2="676" y2="555" stroke="currentColor" stroke-width="0.7" stroke-dasharray="3 3" />
+            <text x="682" y="558" fill="currentColor" stroke="none">ATTENTION / SIGHT</text>
+            <line x1="640" y1="566" x2="676" y2="566" stroke="currentColor" stroke-width="0.7" stroke-dasharray="1.2 2.6" />
+            <text x="682" y="569" fill="currentColor" stroke="none">TRACES IN TIME</text>
+            <line x1="640" y1="577" x2="670" y2="577" stroke="currentColor" stroke-width="0.7" />
+            <polygon points="670,574 678,577 670,580" fill="currentColor" stroke="none" />
+            <text x="682" y="580" fill="currentColor" stroke="none">TRANSFER OF IDEAS</text>
+            <polygon points="652,586 658,586 655,592" fill="none" stroke="currentColor" stroke-width="0.7" />
+            <text x="682" y="590" fill="currentColor" stroke="none">CONFIDENCE (DATUM)</text>
+          </g>
+        </g>
+        <!-- MICRO -->
+        <g class="micro-layer transition-opacity duration-500" opacity="0.45">
+          <g stroke="currentColor" fill="none" stroke-width="0.32" stroke-dasharray="2 1.5" opacity="0.6">
+            <circle cx="706" cy="330" r="7"/>
+            <path d="M 696 338 L 692 400 M 714 338 L 718 400"/>
+          </g>
+          <text x="150" y="120" font-family="IBM Plex Mono, monospace" font-size="5" fill="currentColor" stroke="none">16:45</text>
+          <path d="M 292 484 C 370 470, 440 470, 540 484 C 640 470, 700 470, 760 484" fill="none" stroke-width="0.3" stroke-dasharray="3 2" opacity="0.6"/>
+        </g>
+        <!-- CALQUE -->
+        <g class="calque-layer transition-opacity duration-500" opacity="0.0">
+          <g stroke="var(--primary)" fill="none" stroke-width="0.35" stroke-dasharray="2 3" opacity="0.6">
+            <text x="150" y="52" font-family="IBM Plex Mono, monospace" font-size="8" fill="var(--primary)" stroke="none">ORBITAL GRID</text>
+            <ellipse cx="833" cy="360" rx="120" ry="180" stroke-opacity="0.5"/>
+            <ellipse cx="292" cy="430" rx="90" ry="50" stroke-opacity="0.5"/>
+            <line x1="292" y1="436" x2="760" y2="436" stroke-width="0.7" stroke-dasharray="6 3" marker-end="url(#p5-arrow)"/>
+            <line x1="150" y1="522" x2="850" y2="522" stroke-width="0.5" stroke-dasharray="7 3 2 3" marker-end="url(#p5-arrow)"/>
+            <text x="500" y="536" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="8" fill="var(--primary)" stroke="none">t₀ → t₂</text>
+          </g>
+        </g>
+        </svg>
+    </template>
+
+  </div>
+
+
+  <!-- ===================================================================== -->
+  <!-- INTERACTIVE CONTROLLER (Blind Emboss Lighting, 3.5x Loupe, Overlays)  -->
+  <!-- ===================================================================== -->
+  <script>
+    const platesMeta = [
+      { coord: 'I / V',    azimuth: 'N 14° E',  scale: '1 : 20', datum: '∇ +0.00', hour: '07:45', title: 'Nothing to Explore' },
+      { coord: 'II / V',   azimuth: 'N 14° E',  scale: '1 : 5',  datum: '∇ +0.45', hour: '10:05', title: 'The Recoil' },
+      { coord: 'III / V',  azimuth: 'N 00° E',  scale: '1 : 10', datum: '∇ −0.20 → +1.00', hour: '15:00 ⇢ 15:00', title: 'The Return' },
+      { coord: 'IV / V',   azimuth: 'S 40° W',  scale: '1 : 50', datum: '∇ +2.40', hour: '13:10', title: 'Out and About' },
+      { coord: 'V / V',    azimuth: 'N 90° E',  scale: '1 : 10', datum: '∇ +0.00 → +1.68', hour: '16:45 ⇢ 17:30', title: 'The Choice' }
+    ];
+
+    let currentPlate = 0;
+    let loupeEnabled = true;
+    let calqueEnabled = false;
+    let backlightEnabled = false;
+
+    const coverView = document.getElementById('coverView');
+    const embossSeal = document.getElementById('embossSeal');
+    const plateStage = document.getElementById('plateStage');
+    const macroContainer = document.getElementById('macroContainer');
+    const opticalLoupe = document.getElementById('opticalLoupe');
+    const loupeInner = document.getElementById('loupeInner');
+    const ZOOM = 3.5;
+    const touchOnly = window.matchMedia('(hover: none)').matches;
+
+    // Hash routing: '#/II' or '#/2' → 0-based plate index; '#/' (or empty) → cover
+    function plateFromHash() {
+      const raw = (location.hash || '').replace(/^#\/?/, '');
+      if (!raw) return null;
+      const numerals = { I: 0, II: 1, III: 2, IV: 3, V: 4 };
+      if (Object.prototype.hasOwnProperty.call(numerals, raw.toUpperCase())) {
+        return numerals[raw.toUpperCase()];
+      }
+      const n = parseInt(raw, 10);
+      if (!isNaN(n) && n >= 1 && n <= 5) return n - 1;
+      return null;
+    }
+
+    function hideCoverInstant() {
+      coverView.style.transition = 'none';
+      coverView.style.opacity = '0';
+      coverView.style.pointerEvents = 'none';
+      void coverView.offsetHeight;
+      coverView.style.transition = '';
+    }
+
+    // 1. Dynamic Directional Lighting on the Cover Blind-Embossed Seal
+    coverView.addEventListener('mousemove', (e) => {
+      const rect = embossSeal.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const dx = (e.clientX - centerX) / (window.innerWidth / 2);
+      const dy = (e.clientY - centerY) / (window.innerHeight / 2);
+
+      const shadowX = (-dx * 14).toFixed(1);
+      const shadowY = (-dy * 14).toFixed(1);
+      embossSeal.style.boxShadow = `
+        ${shadowX}px ${shadowY}px 28px rgba(0, 0, 0, 0.09),
+        ${-shadowX}px ${-shadowY}px 28px rgba(255, 255, 255, 0.06),
+        inset ${shadowX * 0.4}px ${shadowY * 0.4}px 12px rgba(0, 0, 0, 0.04)
+      `;
+    });
+
+    function enterGallery() {
+      coverView.style.opacity = '0';
+      coverView.style.pointerEvents = 'none';
+      renderPlate(currentPlate);
+    }
+
+    function returnToCover() {
+      coverView.style.opacity = '1';
+      coverView.style.pointerEvents = 'auto';
+      try { history.replaceState(null, '', '#/'); } catch (e) {}
+    }
+
+    // 2. Render Selected Plate into Macro Canvas & High-Res Loupe Clone
+    function renderPlate(idx) {
+      currentPlate = idx;
+      const tpl = document.getElementById(`tpl-plate-${idx}`);
+      if (!tpl) return;
+
+      // Re-trigger fade animation
+      macroContainer.classList.remove('plate-fade');
+      void macroContainer.offsetWidth;
+      macroContainer.classList.add('plate-fade');
+
+      // Populate Macro View
+      macroContainer.innerHTML = tpl.innerHTML;
+      // Populate Magnified Loupe View
+      loupeInner.innerHTML = tpl.innerHTML;
+
+      //Inside the Loupe, always reveal the Microscopic Pentimenti & Calque Geometry in full clarity!
+      const loupeMicro = loupeInner.querySelector('.micro-layer');
+      const loupeCalque = loupeInner.querySelector('.calque-layer');
+      if (loupeMicro) loupeMicro.setAttribute('opacity', '1');
+      if (loupeCalque) loupeCalque.setAttribute('opacity', '0.85');
+
+      // Sync Macro Overlays based on active toggles
+      syncMacroLayers();
+
+      // Update Metadata Coordinates
+      const meta = platesMeta[idx];
+      const numeral = meta.coord.split(' ')[0];
+      document.getElementById('plateCoord').innerText = meta.coord;
+      document.getElementById('plateAzimuth').innerText = meta.azimuth;
+      document.getElementById('plateScale').innerText = meta.scale;
+      document.getElementById('plateDatum').innerText = meta.datum;
+      document.getElementById('plateHour').innerText = meta.hour;
+      document.getElementById('plateTitle').innerText = `${numeral}. ${meta.title}`;
+
+      // Surface plate identity in the document title, stage label, and URL hash
+      document.title = `${numeral} — ${meta.title} · I – IV`;
+      plateStage.setAttribute('aria-label', `Plate ${numeral} — ${meta.title}, ink drawing`);
+      try { history.replaceState(null, '', '#' + '/' + numeral); } catch (e) {}
+
+      // Update Roman Numeral Tabs
+      document.querySelectorAll('.plate-tab').forEach((tab, i) => {
+        if (i === idx) {
+          tab.className = 'plate-tab px-3 py-1 transition-all text-[var(--foreground)] font-medium border-b border-[var(--foreground)]';
+          tab.setAttribute('aria-current', 'true');
+        } else {
+          tab.className = 'plate-tab px-3 py-1 transition-all opacity-40 hover:opacity-100';
+          tab.removeAttribute('aria-current');
+        }
+      });
+    }
+
+    function selectPlate(idx) {
+      renderPlate(idx);
+    }
+
+    function stepPlate(dir) {
+      const next = (currentPlate + dir + 5) % 5;
+      renderPlate(next);
+    }
+
+    // 3. Optical Loupe Tracking & 3.5x Magnification Math
+    function updateLoupe(clientX, clientY) {
+      if (!loupeEnabled) return;
+      const rect = plateStage.getBoundingClientRect();
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
+
+      opticalLoupe.classList.add('active');
+      opticalLoupe.style.left = `${x}px`;
+      opticalLoupe.style.top = `${y}px`;
+
+      // Position and scale the inner clone so the exact point (x, y) is centered in the 240x240 loupe
+      const loupeRadius = 120;
+      loupeInner.style.width = `${rect.width}px`;
+      loupeInner.style.height = `${rect.height}px`;
+      loupeInner.style.transform = `translate(${loupeRadius - x * ZOOM}px, ${loupeRadius - y * ZOOM}px) scale(${ZOOM})`;
+    }
+
+    plateStage.addEventListener('mousemove', (e) => updateLoupe(e.clientX, e.clientY));
+
+    plateStage.addEventListener('touchstart', (e) => {
+      if (e.touches.length > 0) updateLoupe(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: true });
+
+    plateStage.addEventListener('touchmove', (e) => {
+      if (e.touches.length > 0) updateLoupe(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: true });
+
+    plateStage.addEventListener('mouseleave', () => {
+      opticalLoupe.classList.remove('active');
+    });
+
+    plateStage.addEventListener('touchend', () => {
+      opticalLoupe.classList.remove('active');
+    });
+
+    // 4. Layer Inspection Toggles (Loupe, Calque A-A', Backlight)
+    function syncMacroLayers() {
+      const macroMicro = macroContainer.querySelector('.micro-layer');
+      const macroCalque = macroContainer.querySelector('.calque-layer');
+
+      if (macroCalque) {
+        macroCalque.setAttribute('opacity', calqueEnabled ? '0.95' : '0.16');
+      }
+      if (macroMicro) {
+        macroMicro.setAttribute('opacity', backlightEnabled ? '0.95' : '0.45');
+      }
+
+      document.body.classList.toggle('calque-active', calqueEnabled);
+      document.body.classList.toggle('backlight-active', backlightEnabled);
+      plateStage.style.cursor = touchOnly ? 'default' : (loupeEnabled ? 'none' : 'crosshair');
+    }
+
+    function toggleLoupeMode() {
+      loupeEnabled = !loupeEnabled;
+      const btn = document.getElementById('btnLoupe');
+      if (!loupeEnabled) {
+        opticalLoupe.classList.remove('active');
+        btn.classList.add('opacity-50');
+        btn.classList.remove('bg-[var(--card)]', 'text-[var(--foreground)]');
+      } else {
+        btn.classList.remove('opacity-50');
+        btn.classList.add('bg-[var(--card)]', 'text-[var(--foreground)]');
+      }
+      btn.setAttribute('aria-pressed', String(loupeEnabled));
+      syncMacroLayers();
+    }
+
+    function toggleCalqueMode() {
+      calqueEnabled = !calqueEnabled;
+      const btn = document.getElementById('btnCalque');
+      btn.classList.toggle('opacity-50', !calqueEnabled);
+      btn.classList.toggle('bg-[var(--card)]', calqueEnabled);
+      btn.classList.toggle('text-[var(--primary)]', calqueEnabled);
+      btn.setAttribute('aria-pressed', String(calqueEnabled));
+      syncMacroLayers();
+    }
+
+    function toggleBacklightMode() {
+      backlightEnabled = !backlightEnabled;
+      const btn = document.getElementById('btnBacklight');
+      btn.classList.toggle('opacity-50', !backlightEnabled);
+      btn.classList.toggle('bg-[var(--card)]', backlightEnabled);
+      btn.classList.toggle('text-[var(--foreground)]', backlightEnabled);
+      btn.setAttribute('aria-pressed', String(backlightEnabled));
+      syncMacroLayers();
+    }
+
+    // Keyboard navigation (Left/Right arrows, Space for Calque)
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') stepPlate(1);
+      if (e.key === 'ArrowLeft') stepPlate(-1);
+    });
+
+    // Respond to hash changes (browser back/forward, manual URL edits)
+    window.addEventListener('hashchange', () => {
+      const idx = plateFromHash();
+      if (idx === null) {
+        returnToCover();
+      } else if (idx !== currentPlate) {
+        hideCoverInstant();
+        renderPlate(idx);
+      }
+    });
+
+    // Initialize: honor a plate hash (#/II or #/2); otherwise keep the cover
+    const initialIdx = plateFromHash();
+    if (initialIdx !== null) {
+      hideCoverInstant();
+      renderPlate(initialIdx);
+    } else {
+      renderPlate(0);
+    }
+  </script>
+</body>
+</html>
