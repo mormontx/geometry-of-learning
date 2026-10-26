@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Where the Waves Overlap Archive</title>
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<style>
+/* Layout: an open archive of inquiry in the prototype's language — grain, serif headlines, mono labels,
+   one red accent — built from the five classroom moments: collage hero, question atlas, thought experiment, cards. */
+:root{
+  --paper:#e8e6e0; --paper2:#dcdad3; --sheet:#f6f4ed; --sheet2:#dedbd2; --sheet3:#c6c4bd; --card:#f1efe8; --card-art:#e0ded7;
+  --ink:#1e1f1d; --body:#4b4b47; --muted:#64645f; --line:#b5b2a9; --line2:#9d9b93;
+  --red:#a4372d; --hair:#c8642a; --accent:#6c63a8;
+  --night:#1f201f; --night2:#2c2c2a; --night-ink:#eeeae1; --night-body:#c5c4bb; --night-mut:#8e8d86; --night-line:#51524b; --night-red:#d0766b;
+  --btn:#1e1f1d; --btn-ink:#f8f6ef; --grain:.11;
+  --mono:ui-monospace,'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;
+  --serif:Georgia,'Times New Roman',serif;
+  --sans:'Helvetica Neue',Helvetica,Arial,sans-serif;
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#232421; --paper2:#2b2c28; --sheet:#33342f; --sheet2:#3a3b35; --sheet3:#45463f; --card:#2a2b27; --card-art:#30312c;
+  --ink:#ece9e0; --body:#c3c0b5; --muted:#a3a097; --line:#55564f; --line2:#66675f;
+  --red:#d0675b; --hair:#e08447; --accent:#b1a8ec;
+  --night:#161715; --night2:#232421; --night-line:#45463f;
+  --btn:#ece9e0; --btn-ink:#1e1f1d; --grain:.06; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#232421; --paper2:#2b2c28; --sheet:#33342f; --sheet2:#3a3b35; --sheet3:#45463f; --card:#2a2b27; --card-art:#30312c;
+  --ink:#ece9e0; --body:#c3c0b5; --muted:#a3a097; --line:#55564f; --line2:#66675f;
+  --red:#d0675b; --hair:#e08447; --accent:#b1a8ec;
+  --night:#161715; --night2:#232421; --night-line:#45463f;
+  --btn:#ece9e0; --btn-ink:#1e1f1d; --grain:.06; color-scheme:dark}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::selection{background:var(--red);color:var(--btn-ink)}
+a{color:inherit;text-decoration:none}
+button,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0;padding:0}
+:focus-visible{outline:2px solid var(--red);outline-offset:4px}
+.grain{position:fixed;inset:0;z-index:40;pointer-events:none;opacity:var(--grain);mix-blend-mode:multiply;width:100%;height:100%}
+.wrap{padding-left:max(clamp(16px,4vw,54px),env(safe-area-inset-left,0px));padding-right:max(clamp(16px,4vw,54px),env(safe-area-inset-right,0px))}
+.inner{max-width:1390px;margin-inline:auto}
+.micro,.meta{font:10px/1.5 var(--mono);letter-spacing:.11em;text-transform:uppercase}
+.meta{color:var(--muted)}.red{color:var(--red)}
+
+/* top bar */
+.topbar{position:relative;z-index:50;border-bottom:1px solid var(--ink)}
+.topbar .inner{display:flex;align-items:stretch;justify-content:space-between;min-height:76px}
+.brand{display:flex;align-items:center;gap:14px;padding-block:14px}
+.brand-symbol{border:1.5px solid var(--ink);width:42px;height:42px;display:grid;place-items:center;font:italic 26px/1 var(--serif);transform:rotate(-7deg);flex-shrink:0}
+.brand-text strong{display:block;font-size:11px;letter-spacing:.19em;font-weight:800}
+.brand-text span{display:block;font:9px/1.7 var(--mono);color:var(--muted);margin-top:1px}
+.topnav{display:flex;align-items:stretch;margin-left:auto}
+.topnav a,.topnav button{font:11px var(--mono);letter-spacing:.04em;padding:0 18px;display:grid;place-items:center;transition:background .2s}
+.topnav a:hover,.topnav button:hover{background:var(--paper2)}
+.topnav button{min-width:132px;border-left:1px solid var(--line)}
+.menu-toggle{display:none}
+
+/* hero */
+.hero{display:grid;grid-template-columns:55% 45%;border-bottom:1px solid var(--ink)}
+.hero-copy{padding:80px 0 48px;display:flex;flex-direction:column;align-items:flex-start;min-width:0}
+.small-rule{width:48px;height:1px;background:var(--red);display:inline-block;margin-right:10px;vertical-align:middle}
+.hero h1{font:normal clamp(60px,6.6vw,112px)/.9 var(--serif);letter-spacing:-.07em;margin:52px 0 26px;max-width:740px}
+.hero h1 em{font-style:italic;color:var(--red)}
+.hero h1 .smaller{font-size:.82em}
+.hero-intro{font:19px/1.55 var(--serif);color:var(--body);max-width:430px;margin:8px 0 36px}
+.hero-links{display:flex;align-items:center;gap:28px;flex-wrap:wrap}
+.primary-link{display:inline-flex;align-items:center;justify-content:space-between;min-width:200px;gap:38px;padding:15px 18px;background:var(--btn);color:var(--btn-ink);font:11px var(--mono);letter-spacing:.04em;transition:transform .2s,background .2s}
+.primary-link:hover{background:var(--red);transform:translateY(-2px)}
+.subtle-link{font:11px var(--mono);padding-bottom:7px;border-bottom:1px solid var(--red)}
+.subtle-link:hover{color:var(--red)}
+.hero-footnote{display:flex;gap:20px;align-items:center;margin-top:auto;padding-top:56px}
+.hero-footnote .footline{width:50px;height:1px;background:var(--line)}
+.hero-footnote .meta{font-size:9px;line-height:1.65}
+
+.art-surface{min-height:680px;position:relative;margin:34px 0 30px 10px;border:1px solid var(--line2);background:linear-gradient(transparent 96%,var(--line) 96%) 0 0/100% 27px,var(--paper2);overflow:hidden}
+.art-surface::before{content:'';position:absolute;left:51%;top:-10%;width:1px;height:120%;background:var(--line);transform:rotate(16deg)}
+.art-surface::after{content:'';position:absolute;left:-30%;top:46%;width:160%;height:1px;background:var(--line);transform:rotate(-18deg)}
+.art-meta{position:absolute;z-index:2;top:22px;left:24px}
+.collage-sheet{position:absolute;background:var(--sheet);border:1px solid var(--line2);box-shadow:10px 13px 22px #1e1f1d1f;overflow:hidden;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.sheet-main{width:72%;height:67%;top:13%;left:17%;transform:rotate(-7deg);z-index:3;padding:18px 18px 16px;display:flex;flex-direction:column}
+.art-surface:hover .sheet-main{transform:rotate(-5deg) translateY(-4px)}
+.sheet-title{font:10px var(--mono);letter-spacing:.05em;padding-bottom:10px;border-bottom:1px solid var(--line2);display:flex;justify-content:space-between;gap:8px}
+.wave-visual{width:100%;flex:1;min-height:0;display:block;margin-top:6px}
+.sheet-bottom{display:flex;justify-content:space-between;gap:15px;align-items:end;border-top:1px solid var(--line2);padding-top:8px}
+.sheet-bottom span:first-child{font:italic 19px var(--serif)}
+.sheet-bottom span:last-child{font:9px/1.5 var(--mono);text-align:right;color:var(--muted)}
+.sheet-quote{width:43%;min-height:200px;right:-5%;top:0;z-index:5;transform:rotate(9deg);padding:22px 19px;background:var(--sheet2)}
+.sheet-quote p{font:20px/1.1 var(--serif);letter-spacing:-.035em;margin:20px 0 14px}
+.sheet-quote small{font:9px/1.5 var(--mono);color:var(--muted)}
+.sheet-code{width:47%;height:31%;left:-6%;bottom:4%;z-index:6;transform:rotate(5deg);padding:21px 18px 18px 36px;background:var(--sheet3)}
+.sheet-code .line{height:1px;background:var(--line2);margin:9px 0}
+.sheet-code pre{font:10px/1.65 var(--mono);white-space:pre-wrap;margin:8px 0 0}
+.paper-tape{position:absolute;z-index:10;background:#bcb9ab91;width:88px;height:24px;transform:rotate(-13deg);top:12%;left:42%;border-inline:1px solid #9a978a50}
+.red-ring{position:absolute;z-index:8;border:2px solid var(--red);width:109px;height:75px;border-radius:50%;left:5%;top:17%;transform:rotate(-20deg)}
+.red-ring::after{content:'?';position:absolute;right:-12px;bottom:-26px;font:italic 30px var(--serif);color:var(--red)}
+.annotation{position:absolute;z-index:11;font:italic 17px/1.1 var(--serif);color:var(--red);transform:rotate(-8deg);max-width:150px;transition:opacity .25s,transform .25s}
+.art-annotation{right:3%;bottom:8%}
+.art-annotation::before{content:'';display:block;width:74px;height:1px;background:var(--red);transform:rotate(-24deg);transform-origin:left;margin-bottom:12px}
+.margins-off .annotation,.margins-off .side-note,.margins-off .red-ring{opacity:0;pointer-events:none}
+.art-label{position:absolute;bottom:20px;left:24px;z-index:10;background:var(--btn);color:var(--btn-ink);font:9px var(--mono);padding:8px 10px;letter-spacing:.09em}
+
+.marquee-rule{border-bottom:1px solid var(--ink)}
+.marquee-rule .inner{display:flex;justify-content:space-between;gap:25px;align-items:center;padding-block:24px}
+.marquee-rule .quote{font:italic 24px var(--serif);text-align:center}
+
+/* section intros */
+.numbered-intro{padding:110px 0 56px;display:grid;grid-template-columns:1fr 1.35fr;gap:10%}
+.section-marker{font:10px var(--mono);letter-spacing:.08em;color:var(--red);display:flex;gap:13px;align-items:center;text-transform:uppercase}
+.section-marker::before{content:'';height:1px;width:33px;background:var(--red)}
+.numbered-intro h2,.practice-intro h2{font:normal clamp(43px,5.3vw,76px)/1.02 var(--serif);letter-spacing:-.06em;margin:18px 0 0}
+.numbered-intro h2 em,.practice-intro h2 em{color:var(--red)}
+.numbered-intro p{font:21px/1.48 var(--serif);margin:10px 0 0;max-width:620px;color:var(--body)}
+
+/* atlas */
+.filters{display:flex;gap:7px;flex-wrap:wrap;margin:15px 0 20px}
+.filter{border:1px solid var(--line2);text-transform:uppercase;font:10px var(--mono);letter-spacing:.04em;padding:10px 15px;transition:background .2s,color .2s}
+.filter:hover,.filter.active{background:var(--btn);color:var(--btn-ink);border-color:var(--btn)}
+.question-map{height:585px;border:1px solid var(--night);position:relative;background:var(--night);color:var(--night-ink);overflow:hidden}
+.question-map::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 52% 52%,#4c4b4340,transparent 59%),repeating-linear-gradient(0deg,transparent,transparent 59px,#ffffff09 60px),repeating-linear-gradient(90deg,transparent,transparent 59px,#ffffff09 60px);pointer-events:none}
+.map-top{position:absolute;z-index:4;top:24px;left:28px;right:28px;display:flex;justify-content:space-between;gap:12px;color:var(--night-mut)}
+.map-lines{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+.map-lines line{stroke:#85827b;stroke-opacity:.5;stroke-width:1.2;stroke-dasharray:3 6;transition:stroke .25s,stroke-opacity .25s}
+.map-lines line.active{stroke:var(--night-red);stroke-opacity:1;stroke-width:1.8;stroke-dasharray:none}
+.map-lines circle{fill:none;stroke:#ffffff14}
+.question-node{position:absolute;z-index:3;max-width:200px;text-align:left;transform:translate(-50%,-50%);color:var(--night-ink);padding:10px 11px 9px 16px;transition:opacity .2s,background .2s}
+.question-node::before{content:'';width:7px;height:7px;border:1px solid #d5d0c7;position:absolute;left:0;top:15px;border-radius:50%;background:var(--night)}
+.question-node b{display:block;font:8px var(--mono);letter-spacing:.1em;margin-bottom:7px;color:var(--night-mut);font-weight:normal}
+.question-node span{font:18px/1.15 var(--serif);letter-spacing:-.03em;display:block}
+.question-node:hover,.question-node.selected{background:#3b3935}
+.question-node.selected::before{background:var(--night-red);border-color:var(--night-red);box-shadow:0 0 0 5px #b83d3426}
+.question-node.dim{opacity:.18;pointer-events:none}
+.map-stamp{position:absolute;bottom:24px;right:27px;font:10px var(--mono);border:1px solid #686660;padding:8px 12px;transform:rotate(-8deg);color:#b9ada9;letter-spacing:.1em;z-index:2}
+.wall-bottom{display:grid;grid-template-columns:1.25fr 1fr;gap:10%;border:1px solid var(--line);border-top:0;padding:35px 39px 37px;background:var(--card);min-height:215px}
+.wall-selected{max-width:600px;min-width:0}
+.small-caption{font:9px var(--mono);color:var(--red);letter-spacing:.09em;margin-bottom:10px;text-transform:uppercase}
+.wall-selected h3{font:normal 28px/1.13 var(--serif);letter-spacing:-.04em;margin:0 0 13px}
+.wall-selected p{font:14px/1.6 var(--sans);color:var(--body);margin:0 0 16px}
+.from-link{font:11px var(--mono);border-bottom:1px solid var(--red);padding-bottom:4px}
+.from-link:hover{color:var(--red)}
+.wall-connections{min-width:0}
+.wall-connections .micro{color:var(--muted);margin-bottom:12px}
+.connections-list{display:flex;flex-direction:column;align-items:start;gap:9px}
+.connections-list button{text-align:left;font:13px/1.4 var(--serif);border-bottom:1px solid var(--line);padding-bottom:2px}
+.connections-list button:hover{color:var(--red);border-bottom-color:var(--red)}
+
+/* thought experiment */
+.investigation{background:var(--night);color:var(--night-ink);margin-top:125px;position:relative;padding-block:104px 110px;overflow:hidden}
+.investigation::before{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(90deg,transparent 0,transparent 127px,#ffffff07 128px)}
+.investigation .inner{position:relative;z-index:1}
+.experiment-heading{display:grid;grid-template-columns:1fr 1fr;gap:10%;border-bottom:1px solid var(--night-line);padding-bottom:38px}
+.experiment-heading .section-marker{color:var(--night-red)}.experiment-heading .section-marker::before{background:var(--night-red)}
+.experiment-heading h2{font:normal clamp(46px,6vw,86px)/.96 var(--serif);letter-spacing:-.06em;margin:23px 0 0}
+.experiment-heading h2 em{color:var(--night-red)}
+.right-copy{display:flex;flex-direction:column;justify-content:end;gap:10px}
+.right-copy p{font:21px/1.5 var(--serif);color:var(--night-body);margin:0;max-width:500px}
+.right-copy .micro{color:var(--night-mut)}
+.experiment-stage{display:grid;grid-template-columns:215px minmax(0,1fr);gap:65px;padding-top:65px;min-height:385px}
+.steps{display:flex;flex-direction:column}
+.step{display:flex;gap:14px;padding:18px 0;border-bottom:1px solid var(--night-line);align-items:center;color:var(--night-mut);font:10px var(--mono);letter-spacing:.07em;text-transform:uppercase}
+.step .stepno{font:italic 25px var(--serif);width:35px}
+.step.active,.step.done{color:var(--night-ink)}
+.step.active .stepno{color:var(--night-red)}
+.exercise-content{max-width:860px;min-width:0}
+.exercise-content .micro{color:var(--night-red);margin-bottom:19px;display:block}
+.exercise-content h3{font:normal clamp(27px,2.8vw,40px)/1.2 var(--serif);letter-spacing:-.04em;margin:0 0 29px;max-width:780px}
+.scene{display:block;width:100%;max-width:620px;height:auto;margin:-6px 0 26px;border:1px solid var(--night-line);background:var(--night2)}
+.choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.choice{min-height:149px;padding:18px 19px 24px;border:1px solid #77766d;background:#ffffff07;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:25px;transition:border .18s,background .18s,transform .18s;color:var(--night-ink)}
+.choice:hover,.choice:focus-visible{border-color:var(--night-red);background:#fff1;transform:translateY(-2px)}
+.choice-letter{font:11px var(--mono);color:var(--night-mut)}
+.choice-text{font:16px/1.35 var(--serif)}
+.exercise-feedback{border-left:2px solid var(--night-red);padding:16px 25px;background:#ffffff08;margin-top:4px;max-width:760px;font:17px/1.55 var(--serif)}
+.exercise-feedback strong{display:block;font:10px var(--mono);color:var(--night-red);margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em;font-weight:normal}
+.calc{font:12px/1.8 var(--mono);color:var(--night-body);margin-top:12px}
+.reveal-actions{display:flex;gap:15px;align-items:center;flex-wrap:wrap;margin-top:25px}
+.light-button{background:var(--night-ink);color:var(--night);border:1px solid var(--night-ink);padding:14px 19px;font:11px var(--mono)}
+.light-button:hover{background:#fff}
+.outline-button{border:1px solid #79786f;padding:14px 19px;font:11px var(--mono);color:var(--night-ink)}
+.outline-button:hover{border-color:var(--night-ink)}
+.journal-entry{margin-top:22px}
+.journal-entry label{display:block;margin-bottom:11px;font:10px var(--mono);text-transform:uppercase;color:var(--night-red);letter-spacing:.06em}
+.journal-entry textarea{width:100%;min-height:110px;border:1px solid #6b6b63;background:#ffffff0a;color:var(--night-ink);resize:vertical;padding:16px;font:16px/1.5 var(--serif)}
+.journal-entry textarea::placeholder{color:var(--night-mut)}
+.save-status{color:var(--night-mut);font:10px var(--mono);margin-top:11px;min-height:16px}
+.side-note{position:absolute;z-index:3;color:var(--night-red);font:italic 17px var(--serif);transform:rotate(-10deg);right:4%;bottom:45px;transition:opacity .25s}
+
+/* the five moments */
+.practice{padding-block:118px 114px}
+.practice-intro{display:grid;grid-template-columns:1.3fr 1fr;gap:10%;align-items:end;margin-bottom:45px}
+.practice-intro p{font:18px/1.55 var(--serif);color:var(--body);max-width:440px;margin:0 0 5px}
+.archive-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:15px}
+.archive-card{grid-column:span 2;border:1px solid var(--line2);background:var(--card);min-width:0;transition:transform .25s,box-shadow .25s;display:flex;flex-direction:column}
+.archive-card.wide{grid-column:span 3}
+.archive-card:hover{transform:translateY(-4px);box-shadow:8px 12px 0 var(--line)}
+.card-art{height:250px;position:relative;overflow:hidden;border-bottom:1px solid var(--line2);background:var(--card-art)}
+.card-art svg{width:100%;height:100%;display:block}
+.corner-tag{position:absolute;left:17px;top:17px;color:var(--muted);letter-spacing:.1em;font:9px var(--mono)}
+.serial{position:absolute;bottom:17px;right:17px;color:var(--muted);font:9px var(--mono)}
+.card-info{padding:26px 25px 28px;flex:1;display:flex;flex-direction:column;align-items:start}
+.card-info .micro{color:var(--red)}
+.card-info h3{font:normal 32px/1.05 var(--serif);letter-spacing:-.04em;margin:16px 0 12px}
+.card-info p{font:14px/1.65 var(--sans);color:var(--body);margin:0 0 22px}
+.card-info button{margin-top:auto;border-bottom:1px solid var(--line2);padding:4px 0 6px;font:11px var(--mono)}
+.card-info button:hover{color:var(--red);border-color:var(--red)}
+.archive-note{padding:22px 24px;margin-top:24px;border:1px dashed var(--line2);display:flex;justify-content:space-between;gap:20px;align-items:center}
+.archive-note p{font:14px/1.55 var(--serif);margin:0;color:var(--body)}
+.archive-note span{flex-shrink:0}
+/* svg vocabulary for card art */
+.ln{fill:none;stroke:var(--muted);stroke-width:1.1}
+.ln.ink{stroke:var(--ink)}.ln.r{stroke:var(--red)}.ln.d{stroke-dasharray:3 5}.ln.h{stroke:var(--hair);stroke-width:1.6;stroke-linecap:round}
+.fl-r{fill:var(--red)}.fl-ink{fill:var(--ink)}.fl-card{fill:var(--card-art)}.fl-sheet{fill:var(--sheet)}.fl-acc{fill:var(--accent)}
+.sv-t{font:italic 13px var(--serif);fill:var(--red)}
+.sv-m{font:9px var(--mono);fill:var(--muted);letter-spacing:.06em}
+.sv-m.r{fill:var(--red)}
+.sv-big{font:italic 22px var(--serif);fill:var(--red)}
+
+/* closing */
+.closing{background:var(--paper2);border-top:1px solid var(--ink);padding-block:91px 55px}
+.closing-top{display:grid;grid-template-columns:1fr 1fr;gap:9%}
+.closing h2{font:normal clamp(60px,8.6vw,128px)/.9 var(--serif);letter-spacing:-.075em;margin:35px 0 65px}
+.closing h2 em{color:var(--red)}
+.closing-aside{padding:55px 0 0 15%;position:relative}
+.closing-aside p{font:20px/1.52 var(--serif);max-width:400px;margin:0;color:var(--body)}
+.margin-annotation{position:static;display:block;margin-top:45px;font-size:21px;max-width:none}
+.editions{display:flex;flex-direction:column;gap:10px;margin-top:40px}
+.editions a{font:12px var(--mono);border-bottom:1px solid var(--line2);padding-bottom:5px;align-self:start}
+.editions a:hover{color:var(--red);border-color:var(--red)}
+.closing-bottom{border-top:1px solid var(--line2);padding-top:22px;display:flex;justify-content:space-between;gap:15px;align-items:center;flex-wrap:wrap}
+.closing-bottom .micro{font-size:9px;color:var(--muted)}
+
+/* modal */
+.card-modal{position:fixed;z-index:100;inset:0;background:#1e1d1bbf;display:flex;align-items:center;justify-content:center;padding:22px;opacity:0;pointer-events:none;transition:opacity .2s}
+.card-modal.open{opacity:1;pointer-events:auto}
+.modal-pane{background:var(--card);width:min(720px,100%);max-height:min(800px,90vh);overflow:auto;padding:42px 46px;border:1px solid var(--line2);box-shadow:20px 25px 0 #0004;position:relative}
+.modal-close{position:absolute;right:20px;top:16px;font:28px var(--serif)}
+.modal-pane h2{font:normal 50px/1 var(--serif);letter-spacing:-.06em;margin:22px 0 15px}
+.modal-pane .intro{font:19px/1.55 var(--serif);color:var(--body)}
+.modal-pane .kq{font:italic 22px/1.35 var(--serif);color:var(--red);border-left:2px solid var(--red);padding-left:16px;margin:24px 0}
+.modal-pane ol{font:14px/1.7 var(--sans);padding-left:18px;color:var(--body);margin:0}
+.modal-pane li{margin-bottom:10px}
+.modal-pane li b{font-weight:600;color:var(--ink)}
+.modal-bottom{font:10px/1.6 var(--mono);margin-top:30px;border-top:1px solid var(--line);padding-top:18px;color:var(--red);display:flex;flex-wrap:wrap;gap:10px 22px;letter-spacing:.06em}
+.modal-bottom a{border-bottom:1px solid var(--red)}
+
+@media(max-width:1130px){.hero h1{font-size:clamp(58px,7vw,90px)}.art-surface{min-height:620px}.sheet-quote p{font-size:17px}.question-node{max-width:165px}.question-node span{font-size:16px}.topnav a{padding:0 11px}.topnav button{min-width:115px}.experiment-stage{gap:35px}}
+@media(max-width:860px){
+  .topbar .inner{min-height:68px;align-items:center}.brand-symbol{width:35px;height:35px;font-size:22px}
+  .menu-toggle{display:block;border:1px solid var(--line);padding:10px 13px;font:10px var(--mono)}
+  .topnav{position:absolute;top:100%;right:0;left:0;display:none;background:var(--paper);border-bottom:1px solid var(--ink);flex-direction:column;align-items:stretch;padding:10px max(16px,env(safe-area-inset-right,0px)) 16px max(16px,env(safe-area-inset-left,0px))}
+  .topnav.open{display:flex}.topnav a,.topnav button{display:flex;justify-content:space-between;padding:15px 8px;border-bottom:1px solid var(--line);border-left:0}
+  .hero{grid-template-columns:1fr}.hero-copy{padding:60px 0 30px}.hero h1{margin-top:30px}.art-surface{min-height:560px;margin:0 0 30px}
+  .marquee-rule .inner{flex-direction:column;align-items:start;gap:10px}.marquee-rule .quote{font-size:19px;text-align:left}
+  .numbered-intro{grid-template-columns:1fr;gap:17px;padding-top:80px}.numbered-intro p{font-size:19px}
+  .question-map{height:auto;padding:64px 15px 60px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .map-lines{display:none}.question-node{position:relative;left:auto!important;top:auto!important;max-width:none;min-height:110px;transform:none;background:var(--night2);border:1px solid var(--night-line);padding:15px 10px 13px 16px}
+  .question-node::before{top:14px;left:5px;width:5px;height:5px}
+  .wall-bottom{grid-template-columns:1fr;gap:27px;padding:28px 22px}
+  .experiment-heading,.practice-intro{grid-template-columns:1fr;gap:20px}
+  .experiment-stage{grid-template-columns:1fr;gap:20px}.steps{flex-direction:row;gap:14px}.step{flex:1}
+  .choices{grid-template-columns:1fr}.choice{min-height:auto;gap:8px;padding:14px 17px}
+  .archive-grid{grid-template-columns:1fr 1fr}.archive-card,.archive-card.wide{grid-column:span 1}.archive-card:last-child{grid-column:1/-1}
+  .closing-top{grid-template-columns:1fr;gap:0}.closing-aside{padding:0 0 40px}
+  .archive-note{flex-direction:column;align-items:flex-start}
+}
+@media(max-width:600px){
+  .brand-text span{display:none}
+  .hero h1{font-size:clamp(50px,14vw,76px)}.hero-intro{font-size:18px}.art-surface{min-height:470px}
+  .sheet-main{width:78%;left:11%;padding:12px 10px}.sheet-quote{padding:13px;min-height:130px}.sheet-quote p{font-size:14px;margin:9px 0}.sheet-quote small{font-size:7px}
+  .sheet-code{width:54%;height:31%;padding:9px 9px 9px 30px}.sheet-code pre{font-size:7px}.sheet-title{font-size:7px}.sheet-bottom span:first-child{font-size:14px}.sheet-bottom span:last-child{font-size:7px}
+  .red-ring{width:66px;height:49px}.art-annotation{font-size:14px}
+  .numbered-intro h2,.practice-intro h2{font-size:46px}
+  .question-map{grid-template-columns:1fr}.map-top{flex-direction:column;gap:4px}
+  .experiment-heading h2{font-size:50px}.right-copy p{font-size:18px}.step{font-size:8px;gap:6px}.step .stepno{width:auto;font-size:20px}
+  .exercise-content h3{font-size:26px}
+  .archive-grid{grid-template-columns:1fr}.archive-card:last-child{grid-column:auto}
+  .closing h2{font-size:64px;margin:28px 0}
+  .modal-pane{padding:36px 22px}.modal-pane h2{font-size:38px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
+</style>
+
+<svg class="grain" aria-hidden="true"><filter id="noiseFilter"><feTurbulence type="fractalNoise" baseFrequency=".72" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(#noiseFilter)" opacity=".55"/></svg>
+
+<header class="topbar wrap" id="top"><div class="inner">
+<a href="#top" class="brand" aria-label="Where the Waves Overlap, top of the archive"><span class="brand-symbol">∿</span><span class="brand-text"><strong>WHERE THE WAVES OVERLAP</strong><span>an open archive of five classroom moments</span></span></a>
+<button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="topnav" type="button">MENU +</button>
+<nav id="topnav" class="topnav" aria-label="Main navigation">
+<a href="#atlas">01 / The atlas</a>
+<a href="#experiment">02 / A thought experiment</a>
+<a href="#moments">03 / The moments</a>
+<a href="#premise">04 / The premise</a>
+<button id="marginsToggle" aria-pressed="true" type="button">Margins: on</button>
+</nav>
+</div></header>
+
+<main>
+<section class="wrap" aria-labelledby="hero-title"><div class="inner hero">
+<div class="hero-copy">
+<div class="micro"><span class="small-rule"></span> VOLUME 001 &nbsp;/&nbsp; A TEACHER’S OPEN ARCHIVE</div>
+<h1 id="hero-title">Where<br/>the <em>waves</em><br/><span class="smaller">overlap</span><span class="red">.</span></h1>
+<p class="hero-intro">Physics asks what is real. Computer Science turns what we do into data. Theory of Knowledge asks how we know. Five moments from one classroom, kept with the questions they left open.</p>
+<div class="hero-links"><a href="#atlas" class="primary-link">Enter the archive <span>↗</span></a><a class="subtle-link" href="#experiment">A thought experiment ↗</a></div>
+<div class="hero-footnote"><span class="footline"></span><span class="meta">NOT A CATALOGUE OF LESSONS.<br/>A RECORD OF WHAT HAPPENS WHEN STUDENTS ARRIVE.</span></div>
+</div>
+<div class="art-surface" role="img" aria-label="Collage: a sheet of three overlapping wave patterns, a fragment from the scooter lesson, and a field note from the after-school session">
+<div class="micro art-meta">PLATE 001 / FIVE MOMENTS &nbsp; ↗</div>
+<span class="red-ring"></span>
+<div class="collage-sheet sheet-main">
+<div class="sheet-title"><span>OBSERVATION NO. 001</span><span>FIG. A — THREE SOURCES</span></div>
+<svg class="wave-visual" viewBox="0 0 320 250" aria-hidden="true">
+<defs><clipPath id="wclip"><rect x="0" y="0" width="320" height="250"/></clipPath></defs>
+<path d="M0 125H320M160 0V250" stroke="var(--line)" stroke-width=".7" stroke-dasharray="3 3"/>
+<g clip-path="url(#wclip)" id="rings"></g>
+<circle cx="160" cy="128" r="9" class="fl-acc"/><path d="M160 141l-6 -3v6zM160 141l6 -3v6z" class="fl-acc"/>
+<circle cx="110" cy="105" r="3.2" class="fl-r"/><circle cx="210" cy="105" r="3.2" class="fl-r"/><circle cx="160" cy="190" r="3.2" class="fl-r"/>
+<g class="sv-m"><text x="80" y="92">PHYSICS</text><text x="218" y="92">CS</text><text x="170" y="206">TOK</text><text x="282" y="242">∞</text><text x="6" y="16">N 00°</text></g>
+<path d="M174 128l46 34" stroke="var(--red)" stroke-width=".8"/><text x="224" y="170" class="sv-t">here?</text>
+</svg>
+<div class="sheet-bottom"><span>Where does learning happen?</span><span>THREE WAVES<br/>ONE CLASSROOM</span></div>
+</div>
+<div class="paper-tape" aria-hidden="true"></div>
+<div class="collage-sheet sheet-quote"><span class="micro">FRAGMENT / 02</span><p>A law felt in the body is known differently.</p><small>From the scooter lesson. Σp = 0.</small></div>
+<div class="collage-sheet sheet-code"><span class="micro">FIELD NOTE / 05 · 15:30</span><div class="line"></div><pre>while not understood:
+    ask(question)
+    stay()
+
+// left at 17:45, ready</pre></div>
+<div class="annotation art-annotation">perhaps the question is the lesson ↗</div>
+<span class="art-label">FIVE MOMENTS, NOT FIVE ANSWERS.</span>
+</div>
+</div></section>
+
+<div class="marquee-rule wrap"><div class="inner"><span class="micro red">I → II → III → IV → V &nbsp;/&nbsp; EXPLORE WITHOUT CERTAINTY</span><span class="quote">“Where the waves overlap, learning happens.”</span><span class="micro">ARCHIVE OPEN / ∞</span></div></div>
+
+<section class="wrap" id="atlas" aria-labelledby="atlas-title"><div class="inner">
+<div class="numbered-intro">
+<div><div class="section-marker">001 / The question atlas</div><h2 id="atlas-title">An atlas of<br/><em>open</em><br/>questions.</h2></div>
+<p>Every moment in this archive ended with a knowledge question, and none of them stayed inside one subject. Here they are side by side, with the threads between them: where physics turns into philosophy, where data meets a feeling, where a mark meets a person.</p>
+</div>
+<div class="filters" role="group" aria-label="Filter questions by subject">
+<button class="filter active" type="button" data-filter="all" aria-pressed="true">All questions [07]</button>
+<button class="filter" type="button" data-filter="physics" aria-pressed="false">Physics</button>
+<button class="filter" type="button" data-filter="cs" aria-pressed="false">Computer Science</button>
+<button class="filter" type="button" data-filter="tok" aria-pressed="false">Ways of knowing / TOK</button>
+</div>
+<div class="question-map" id="questionMap" aria-label="Map of seven connected knowledge questions">
+<div class="map-top micro"><span>SEVEN QUESTIONS / NINE THREADS</span><span>FIG. 02 — WHERE THE QUESTIONS OVERLAP</span></div>
+<svg class="map-lines" id="mapLines" aria-hidden="true"></svg>
+<button class="question-node selected" type="button" data-q="share" style="left:18%;top:26%" aria-pressed="true"><b>Q.01 / TOK · MOMENT I</b><span>Can knowledge exist if there is no one to share it with?</span></button>
+<button class="question-node" type="button" data-q="felt" style="left:47%;top:20%" aria-pressed="false"><b>Q.02 / PHYSICS + TOK · II</b><span>When a law is felt in the body, do we know it differently?</span></button>
+<button class="question-node" type="button" data-q="tracker" style="left:79%;top:27%" aria-pressed="false"><b>Q.06 / CS + TOK · II ↔ IV</b><span>Can a tracker record what we felt?</span></button>
+<button class="question-node" type="button" data-q="data" style="left:72%;top:58%" aria-pressed="false"><b>Q.04 / PHYSICS + CS · IV</b><span>What changes when the data is our own movement?</span></button>
+<button class="question-node" type="button" data-q="failure" style="left:30%;top:58%" aria-pressed="false"><b>Q.03 / TOK · MOMENT III</b><span>How does failure become knowledge?</span></button>
+<button class="question-node" type="button" data-q="mark" style="left:52%;top:82%" aria-pressed="false"><b>Q.07 / PHYSICS + TOK · III ↔ V</b><span>What does a mark measure?</span></button>
+<button class="question-node" type="button" data-q="choice" style="left:14%;top:82%" aria-pressed="false"><b>Q.05 / TOK · MOMENT V</b><span>Is resilience something we choose?</span></button>
+<span class="map-stamp">OPEN QUESTIONS ONLY</span>
+</div>
+<div class="wall-bottom" aria-live="polite">
+<div class="wall-selected"><div class="small-caption" id="selectedIndex"></div><h3 id="selectedTitle"></h3><p id="selectedBody"></p><button type="button" class="from-link" id="selectedFrom"></button></div>
+<div class="wall-connections"><div class="micro">CONNECTED QUESTIONS ↗</div><div class="connections-list" id="connectionsList"></div></div>
+</div>
+</div></section>
+
+<section class="investigation wrap" id="experiment" aria-labelledby="experiment-title"><div class="inner">
+<div class="experiment-heading"><div><div class="section-marker">002 / A thought experiment</div><h2 id="experiment-title">The board<br/><em>rolls</em> back.</h2></div>
+<div class="right-copy"><div class="micro">NO SCORES / NO CORRECT ANSWER / ONLY REVISION</div><p>Built from the scooter lesson: a first judgement, a complication from what the class actually saw, and room to revise.</p></div></div>
+<div class="experiment-stage"><div class="steps" aria-label="Experiment progress"><div class="step active"><span class="stepno">I.</span> Position</div><div class="step"><span class="stepno">II.</span> Disruption</div><div class="step"><span class="stepno">III.</span> Reflection</div></div><div class="exercise-content" id="exerciseContent" aria-live="polite"></div></div>
+</div><div class="side-note annotation">Leave room to change your mind.</div></section>
+
+<section class="wrap practice" id="moments" aria-labelledby="practice-title"><div class="inner">
+<div class="practice-intro"><div><div class="section-marker">003 / The work behind the questions</div><h2 id="practice-title">Five moments.<br/>One <em>classroom.</em></h2></div><p>Each card keeps one moment as an archive record: what happened, what it showed, and the question it left behind.</p></div>
+<div class="archive-grid" id="grid"></div>
+<div class="archive-note"><p><strong>A note on the record.</strong> Every moment here happened in my classroom. The drawings stand in for photographs, and no student is named.</p><span class="micro red">EVIDENCE BEFORE AESTHETICS ↗</span></div>
+</div></section>
+
+<footer class="closing wrap" id="premise"><div class="inner">
+<div class="closing-top"><div><div class="section-marker">004 / The premise</div><h2>Never<br/><em>alone.</em></h2></div>
+<div class="closing-aside"><p>A teacher alone is one wave with nothing to meet. Everything in this archive happened after the students arrived: they pushed back, ran, failed, stayed, and asked.</p><span class="annotation margin-annotation">Where the waves overlap, learning happens. ↗</span>
+<div class="editions"><span class="micro" style="color:var(--muted)">OTHER EDITIONS OF THIS PORTFOLIO</span>
+<a href="notebook.html">The notebook ↗</a>
+<a href="drawing-set.html">The drawing set ↗</a>
+<a href="8bit.html">The 8-bit edition ↗</a>
+<a href="geometry-v1.html">The geometry of learning ↗</a></div></div></div>
+<div class="closing-bottom"><div class="micro">WHERE THE WAVES OVERLAP &nbsp;/&nbsp; A TEACHER’S OPEN ARCHIVE</div><div class="micro">PHYSICS &nbsp;·&nbsp; COMPUTER SCIENCE &nbsp;·&nbsp; THEORY OF KNOWLEDGE</div><a class="micro" href="#top">BACK TO THE FIRST QUESTION ↑</a></div>
+</div></footer>
+</main>
+
+<div class="card-modal" id="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="mTitle"><div class="modal-pane">
+<button type="button" class="modal-close" aria-label="Close moment" id="mClose">×</button>
+<div class="section-marker" id="mEyebrow"></div><h2 id="mTitle"></h2><p class="intro" id="mIntro"></p><p class="kq" id="mKq"></p>
+<div class="micro" style="color:var(--muted);margin-bottom:12px">DETAILS IN THE RECORD</div><ol id="mList"></ol>
+<div class="modal-bottom" id="mBottom"></div>
+</div></div>
+
+<script>
+(()=>{
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const ARCH='drawing-set.html';
+const safe=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* hero rings: three sources interfering */
+let rg='';[[110,105],[210,105],[160,190]].forEach(p=>{for(let r=12;r<=260;r+=13)rg+=`<circle cx="${p[0]}" cy="${p[1]}" r="${r}" fill="none" stroke="var(--muted)" stroke-width="${r%39===0?.9:.45}" opacity="${r%39===0?.75:.5}"/>`});$('#rings').innerHTML=rg;
+
+/* ---------- the five moments ---------- */
+const M=[
+{id:'I',tag:'MOMENT I / ALONE',serial:'W/0001 — ∞',subj:'TOK / THE EMPTY ROOM',title:'Alone in the room',
+ short:'A room full of preparation and nobody in it. One wave, with nothing to meet.',
+ note:'One wave with nothing to meet. Without students, there is nothing to explore.',kq:'Can knowledge exist if there is no one to share it with?',
+ details:[['The empty chair','Seat height 450 mm, designed load: one student. Current load: zero.'],['A single source','One wave travelling outward with nothing to interfere with. Amplitude, but no pattern.'],['The blank board','Clean because nobody has asked anything yet. Questions are what fill a classroom.']],
+ art:`<g class="ln d"><circle cx="105" cy="170" r="12"/><circle cx="130" cy="96" r="12"/><circle cx="185" cy="62" r="12"/><circle cx="240" cy="96" r="12"/><circle cx="265" cy="170" r="12"/><circle cx="185" cy="214" r="12"/></g><g class="ln"><circle cx="185" cy="138" r="34"/><circle cx="185" cy="138" r="58" stroke-dasharray="2 6"/><circle cx="185" cy="138" r="84" opacity=".5"/></g><circle cx="185" cy="138" r="12" class="fl-acc"/><path d="M185 154l-7 -4v8zM185 154l7 -4v8z" class="fl-acc"/><path d="M268 70l26 -18" class="ln r"/><text x="248" y="46" class="sv-t">nothing to meet?</text><text x="30" y="236" class="sv-m">LOAD 0 / 6</text>`},
+{id:'II',tag:'MOMENT II / RECOIL',serial:'P/0002 — ∞',subj:'PHYSICS / MOMENTUM',title:'The scooter lesson',
+ short:'She throws the ball forward and rolls backward. Conservation of momentum, felt by the whole class.',
+ note:'She throws the ball forward and slides backward on the board, and the whole class steps in. Conservation of momentum stopped being a formula and became something we all felt.',kq:'When a law is felt in the body, do we know it differently?',
+ details:[['Low-friction bearings','With friction almost removed, the only story left is momentum: m₁v₁ + m₂v₂ = 0.'],['The ball','About 0.6 kg at about 5 m/s: 3.0 kg·m/s forward. She is about 45 kg, so she rolls back at roughly 0.07 m/s. These are estimates.'],['The class steps in','The seating plan gave way to a ring. Everyone had a sightline, and everyone wanted a turn.']],
+ art:`<path d="M30 200H340" class="ln"/><rect x="74" y="182" width="74" height="8" class="ln ink"/><circle cx="86" cy="196" r="5" class="ln ink"/><circle cx="136" cy="196" r="5" class="ln ink"/><circle cx="110" cy="160" r="16" class="ln ink"/><path d="M96 154q-14 -2 -18 10" class="ln h"/><path d="M70 128H30" class="ln r"/><path d="M38 122l-8 6l8 6" class="ln r"/><text x="30" y="118" class="sv-m r">−p</text><circle cx="232" cy="140" r="13" class="ln ink"/><path d="M219 140h26M232 127v26" class="ln"/><path d="M262 140H330" class="ln r"/><path d="M322 134l8 6l-8 6" class="ln r"/><text x="300" y="128" class="sv-m r">+p</text><path d="M160 140h52" class="ln d"/><text x="170" y="232" class="sv-big">Σp = 0</text><g class="ln" opacity=".55"><circle cx="70" cy="60" r="8"/><circle cx="120" cy="42" r="8"/><circle cx="185" cy="36" r="8"/><circle cx="250" cy="42" r="8"/><circle cx="300" cy="60" r="8"/></g>`},
+{id:'III',tag:'MOMENT III / THEN & LATER',serial:'T/0003 — ∞',subj:'TOK / RESILIENCE',title:'Two moments, one student',
+ short:'The tears and the 100% belong to the same girl. The line between them is what we built together.',
+ note:'The tears on the left and the 100% on the right belong to the same girl. The line between them is the resilience we built together, and I’m proud of both.',kq:'How does failure become knowledge?',
+ details:[['The failed test','Folded twice and taken home, not thrown away.'],['The weeks between','Extra sessions, re-dos and small wins. The part no single picture shows.'],['100%','Same student, same handwriting, the same kind of paper she once folded away.']],
+ art:`<g transform="rotate(-9 110 130)"><rect x="66" y="74" width="88" height="112" class="fl-sheet ln"/><path d="M78 96h64M78 106h64M78 116h40M78 132h64M78 142h52" class="ln" opacity=".5"/><path d="M86 152l30 26M116 152l-30 26" class="ln r" stroke-width="2"/><path d="M66 130h88" class="ln d"/></g><g transform="rotate(7 262 118)"><rect x="216" y="60" width="92" height="116" class="fl-sheet ln"/><path d="M228 82h68M228 92h68M228 102h44" class="ln" opacity=".5"/><text x="232" y="148" class="sv-big" style="font-size:30px">100%</text></g><path d="M150 70Q190 10 228 56" class="ln r d"/><text x="40" y="226" class="sv-m">THEN</text><text x="286" y="226" class="sv-m">LATER</text><text x="185" y="230" class="sv-t" text-anchor="middle">same girl</text>`},
+{id:'IV',tag:'MOMENT IV / RECORDED',serial:'D/0004 — ∞',subj:'PHYSICS + CS / MOTION DATA',title:'Running the data',
+ short:'The drone recorded us running. Tracker analysis and sensor telemetry turned our motion into a graph.',
+ note:'We took the lesson outside. The drone recorded all of us running, and that recording was the point: tracker analysis of the footage, combined with the drone’s sensor telemetry, turned our own motion into a motion graph.',kq:'What changes when the data is our own movement?',
+ details:[['The drone recording','From twelve metres up at thirty frames a second, while its sensors log position, height and time.'],['Tracker analysis','Each runner followed frame by frame; telemetry fixes the distances and the times.'],['The motion graph','An x–t graph of our own run: the steeper the line, the faster we went. Δx = 20 m in 3.6 s is about 5.6 m/s.']],
+ art:`<g class="ln" opacity=".35"><path d="M82 30V214M133 30V214M185 30V214M236 30V214M288 30V214M50 62H330M50 106H330M50 150H330M50 194H330"/></g><path d="M56 30V214H334" class="ln ink"/><path d="M60 206C110 202 140 180 170 150S240 70 320 46" class="ln ink" stroke-width="2"/><g class="fl-r"><circle cx="84" cy="203" r="4"/><circle cx="122" cy="192" r="4"/><circle cx="160" cy="161" r="4"/><circle cx="198" cy="121" r="4"/><circle cx="236" cy="88" r="4"/><circle cx="276" cy="63" r="4"/><circle cx="316" cy="48" r="4"/></g><text x="62" y="26" class="sv-m">x (m)</text><text x="306" y="232" class="sv-m">t (s)</text><text x="200" y="196" class="sv-m r">30 fps · telemetry</text><text x="88" y="70" class="sv-t">v = Δx/Δt</text>`},
+{id:'V',tag:'MOMENT V / AFTER SCHOOL',serial:'R/0005 — ∞',subj:'TOK / THE CHOICE',title:'Who is stopping you?',
+ short:'She arrived lost, the night before an assessment. She stayed, asked question after question, and left a different person.',
+ note:'She came after school, lost, with an assessment the next day and big targets. I told her she could go home, or we could stay together until the concepts made sense. I’m here, and it’s your choice. She stayed, asked question after question, and left a different person.',kq:'Is resilience something we choose?',
+ details:[['Height on arrival','She looked smaller than she was: targets high, hope low.'],['The choice','“Who is stopping you from asking questions and learning? I’m here.” She could head home, or we could stay and work through it together. She chose to stay.'],['Height on leaving','Two hours later, confident and ready for tomorrow.']],
+ art:`<path d="M30 214H340" class="ln"/><rect x="262" y="42" width="62" height="172" class="ln ink"/><circle cx="316" cy="132" r="2.5" class="fl-ink"/><circle cx="74" cy="190" r="9" class="ln ink"/><path d="M68 184q-4 14 -2 24M80 184q4 14 2 24" class="ln h"/><path d="M74 199v15" class="ln ink"/><circle cx="292" cy="76" r="20" class="ln ink"/><path d="M276 66q-10 30 -6 52M308 66q10 30 6 52M284 60q-6 34 -2 56M300 60q6 34 2 56" class="ln h"/><path d="M292 96v118M292 214l-14 0M292 214l14 0" class="ln ink"/><g class="sv-t" style="font-size:18px"><text x="96" y="168">?</text><text x="114" y="150">?</text><text x="138" y="164">?</text><text x="164" y="132">✓</text><text x="190" y="116">✓</text><text x="216" y="100">✓</text></g><path d="M96 200Q180 190 250 120" class="ln r d"/><text x="30" y="236" class="sv-m">15:30 → 17:45</text>`}
+];
+const grid=$('#grid');
+grid.innerHTML=M.map((m,i)=>`<article class="archive-card${i>2?' wide':''}" id="moment-${m.id}"><div class="card-art"><span class="corner-tag">${m.tag}</span><svg viewBox="0 0 370 258" aria-hidden="true">${m.art}</svg><span class="serial">${m.serial}</span></div>
+<div class="card-info"><span class="micro">${m.subj}</span><h3>${m.title}</h3><p>${m.short}</p><button type="button" data-m="${i}">Open the record ↗</button></div></article>`).join('');
+
+/* ---------- modal ---------- */
+const modal=$('#modal');let lastFocus;
+function openMoment(i){const m=M[i];lastFocus=document.activeElement;
+  $('#mEyebrow').textContent=m.tag+' · '+m.subj;$('#mTitle').textContent=m.title;$('#mIntro').textContent=m.note;$('#mKq').textContent=m.kq;
+  $('#mList').innerHTML=m.details.map(d=>`<li><b>${safe(d[0])}.</b> ${safe(d[1])}</li>`).join('');
+  $('#mBottom').innerHTML=`<span>MOMENT ${m.id} OF V</span><a href="${ARCH}#${m.id}">SEE IT AS A DRAWING SHEET ↗</a>`;
+  modal.classList.add('open');modal.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';$('#mClose').focus()}
+function closeModal(){modal.classList.remove('open');modal.setAttribute('aria-hidden','true');document.body.style.overflow='';lastFocus?.focus()}
+$$('[data-m]').forEach(b=>b.addEventListener('click',()=>openMoment(+b.dataset.m)));
+$('#mClose').addEventListener('click',closeModal);modal.addEventListener('click',e=>{if(e.target===modal)closeModal()});
+addEventListener('keydown',e=>{if(!modal.classList.contains('open'))return;if(e.key==='Escape')closeModal();
+  if(e.key==='Tab'){const f=[...modal.querySelectorAll('button,a')],a=f[0],z=f[f.length-1];if(e.shiftKey&&document.activeElement===a){e.preventDefault();z.focus()}else if(!e.shiftKey&&document.activeElement===z){e.preventDefault();a.focus()}}});
+
+/* ---------- atlas ---------- */
+const Q={
+ share:{num:'001',m:0,title:'Can knowledge exist if there is no one to share it with?',body:'A room full of preparation and nobody in it. Is knowledge something a person holds, or something that happens between people?',tags:['tok'],links:['felt','choice']},
+ felt:{num:'002',m:1,title:'When a law is felt in the body, do we know it differently?',body:'Everyone could write p = mv before the lesson. After watching her roll backward, they could feel it. Is that a different kind of knowing, or the same knowledge arriving by another route?',tags:['physics','tok'],links:['share','tracker','data']},
+ failure:{num:'003',m:2,title:'How does failure become knowledge?',body:'The folded test and the 100% belong to the same student. What did the failure teach that the success could not have taught on its own?',tags:['tok'],links:['choice','mark']},
+ data:{num:'004',m:3,title:'What changes when the data is our own movement?',body:'The drone recorded us running, and tracker analysis with sensor telemetry turned it into a graph. Does a graph mean more when it is your own body on the axes?',tags:['physics','cs'],links:['tracker','felt','mark']},
+ choice:{num:'005',m:4,title:'Is resilience something we choose?',body:'She could have gone home. She stayed. If resilience is a choice, what has to be true for that choice to be possible?',tags:['tok'],links:['failure','share','mark']},
+ tracker:{num:'006',m:3,title:'Can a tracker record what we felt?',body:'A tracker follows a runner frame by frame, and telemetry fixes every metre and second. The push on the scooter board was felt, not filmed. Does knowledge need both?',tags:['cs','tok'],links:['felt','data']},
+ mark:{num:'007',m:2,title:'What does a mark measure?',body:'A score records one afternoon. A measurement records one quantity. What does each leave out about the person or the motion behind it?',tags:['physics','tok'],links:['failure','choice','data']}
+};
+const edges=[['share','felt'],['share','choice'],['felt','tracker'],['felt','data'],['tracker','data'],['failure','choice'],['failure','mark'],['mark','data'],['choice','mark']];
+let sel='share',filt='all';const map=$('#questionMap'),nodes=$$('.question-node'),svg=$('#mapLines');
+function drawLines(){if(innerWidth<=860){svg.innerHTML='';return}const R=map.getBoundingClientRect();svg.setAttribute('viewBox',`0 0 ${R.width} ${R.height}`);
+  const c=q=>{const r=map.querySelector(`[data-q="${q}"]`).getBoundingClientRect();return[r.left-R.left+4,r.top-R.top+18]};
+  let s='';[[.52,.52,120],[.52,.52,220],[.52,.52,320]].forEach(o=>s+=`<circle cx="${o[0]*R.width}" cy="${o[1]*R.height}" r="${o[2]}"/>`);
+  edges.forEach(([a,b])=>{const p=c(a),q=c(b);const on=a===sel||b===sel;const fade=filt!=='all'&&!(Q[a].tags.includes(filt)&&Q[b].tags.includes(filt));
+    s+=`<line x1="${p[0]}" y1="${p[1]}" x2="${q[0]}" y2="${q[1]}" class="${on?'active':''}" ${fade?'style="stroke-opacity:.08"':''}/>`});svg.innerHTML=s}
+function select(id){sel=id;const q=Q[id];
+  $('#selectedIndex').textContent=`ARCHIVE CARD NO. ${q.num} / SELECTED`;$('#selectedTitle').textContent=q.title;$('#selectedBody').textContent=q.body;
+  $('#selectedFrom').textContent=`From moment ${M[q.m].id}: ${M[q.m].title} ↗`;$('#selectedFrom').onclick=()=>openMoment(q.m);
+  const L=$('#connectionsList');L.replaceChildren();q.links.forEach(k=>{const b=document.createElement('button');b.type='button';b.textContent='↗  '+Q[k].title;b.onclick=()=>{setFilter('all');select(k)};L.appendChild(b)});
+  nodes.forEach(n=>{const a=n.dataset.q===id;n.classList.toggle('selected',a);n.setAttribute('aria-pressed',String(a))});drawLines()}
+function setFilter(f){filt=f;$$('.filter').forEach(b=>{const a=b.dataset.filter===f;b.classList.toggle('active',a);b.setAttribute('aria-pressed',String(a))});
+  nodes.forEach(n=>n.classList.toggle('dim',f!=='all'&&!Q[n.dataset.q].tags.includes(f)));
+  if(f!=='all'&&!Q[sel].tags.includes(f)){const m=nodes.find(n=>Q[n.dataset.q].tags.includes(f));if(m)select(m.dataset.q)}drawLines()}
+nodes.forEach(n=>n.addEventListener('click',()=>select(n.dataset.q)));$$('.filter').forEach(f=>f.addEventListener('click',()=>setFilter(f.dataset.filter)));
+addEventListener('resize',drawLines);select('share');requestAnimationFrame(drawLines);setTimeout(drawLines,300);
+
+/* ---------- margins + menu ---------- */
+const mt=$('#marginsToggle');mt.addEventListener('click',()=>{const off=document.body.classList.toggle('margins-off');mt.setAttribute('aria-pressed',String(!off));mt.textContent='Margins: '+(off?'off':'on')});
+const menu=$('#menuToggle'),nav=$('#topnav');menu.addEventListener('click',()=>{const o=nav.classList.toggle('open');menu.setAttribute('aria-expanded',String(o));menu.textContent=o?'CLOSE −':'MENU +'});
+$$('#topnav a').forEach(a=>a.addEventListener('click',()=>{nav.classList.remove('open');menu.setAttribute('aria-expanded','false');menu.textContent='MENU +'}));
+
+/* ---------- thought experiment ---------- */
+let stage=0,first='',second='';const ex=$('#exerciseContent');
+const sceneSVG=`<svg class="scene" viewBox="0 0 620 150" aria-hidden="true"><path d="M20 128H600" stroke="#6b6b63"/><rect x="120" y="110" width="80" height="7" fill="none" stroke="#eeeae1"/><circle cx="132" cy="122" r="5" fill="none" stroke="#eeeae1"/><circle cx="188" cy="122" r="5" fill="none" stroke="#eeeae1"/><circle cx="160" cy="88" r="14" fill="none" stroke="#eeeae1"/><path d="M148 82q-12 0 -14 12" fill="none" stroke="#e08447" stroke-width="2"/><path d="M160 102v8M172 92l26 -8" stroke="#eeeae1"/><circle cx="300" cy="72" r="11" fill="none" stroke="#eeeae1"/><path d="M289 72h22M300 61v22" stroke="#8e8d86"/><path d="M322 72h60" stroke="#d0766b"/><path d="M374 66l8 6l-8 6" fill="none" stroke="#d0766b"/><text x="330" y="62" fill="#d0766b" font-family="ui-monospace,monospace" font-size="10">0.6 kg · 5 m/s</text><path d="M108 96H66" stroke="#d0766b" stroke-dasharray="3 4"/><path d="M74 90l-8 6l8 6" fill="none" stroke="#d0766b"/><text x="40" y="84" fill="#d0766b" font-family="ui-monospace,monospace" font-size="10">v = ?</text><text x="128" y="146" fill="#8e8d86" font-family="ui-monospace,monospace" font-size="10">≈ 45 kg</text></svg>`;
+const opt={initial:[{id:'still',t:'She stays still. She is far heavier than the ball.'},{id:'back',t:'She rolls backward, slowly.'},{id:'depends',t:'It depends on how she braces herself.'}],
+  follow:[{id:'revise',t:'I would revise my first answer.'},{id:'keep',t:'I would keep it, but say more precisely what I meant.'},{id:'test',t:'I would want to test it again before deciding.'}]};
+const challenge={still:'The class watched her roll back at about 7 centimetres a second. Small, but everyone saw it. Is too small to notice the same as zero?',
+  back:'Then the ball reached the teacher, who was pushed back a little too. Where has all the momentum gone by the end?',
+  depends:'Her feet were off the floor and the bearings were almost frictionless. With nothing to brace against, what is left to decide the outcome?'};
+const refl={still:'You began by trusting intuition about size: a small ball cannot move a big person. The measurement says it can, just slowly.',
+  back:'You began with the law itself. The teacher’s step back asks you to follow the momentum all the way through the system.',
+  depends:'You began by looking for a hidden force. Taking the floor away leaves only the ball and the girl, and the rule that their momenta cancel.'};
+function view(){
+  $$('.step').forEach((el,i)=>{el.classList.toggle('active',i===stage);el.classList.toggle('done',i<stage)});
+  if(stage===0){ex.innerHTML=`<span class="micro">I / A FIRST JUDGEMENT</span><h3>She sits on a scooter board, feet off the floor, and throws a ball forward. What happens to her?</h3>${sceneSVG}<div class="choices">${opt.initial.map((x,i)=>`<button class="choice" type="button" data-a="${x.id}"><span class="choice-letter">0${i+1} / POSITION</span><span class="choice-text">${safe(x.t)} ↗</span></button>`).join('')}</div>`;
+    $$('.choice').forEach(b=>b.onclick=()=>{first=b.dataset.a;stage=1;view()})}
+  else if(stage===1){ex.innerHTML=`<span class="micro">II / WHAT THE CLASS SAW</span><h3>${safe(challenge[first])}</h3><div class="choices">${opt.follow.map((x,i)=>`<button class="choice" type="button" data-a="${x.id}"><span class="choice-letter">0${i+1} / CONSIDER</span><span class="choice-text">${safe(x.t)} ↗</span></button>`).join('')}</div><div class="reveal-actions"><button type="button" class="outline-button" id="back">← A different first judgement</button></div>`;
+    $$('.choice').forEach(b=>b.onclick=()=>{second=b.dataset.a;stage=2;view()});$('#back').onclick=()=>{stage=0;view()}}
+  else{const resp=second==='revise'?'You were willing to revise. What made the new evidence strong enough?':second==='keep'?'You kept your position and sharpened it. What would it take to change your mind?':'You wanted to test it again. That is exactly what the class did: three more throws, three more recoils.';
+    let saved='';try{saved=localStorage.getItem('wavesArchiveNote')||''}catch(e){}
+    ex.innerHTML=`<span class="micro">III / MAKING THINKING VISIBLE</span><h3>What changed in the way you see the push?</h3><div class="exercise-feedback"><strong>An annotation, not a grade</strong>${safe(refl[first])}<br/><br/>${safe(resp)}<div class="calc">p(ball) = 0.6 kg × 5 m/s = 3.0 kg·m/s<br/>v(girl) = 3.0 ÷ 45 ≈ 0.07 m/s, backward<br/><span style="color:var(--night-mut)">estimates from the lesson, not measurements</span></div></div>
+<div class="journal-entry"><label for="journal">A note for the margins / optional</label><textarea id="journal" placeholder="What did you assume? What could change your mind?">${safe(saved)}</textarea><div class="save-status" id="status">This note stays in this browser and is not sent anywhere.</div></div>
+<div class="reveal-actions"><button class="light-button" id="copy" type="button">Copy my reflection ↗</button><button class="outline-button" id="reset" type="button">Another first judgement ↺</button></div>`;
+    const ta=$('#journal');ta.addEventListener('input',()=>{try{localStorage.setItem('wavesArchiveNote',ta.value);$('#status').textContent='Saved in this browser only.'}catch(e){$('#status').textContent='This browser is not keeping notes, so the note will go when the page closes.'}});
+    $('#copy').onclick=async()=>{const t=`Where the Waves Overlap — reflection\n\n${refl[first]}\n${resp}\n\nMy note:\n${ta.value}`;try{await navigator.clipboard.writeText(t);$('#status').textContent='Copied.'}catch(e){ta.focus();ta.select();$('#status').textContent='Copying is blocked here; the note is selected instead.'}};
+    $('#reset').onclick=()=>{stage=0;first='';second='';view()}}}
+view();
+})();
+</script>
+
+</body>
+</html>

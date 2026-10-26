@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Geometry of Learning v2</title>
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<style>
+/* Layout: one wide drafting board per moment that plays its own story on a loop, a headline and a
+   single question beneath it, and five plate buttons. The drawing does the explaining. */
+:root{
+  --paper:#efecdf; --card:#f7f4e9; --ink:#23241f; --muted:#757569; --stroke:#b6b3a2;
+  --yellow:#e4c447; --hl-ink:#191a17;
+  --canvas:#141714; --artline:#e7e7d8; --ghost:#6b7069; --accent:#f0ce43; --hair:#e8894a; --tear:#8fc3ef;
+  --serif:Georgia,'Times New Roman',serif; --mono:Consolas,ui-monospace,'SFMono-Regular',Menlo,monospace; --sans:Arial,Helvetica,sans-serif;
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#191a16; --card:#1f201b; --ink:#ebe8da; --muted:#a09f90; --stroke:#3f4036; --yellow:#d9b93c; --canvas:#0f110e; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#191a16; --card:#1f201b; --ink:#ebe8da; --muted:#a09f90; --stroke:#3f4036; --yellow:#d9b93c; --canvas:#0f110e; color-scheme:dark}
+body.mono{--yellow:#c9c8bf;--accent:#f4f4ec;--hair:#c4c4ba;--tear:#d6d6cf}
+
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer;background:none;border:0;padding:0}
+:focus-visible{outline:2px solid var(--yellow);outline-offset:4px}
+a{color:inherit;text-decoration:none}
+.layout{max-width:1500px;margin:0 auto}
+.gut{padding-left:max(clamp(16px,3vw,55px),env(safe-area-inset-left,0px));padding-right:max(clamp(16px,3vw,55px),env(safe-area-inset-right,0px))}
+.meta{font:10px/1.5 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+
+.top{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-block:20px;border-bottom:1px solid var(--stroke)}
+.brand{display:flex;align-items:center;gap:14px}
+.brandglyph{width:38px;height:38px;border:1px solid var(--ink);border-radius:50%;display:grid;place-items:center;position:relative;font:19px var(--serif);flex:none}
+.brandglyph::after{content:'';height:44px;border-left:1px solid var(--ink);position:absolute;transform:rotate(44deg)}
+.brandtext{font-size:10px;letter-spacing:.21em;line-height:1.65;font-weight:700}
+.brandtext span{display:block;color:var(--muted);font-size:9px;font-weight:400}
+.themebutton{border:1px solid var(--stroke);padding:9px 12px;font:10px var(--mono);letter-spacing:.08em}
+
+.stage{padding-block:28px 0}
+.art{position:relative;background:var(--canvas);aspect-ratio:980/560;width:min(100%,calc(66vh * 1.75));max-width:100%;margin-inline:auto;overflow:hidden}
+.art svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.art .num{position:absolute;left:22px;bottom:16px;font:italic 30px var(--serif);color:var(--artline);opacity:.9;pointer-events:none}
+.timeline{position:absolute;left:0;right:0;bottom:0;height:2px;background:#ffffff12}
+.timeline i{display:block;height:100%;width:100%;background:var(--accent);transform-origin:0 50%;transform:scaleX(0)}
+.caption{max-width:min(100%,calc(66vh * 1.75));margin-inline:auto;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:24px 48px;align-items:end;padding-block:30px 34px;border-bottom:1px solid var(--stroke)}
+.caption h1{font:400 clamp(48px,6.6vw,112px)/.86 var(--serif);letter-spacing:-.07em;margin:12px 0 0;text-wrap:balance}
+.caption h1 em{color:var(--muted)}
+.caption h1 span{display:block}
+.side{display:flex;flex-direction:column;gap:22px;min-width:0}
+.kq{font:italic clamp(21px,2vw,30px)/1.22 var(--serif);letter-spacing:-.02em;margin:0;max-width:24ch;text-wrap:balance}
+.arrows{display:flex;gap:10px}
+.arrows button{border:1px solid var(--ink);width:56px;height:56px;border-radius:50%;font-size:22px;transition:.2s}
+.arrows button:hover{background:var(--ink);color:var(--paper)}
+
+.floor{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding-block:22px 0}
+.floor-button{min-height:96px;border-top:1px solid var(--stroke);border-right:1px solid var(--stroke);text-align:left;padding:18px 18px 16px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;transition:background .2s,color .2s;min-width:0}
+.floor-button:first-child{border-left:1px solid var(--stroke)}
+.floor-button.current,.floor-button:hover{background:var(--yellow);color:var(--hl-ink)}
+.floor-number{font:10px var(--mono);letter-spacing:.14em;margin-bottom:12px}
+.floor-label{font:italic 23px/1 var(--serif);letter-spacing:-.04em}
+.floor-button svg{width:44px;height:44px;opacity:.65;flex:none}
+
+.epilogue{margin-top:72px;padding-block:26px 70px;border-top:1px solid var(--ink)}
+.epilogue p{font:italic clamp(38px,4.6vw,78px)/1 var(--serif);letter-spacing:-.06em;max-width:820px;margin:0 0 0 auto}
+.epilogue em{font-style:normal;background:linear-gradient(transparent 80%,var(--yellow) 80%)}
+.bottom{padding-block:0 30px}
+.bottom>div{border-top:1px solid var(--stroke);padding-top:22px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:14px 30px}
+.bottom a{font:10px var(--mono);text-decoration:underline;text-underline-offset:5px;letter-spacing:.08em}
+.bottom .eds{display:flex;flex-wrap:wrap;gap:8px 18px}
+
+/* drafting vocabulary */
+.art .fine{fill:none;stroke:var(--artline);stroke-width:1.25;stroke-linecap:round;stroke-linejoin:round}
+.art .faint{fill:none;stroke:var(--ghost);stroke-width:1;stroke-linecap:round;stroke-linejoin:round}
+.art .strong{fill:none;stroke:var(--artline);stroke-width:2.6;stroke-linejoin:round}
+.art .gold{fill:none;stroke:var(--accent);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.art .cut{fill:url(#hatch);stroke:var(--artline);stroke-width:1.4}
+.art .body{fill:var(--canvas)}
+.art .goldfill{fill:var(--accent);stroke:none}
+.art .pale{fill:var(--artline)}
+.art .hair{fill:none;stroke:var(--hair);stroke-width:1.6;stroke-linecap:round}
+.art .hatch{stroke:var(--ghost);stroke-width:.8;opacity:.5}
+.art .label{fill:var(--artline);font:13px var(--mono);letter-spacing:2px}
+.art .goldtext{fill:var(--accent);font:italic 24px var(--serif)}
+.art .wv-her{fill:none;stroke:var(--hair);stroke-width:1.8;opacity:.9}
+.art .wv-hope{fill:none;stroke:var(--accent);stroke-width:1.8;opacity:.9}
+.art .wv-sum{fill:none;stroke:var(--artline);stroke-width:1.2;stroke-dasharray:2 5;opacity:.8}
+.art .wv-big{fill:none;stroke:var(--artline);stroke-width:2.4}
+.art .pupil-line{stroke:var(--canvas);stroke-width:.7}
+.art .stripe{fill:none;stroke:var(--artline);stroke-width:3.4;stroke-linecap:round}
+.art .iris{fill:none;stroke:var(--canvas);stroke-width:1.2;opacity:.6}
+.art .pupil{fill:var(--canvas);transform-box:fill-box;transform-origin:center}
+.art .tear{fill:var(--tear)}
+.art .ns *{vector-effect:non-scaling-stroke}
+.art .flowline{stroke-dasharray:5 18;animation:flow 16s linear infinite}
+.art .rip{transform-box:fill-box;transform-origin:center;animation:rip 6s ease-out infinite}
+.art .rotor{transform-box:fill-box;transform-origin:center;animation:rotor .14s linear infinite alternate}
+.art .bob{animation:bob .32s ease-in-out infinite alternate}
+.art .sway{transform-box:fill-box;transform-origin:50% 0;animation:sway 3.4s ease-in-out infinite}
+.art .blink{animation:blink 1.2s steps(1) infinite}
+@keyframes flow{to{stroke-dashoffset:-180}}
+@keyframes rip{from{transform:scale(.03);opacity:.95}to{transform:scale(1);opacity:0}}
+@keyframes rotor{to{transform:scaleX(.35)}}
+@keyframes bob{to{transform:translateY(-3px)}}
+@keyframes sway{50%{transform:rotate(4deg)}}
+@keyframes blink{50%{opacity:0}}
+@keyframes tl{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+@media(max-width:900px){
+  .caption{grid-template-columns:minmax(0,1fr);align-items:start}
+  .floor{grid-template-columns:repeat(6,minmax(0,1fr))}.floor-button{grid-column:span 2}.floor-button:nth-child(n+4){grid-column:span 3}.floor-button:nth-child(4){border-left:1px solid var(--stroke)}
+}
+@media(max-width:560px){
+  .brandtext span{display:none}.themebutton{padding:8px;font-size:9px}
+  .art .num{font-size:20px;left:12px;bottom:8px}
+  .caption h1{font-size:clamp(44px,13vw,60px)}.arrows button{width:46px;height:46px;font-size:19px}
+  .floor{grid-template-columns:minmax(0,1fr)}.floor-button,.floor-button:nth-child(n+4){grid-column:auto;border-left:1px solid var(--stroke);min-height:0;padding:12px 16px}
+  .floor-number{margin-bottom:6px}.floor-label{font-size:19px}.floor-button svg{width:28px;height:28px}
+  .epilogue p{font-size:40px}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important}html{scroll-behavior:auto}}
+</style>
+
+<div class="layout">
+<header class="top gut"><div class="brand"><div class="brandglyph" aria-hidden="true">∿</div><div class="brandtext">THE GEOMETRY OF LEARNING <span>VERSION 2 · FIVE MOMENTS, DRAWN</span></div></div>
+<button class="themebutton" id="themeSwitch" type="button" aria-pressed="false">◐ GOLD / GRAPHITE</button></header>
+<main>
+<section class="stage gut" aria-label="Plate">
+<div class="art" id="art"><span class="num" id="num"></span><div class="timeline"><i id="tl"></i></div></div>
+<div class="caption"><div><div class="meta" id="plateName"></div><h1 id="headline"></h1></div>
+<div class="side"><p class="kq" id="kq"></p><div class="arrows"><button type="button" id="prev" aria-label="Previous plate">←</button><button type="button" id="next" aria-label="Next plate">→</button></div></div></div>
+</section>
+<nav class="floor gut" id="floor" aria-label="Plates"></nav>
+<section class="epilogue gut"><p>We do not give students a world to remember. We create the <em>conditions</em> to discover one.</p></section>
+</main>
+<footer class="bottom gut"><div><span class="meta">Where the waves overlap, learning happens.</span>
+<span class="eds"><a href="geometry-v1.html">GEOMETRY · VERSION 1 ↗</a><a href="notebook.html">NOTEBOOK ↗</a><a href="drawing-set.html">DRAWING SET ↗</a><a href="archive.html">ARCHIVE ↗</a><a href="8bit.html">8-BIT ↗</a></span></div></footer>
+</div>
+
+<script>
+const $=id=>document.getElementById(id),R=n=>Math.round(n*10)/10;
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const defs=`<defs><pattern id="hatch" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(35)"><path d="M0 0V8" class="hatch"/></pattern><pattern id="dots" width="26" height="26" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".8" fill="var(--ghost)" opacity=".4"/></pattern><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0L7 4L0 8" fill="none" stroke="var(--accent)" stroke-width="1.4"/></marker><clipPath id="roomclip"><rect x="120" y="140" width="860" height="426"/></clipPath></defs>`;
+const dots=`<rect x="60" y="80" width="980" height="560" fill="url(#dots)" opacity=".3"/>`;
+const room=(o={})=>`<rect x="100" y="118" width="20" height="470" class="cut"/><rect x="980" y="118" width="20" height="470" class="cut"/>${o.noCeil?'':'<rect x="100" y="118" width="900" height="22" class="cut"/>'}<rect x="100" y="566" width="900" height="22" class="cut"/>`;
+const op=(name,pts)=>`@keyframes ${name}{${pts}}`;
+
+/* drafting figures: joints in body-heights, u across (+ = facing side), v up from the feet */
+const BASE={hd:[0,.935],nk:[0,.85],sL:[-.085,.82],sR:[.085,.82],wL:[-.058,.6],wR:[.058,.6],pL:[-.068,.47],pR:[.068,.47],
+  hipL:[-.036,.46],hipR:[.036,.46],eL:[-.1,.64],hL:[-.094,.47],eR:[.1,.64],hR:[.094,.47],kL:[-.042,.26],aL:[-.048,.035],kR:[.042,.26],aR:[.048,.035]};
+const POSES={stand:{},
+  clasp:{eL:[-.09,.64],hL:[.01,.55],eR:[.09,.64],hR:[.02,.56]},
+  reach:{eL:[.11,.72],hL:[.25,.73],eR:[.15,.75],hR:[.29,.78]},
+  point:{eR:[.15,.93],hR:[.25,1.03],eL:[-.08,.64],hL:[-.04,.48]},
+  raise:{eL:[-.12,.98],hL:[-.075,1.12],eR:[.12,.98],hR:[.075,1.12]},
+  cheer:{eR:[.13,.97],hR:[.16,1.1],eL:[-.12,.97],hL:[-.15,1.08]},
+  hold:{eR:[.1,.63],hR:[.2,.69],eL:[-.01,.61],hL:[.16,.66]},
+  carry:{eR:[.1,.63],hR:[.13,.48],eL:[-.07,.64],hL:[-.02,.5],hd:[.03,.92]},
+  walk:{kL:[-.06,.26],aL:[-.13,.035],kR:[.1,.27],aR:[.15,.035],eL:[-.06,.64],hL:[-.12,.5],eR:[.08,.64],hR:[.14,.5]},
+  run:{hd:[.06,.925],nk:[.05,.84],sL:[-.03,.81],sR:[.12,.81],wL:[-.03,.6],wR:[.09,.6],kR:[.17,.33],aR:[.12,.1],kL:[-.07,.24],aL:[-.2,.12],eR:[.18,.68],hR:[.25,.79],eL:[-.06,.66],hL:[-.14,.56]},
+  sit:{hd:[.03,.665],nk:[.02,.585],sL:[-.07,.55],sR:[.1,.55],wL:[-.055,.37],wR:[.065,.37],pL:[-.065,.26],pR:[.07,.26],hipL:[-.03,.25],hipR:[.03,.25],kL:[.2,.26],kR:[.22,.27],aL:[.2,.035],aR:[.23,.035],eL:[.05,.39],hL:[.2,.43],eR:[.09,.4],hR:[.23,.44]},
+  board:{hd:[.02,.47],nk:[.01,.39],sL:[-.075,.355],sR:[.09,.355],wL:[-.055,.17],wR:[.06,.17],pL:[-.065,.06],pR:[.065,.06],hipL:[-.03,.06],hipR:[.03,.06],kL:[.15,.18],kR:[.17,.19],aL:[.3,.04],aR:[.32,.04],eL:[.12,.38],hL:[.24,.44],eR:[.14,.4],hR:[.27,.47]}};
+function fig(x,y,h,o={}){
+  const d=o.dir||1,J=Object.assign({},BASE,POSES[o.pose||'stand']),sat=o.pose==='sit'||o.pose==='board';
+  const X=p=>R(x+d*p[0]*h),Y=p=>R(y-p[1]*h),P=p=>X(p)+' '+Y(p),add=(a,b)=>[a[0]+b[0],a[1]+b[1]];
+  const k=o.faint?'faint':'fine',ks=o.faint?'faint':'strong',hd=J.hd,hc=o.faint?'faint':'hair';
+  const leg=(hp,kn,an)=>`<path class="${k}" d="M${P(hp)}L${P(kn)}L${P(an)}M${P(an)}l${R(d*.055*h)} 0"/>`;
+  const arm=(s,e,hn)=>`<path class="${k}" d="M${P(s)}L${P(e)}L${P(hn)}"/><circle class="${k} body" cx="${X(hn)}" cy="${Y(hn)}" r="${R(Math.max(1.2,.012*h))}"/>`;
+  let s=arm(J.sL,J.eL,J.hL)+leg(J.hipL,J.kL,J.aL)+leg(J.hipR,J.kR,J.aR);
+  s+=`<path class="${ks} body" d="M${[J.sL,J.sR,J.wR,J.pR,J.pL,J.wL].map(P).join('L')}Z"/>`;
+  if(o.dress){const sk=sat?[J.wL,J.wR,add(J.kR,[.02,.035]),add(J.kR,[.02,-.035]),add(J.pL,[0,-.03])]:[J.wL,J.wR,[.13,.31],[-.13,.31]];s+=`<path class="${k} body" d="M${sk.map(P).join('L')}Z"/>`}
+  else if(!sat)s+=`<path class="${k}" d="M${P(J.wL)}L${P(J.wR)}"/>`;
+  s+=`<path class="${k}" d="M${P(J.nk)}L${P(add(hd,[0,-.055]))}"/><ellipse class="${k} body" cx="${X(hd)}" cy="${Y(hd)}" rx="${R(.052*h)}" ry="${R(.066*h)}"/>`;
+  const hw=R(Math.max(1,.0055*h));
+  if(o.hair==='long'){let hs='';for(let i=-3;i<=3;i++){const sd=i<0?-1:i>0?1:-1,ai=Math.abs(i);
+      hs+=`<path class="${hc}" stroke-width="${hw}" d="M${P(add(hd,[i*.011,.062-ai*.004]))}Q${P(add(hd,[sd*(.088+ai*.004),-.01]))} ${P(add(hd,[sd*(.064+ai*.012),-.2-ai*.012]))}"/>`}
+    s+=`<g class="${o.sway?'sway':''}">${hs}</g>`}
+  else if(o.hair==='bob')s+=`<path class="${hc}" stroke-width="${hw}" d="M${P(add(hd,[-.056,-.05]))}L${P(add(hd,[-.056,.005]))}Q${P(add(hd,[0,.105]))} ${P(add(hd,[.056,.005]))}L${P(add(hd,[.056,-.05]))}"/>`;
+  else if(o.hair==='pony')s+=`<path class="${hc}" stroke-width="${hw}" d="M${P(add(hd,[-.054,.01]))}Q${P(add(hd,[0,.1]))} ${P(add(hd,[.054,.01]))}M${P(add(hd,[-.045,.035]))}Q${P(add(hd,[-.12,.02]))} ${P(add(hd,[-.11,-.09]))}"/>`;
+  if(o.teacher){const b=add(J.nk,[0,-.015]),w=R(.022*h),v=R(.013*h);s+=`<path class="goldfill" d="M${P(b)}l${R(-d*w)} ${-v}v${2*v}zM${P(b)}l${R(d*w)} ${-v}v${2*v}z"/>`}
+  return `<g>${s+arm(J.sR,J.eR,J.hR)}</g>`}
+const chair=(x,y,s)=>`<path class="fine" d="M${x} ${y-50*s}V${y+40*s}M${x} ${y}H${x+38*s}V${y+40*s}"/>`;
+
+/* ---------- I · the room: waves leave the teacher and find nobody ---------- */
+function sceneI(D){let st='',s=dots+room();
+  s+=`<rect x="560" y="182" width="330" height="150" class="fine"/><path class="fine" d="M552 340h346"/><circle cx="470" cy="214" r="22" class="fine"/><path class="fine" d="M470 214h-16M470 214l-9 6"/>`;
+  st+=op('ghost','0%,40%{opacity:.2}50%{opacity:1}64%,100%{opacity:.2}');
+  const heads=[];[640,712,784,856].forEach(x=>{s+=chair(x,500,.8);heads.push([x+15,450,9])});[604,684,764,844].forEach(x=>{s+=chair(x,526,1);heads.push([x+19,464,11])});
+  heads.forEach(h=>{const dist=Math.hypot(h[0]-300,h[1]-430),t=D*Math.pow(dist/640,1.6),dl=((t-1)%2+2)%2-2;s+=`<circle cx="${h[0]}" cy="${h[1]}" r="${h[2]}" class="faint" stroke-dasharray="2 4" style="animation:ghost 2s ${R(dl)}s infinite"/>`});
+  s+=`<g clip-path="url(#roomclip)">${[0,-2,-4].map(dl=>`<circle cx="300" cy="430" r="640" class="gold rip" style="animation-delay:${dl}s"/>`).join('')}</g>`;
+  s+=fig(300,566,195,{teacher:1,pose:'clasp'});
+  return `<style>${st}</style>`+s}
+
+/* ---------- II · the recoil: ball forward, board back, class erupts ---------- */
+function sceneII(D){const A=`${D}s infinite`;let st='';
+  st+=op('girl','0%,15%{transform:translateX(0);animation-timing-function:cubic-bezier(.15,.7,.3,1)}60%,88%{transform:translateX(-70px);opacity:1}93%{transform:translateX(-70px);opacity:0}94%{transform:translateX(0);opacity:0}100%{transform:translateX(0);opacity:1}');
+  st+=op('vec','0%,16%{opacity:0}24%,86%{opacity:1}92%,100%{opacity:0}')+op('sum','0%,58%{opacity:0}66%,86%{opacity:1}92%,100%{opacity:0}');
+  st+=op('catch','0%,54%{transform:translateX(0)}60%{transform:translateX(10px)}74%,100%{transform:translateX(0)}');
+  st+=op('calm','0%,54%{opacity:1}60%,90%{opacity:0}96%,100%{opacity:1}')+op('cheer','0%,54%{opacity:0}60%,90%{opacity:1}96%,100%{opacity:0}');
+  let s=dots+room();
+  [200,250,300].forEach(r=>s+=`<path class="faint" d="M${550-r} 470A${r} ${R(r*.6)} 0 0 1 ${550+r} 470" opacity=".4"/>`);
+  const ring=[];for(let i=0;i<9;i++){const t=Math.PI*(.12+.76*i/8),sn=Math.sin(t);ring.push({x:R(560-250*Math.cos(t)),y:R(520-34*sn),h:R(118-20*sn),sn,i})}
+  ring.sort((a,b)=>b.sn-a.sn);
+  const crowd=pose=>ring.map(p=>fig(p.x,p.y,p.h,{faint:1,dir:p.x<560?1:-1,pose:pose==='calm'?['stand','clasp'][p.i%2]:'cheer',dress:p.i%2===0,hair:['long','bob','pony'][p.i%3]})).join('');
+  s+=`<g style="animation:calm ${A}">${crowd('calm')}</g><g style="animation:cheer ${A}">${crowd('cheer')}</g>`;
+  s+=`<path class="faint" stroke-dasharray="3 7" d="M281 467Q530 140 795 418"/>`;
+  s+=`<g style="animation:girl ${A}"><rect x="198" y="538" width="112" height="9" class="strong body"/><circle cx="216" cy="556" r="8" class="fine"/><circle cx="292" cy="556" r="8" class="fine"/>${fig(240,538,150,{pose:'board',dress:1,hair:'pony'})}<g style="animation:vec ${A}"><path class="gold" d="M262 400H207" marker-end="url(#arr)"/><text class="goldtext" x="214" y="388">−p</text></g></g>`;
+  s+=`<g style="animation:vec ${A}"><path class="gold" d="M507 236H562" marker-end="url(#arr)"/><text class="goldtext" x="514" y="224">+p</text></g>`;
+  s+=reduced?`<circle cx="795" cy="418" r="13" class="goldfill"/>`:`<circle r="13" class="goldfill"><animateMotion dur="${D}s" repeatCount="indefinite" keyPoints="0;0;1;1" keyTimes="0;.15;.55;1" calcMode="linear" path="M281 467Q530 140 795 418"/><animate attributeName="opacity" values="1;1;0;0;1" keyTimes="0;.88;.93;.99;1" dur="${D}s" repeatCount="indefinite"/></circle>`;
+  s+=`<g style="animation:catch ${A}">${fig(850,566,195,{teacher:1,pose:'reach',dir:-1})}</g>`;
+  s+=`<text class="goldtext" x="700" y="200" text-anchor="middle" style="animation:sum ${A}">Σp = 0</text>`;
+  return `<style>${st}</style>`+s}
+
+/* ---------- III · the return: tears, the eye of the tiger, 100% ---------- */
+function eye(cx,cy,rot,side,A){const id='eye'+(side<0?'L':'R'),m=-side;
+  return `<g transform="translate(${cx} ${cy}) rotate(${rot})"><clipPath id="${id}"><path d="M-36 0Q0 -25 36 0Q0 23 -36 0Z"/></clipPath>`+
+   `<g clip-path="url(#${id})"><rect x="-38" y="-27" width="76" height="54" class="body"/><circle r="17" class="goldfill"/><circle r="17" class="iris"/><circle r="11" class="iris" opacity=".5"/>`+
+   `<ellipse rx="3" ry="14" class="pupil" style="animation:pupil ${A}"/><circle cx="-6" cy="-7" r="2.4" class="pale"/>`+
+   `<g style="animation:lid ${A}"><rect x="-40" y="-29" width="80" height="56" class="body"/><path class="fine" d="M-40 27H40"/></g></g>`+
+   `<path class="fine" d="M-36 0Q0 -25 36 0Q0 23 -36 0Z"/><path class="stripe" pathLength="1" stroke-dasharray="1" style="animation:stripes ${A}" d="M${-36*m} 0Q${-46*m} -5 ${-58*m} -12"/>`+
+   `<path class="stripe" pathLength="1" stroke-dasharray="1" style="animation:stripes ${A}" d="M${34*m} 5Q${42*m} 15 ${40*m} 28"/></g>`}
+/* travelling sine wave, drawn one wavelength wider than its window so it can slide */
+function wave(x0,x1,y,amp,lam,ph){let d='';for(let x=x0-lam;x<=x1;x+=4){const v=y-amp*Math.sin(2*Math.PI*(x-x0)/lam+ph);d+=(d?'L':'M')+R(x)+' '+R(v)}return d}
+function sceneIII(D){const A=`${D}s infinite`;let st='';
+  st+=op('lp','0%,30%{opacity:1}42%,90%{opacity:.28}97%,100%{opacity:1}')+op('rp','0%,46%{opacity:.16}56%,90%{opacity:1}97%,100%{opacity:.16}');
+  st+=op('rise','0%,48%{transform:translateY(14px)}58%,100%{transform:translateY(0)}');
+  st+=op('lid','0%,28%{transform:translateY(0)}36%,61%{transform:translateY(-58px)}63%{transform:translateY(0)}65%,88%{transform:translateY(-58px)}94%,100%{transform:translateY(0)}');
+  st+=op('pupil','0%,36%{transform:scaleX(2.3)}50%,100%{transform:scaleX(.7)}')+op('glow','0%,30%{opacity:0}46%,88%{opacity:1}96%,100%{opacity:0}');
+  st+=op('stripes','0%,30%{stroke-dashoffset:1;opacity:0}31%{stroke-dashoffset:1;opacity:1}50%,88%{stroke-dashoffset:0;opacity:1}95%{stroke-dashoffset:0;opacity:0}100%{stroke-dashoffset:1;opacity:0}');
+  st+=op('tear','0%{transform:translateY(0);opacity:0}15%{opacity:1}100%{transform:translateY(34px);opacity:0}')+op('twinkle','0%,100%{opacity:.25}50%{opacity:1}');
+  let s=dots+room()+`<defs><radialGradient id="tglow"><stop offset="0" stop-color="var(--accent)" stop-opacity=".28"/><stop offset="1" stop-color="var(--accent)" stop-opacity="0"/></radialGradient></defs>`;
+  s+=`<rect x="410" y="118" width="14" height="470" class="cut"/><rect x="676" y="118" width="14" height="470" class="cut"/>`;
+  /* left: the result, and a different lens */
+  st+=op('offer','0%,8%{transform:translateX(16px);opacity:0}16%{opacity:1}24%,100%{transform:translateX(0);opacity:1}');
+  st+=op('sight','0%,25%{stroke-dashoffset:1;opacity:0}26%{opacity:.85}38%,88%{stroke-dashoffset:0;opacity:.85}95%,100%{stroke-dashoffset:0;opacity:0}');
+  st+=op('slide','from{transform:translateX(0)}to{transform:translateX(130px)}');
+  s+=`<clipPath id="lwin"><rect x="132" y="196" width="268" height="110"/></clipPath><clipPath id="rwin"><rect x="700" y="176" width="272" height="150"/></clipPath>`;
+  s+=`<g style="animation:lp ${A}"><g clip-path="url(#lwin)"><g style="animation:slide 3.2s linear infinite"><path class="wv-her" d="${wave(132,400,250,24,130,0)}"/><path class="wv-hope" d="${wave(132,400,250,24,130,Math.PI)}"/></g></g>`+
+     `<path class="wv-sum" d="M132 250H400"/></g>`;
+  s+=`<g style="animation:lp ${A}">`+fig(185,566,150,{pose:'carry',dress:1,hair:'bob'})+
+     `<g transform="rotate(10 205 494)"><rect x="195" y="486" width="20" height="16" class="fine body"/><path class="gold" d="M199 490l12 9M211 490l-12 9"/></g>`+
+     `<circle cx="197" cy="436" r="2.6" class="tear" style="animation:tear 1.3s infinite"/><circle cx="186" cy="438" r="2.2" class="tear" style="animation:tear 1.3s -.6s infinite"/>`+
+     fig(345,566,175,{teacher:1,pose:'reach',dir:-1})+
+     `<g style="animation:offer ${A}"><g transform="translate(286 426)"><path class="fine" d="M-3 -3H3M-3 3H3"/><circle cx="-11" r="9.5" class="fine body"/><circle cx="11" r="9.5" class="fine body"/>`+
+     `<circle cx="-11" r="5.5" class="goldfill"/><circle cx="11" r="5.5" class="goldfill"/><circle cx="-13" cy="-2" r="1.6" class="pale"/><circle cx="9" cy="-2" r="1.6" class="pale"/></g></g></g>`;
+  s+=`<path class="gold" pathLength="1" stroke-dasharray="1" stroke-width="1.4" d="M286 414Q370 250 468 322" style="animation:sight ${A}"/>`;
+  /* between: the eye of the tiger */
+  s+=`<g transform="translate(550 330) scale(1.2) translate(-550 -330)"><circle cx="550" cy="330" r="120" fill="url(#tglow)" style="animation:glow ${A}"/>`;
+  ['M550 236V280','M534 246Q542 266 536 290','M566 246Q558 266 564 290','M468 300Q490 286 512 296','M462 270Q474 256 492 254','M458 386Q476 378 486 392','M462 416Q480 406 492 422']
+   .forEach(d=>{s+=`<path class="stripe" pathLength="1" stroke-dasharray="1" style="animation:stripes ${A}" d="${d}"/>`;
+     if(!d.startsWith('M550')&&!d.startsWith('M534')&&!d.startsWith('M566'))s+=`<path class="stripe" pathLength="1" stroke-dasharray="1" style="animation:stripes ${A}" d="${d.replace(/(-?\d+(?:\.\d+)?) (-?\d+(?:\.\d+)?)/g,(_,x,y)=>`${1100-+x} ${y}`)}"/>`});
+  s+=eye(505,330,8,-1,A)+eye(595,330,-8,1,A)+`</g>`;
+  /* right: the result, later. In phase now, the waves add up */
+  s+=`<g style="animation:rp ${A}"><g clip-path="url(#rwin)"><g style="animation:slide 3.2s linear infinite"><path class="wv-her" d="${wave(700,972,251,22,130,0)}"/><path class="wv-hope" d="${wave(700,972,249,22,130,0)}"/><path class="wv-big" d="${wave(700,972,250,44,130,0)}"/></g></g>`+
+     `<g style="animation:rise ${A}">`+fig(835,566,150,{pose:'raise',dress:1,hair:'bob'})+
+     `<circle cx="835" cy="425" r="15" fill="url(#tglow)" style="animation:twinkle 2.4s infinite"/><g class="tiger-eyes"><path class="goldfill" d="M827.6 424.6Q830.8 422.4 834 424.6Q830.8 426.6 827.6 424.6Z"/><path class="goldfill" d="M836 424.6Q839.2 422.4 842.4 424.6Q839.2 426.6 836 424.6Z"/><path class="pupil-line" d="M830.8 423.2V426M839.2 423.2V426"/></g>`+
+     `<rect x="813" y="336" width="44" height="60" class="fine body"/><ellipse cx="832" cy="350" rx="16" ry="9" class="gold" stroke-width="1.4"/><text class="goldtext" x="832" y="354" text-anchor="middle" style="font-size:11px">100%</text>`+
+     [364,372,380,388].map(y=>`<path class="faint" d="M818 ${y}H844"/><path class="gold" stroke-width="1.3" d="M846 ${y-1}l2 2 4-4"/>`).join('')+
+     `<path class="gold" style="animation:twinkle 1.6s infinite" d="M835 326v-10M809 332l-7-7M861 332l7-7M800 360h-10M870 360h10"/></g></g>`;
+  return `<style>${st}</style>`+s}
+
+/* ---------- IV · the world: a drone records the run, a tracker turns it into a graph ---------- */
+function sceneIV(D){const A=`${D}s infinite`;let st='';
+  st+=op('run','0%{transform:translateX(170px);opacity:0}5%{opacity:1}80%{transform:translateX(800px);opacity:1}86%,100%{transform:translateX(800px);opacity:0}');
+  st+=op('curve','0%{stroke-dashoffset:1;opacity:1}80%,86%{stroke-dashoffset:0;opacity:1}92%,100%{stroke-dashoffset:0;opacity:0}');
+  let s=dots;
+  for(let i=0;i<6;i++)s+=`<path class="faint" d="M60 ${400+i*14}C260 ${330+i*12} 420 ${430+i*10} 600 ${380+i*12}S860 ${330+i*14} 1040 ${370+i*12}" opacity="${R(.75-i*.09)}"/>`;
+  s+=`<rect x="60" y="540" width="980" height="70" fill="url(#hatch)"/><path class="strong" d="M60 540H1040"/>`;
+  [230,387,545,702,860].forEach(x=>s+=`<path class="fine" d="M${x} 540v12"/>`);
+  const xs=[];for(let j=0;j<15;j++)xs.push(250+j*40);
+  xs.forEach((x,j)=>{const f=R((x-230)/630*80);st+=op('d'+j,`0%,${f}%{opacity:0}${R(f+1)}%,86%{opacity:1}92%,100%{opacity:0}`);s+=`<circle cx="${x}" cy="${472+(j%2?-2:1)}" r="2.6" class="goldfill" style="animation:d${j} ${A}"/>`});
+  s+=`<g style="animation:run ${A}"><path class="goldfill" opacity=".07" d="M60 222L-80 540H200Z"/><path class="faint" stroke-dasharray="3 6" d="M60 222L-80 540M60 222L200 540"/>`+
+     `<path class="fine" d="M28 204H92M32 204V197M88 204V197"/><rect x="46" y="200" width="28" height="12" class="fine body"/><ellipse cx="32" cy="195" rx="16" ry="3" class="fine rotor"/><ellipse cx="88" cy="195" rx="16" ry="3" class="fine rotor"/><circle cx="60" cy="216" r="4" class="gold"/><circle cx="104" cy="186" r="3.5" class="goldfill blink"/>`+
+     `<g class="bob">${fig(-55,540,68,{pose:'run'})}</g><g class="bob" style="animation-delay:-.12s">${fig(0,540,70,{pose:'run',dress:1,hair:'long'})}</g><g class="bob" style="animation-delay:-.2s">${fig(60,540,72,{pose:'run',hair:'pony'})}</g><path class="faint" d="M-96 506h18M-100 516h20"/></g>`;
+  s+=fig(950,540,78,{teacher:1,pose:'hold',dir:-1})+`<rect x="924" y="481" width="13" height="9" class="fine body"/><path class="faint" stroke-dasharray="3 6" d="M930 478Q920 400 900 334"/>`;
+  s+=`<rect x="770" y="150" width="220" height="180" class="fine body"/><path class="faint" d="M792 166V312H974"/><text class="label" x="778" y="176" style="font-size:11px">x</text><text class="label" x="972" y="326" style="font-size:11px">t</text>`;
+  s+=`<path class="gold" pathLength="1" stroke-dasharray="1" d="M794 310C830 306 852 282 872 250S934 178 972 168" style="animation:curve ${A}"/>`;
+  [[.06,[806,308]],[.22,[836,300]],[.4,[862,268]],[.58,[890,228]],[.76,[928,192]],[.94,[964,170]]].forEach((p,j)=>{const f=R(p[0]*80);st+=op('g'+j,`0%,${f}%{opacity:0}${R(f+1)}%,86%{opacity:1}92%,100%{opacity:0}`);s+=`<circle cx="${p[1][0]}" cy="${p[1][1]}" r="3.5" class="goldfill" style="animation:g${j} ${A}"/>`});
+  return `<style>${st}</style>`+s}
+
+/* ---------- V · the threshold: questions become ticks, and she leaves taller ---------- */
+function sceneV(D){const A=`${D}s infinite`;let st='';
+  st+=op('sit','0%,42%{opacity:1}46%,96%{opacity:0}100%{opacity:1}');
+  st+=op('walk','0%,44%{transform:translate(232px,566px) scale(.33);opacity:0}46%{transform:translate(232px,566px) scale(.33);opacity:1;animation-timing-function:cubic-bezier(.4,0,.3,1)}80%,92%{transform:translate(855px,566px) scale(1);opacity:1}97%,100%{transform:translate(855px,566px) scale(1);opacity:0}');
+  st+=op('clock','0%{transform:rotate(0)}45%,100%{transform:rotate(720deg)}');
+  let s=dots+room();
+  s+=`<rect x="170" y="176" width="300" height="150" class="fine"/><path class="fine" d="M162 334h316"/>`;
+  ['F = ma','p = mv','v = Δx/Δt','a = Δv/Δt'].forEach((t,i)=>{const f=10+8*i;st+=op('q'+i,`0%,${f}%{opacity:1}${f+2}%,100%{opacity:0}`)+op('t'+i,`0%,${f}%{opacity:0}${f+2}%,92%{opacity:1}96%,100%{opacity:0}`);
+    s+=`<text class="label" x="190" y="${212+32*i}">${t}</text><text class="goldtext" x="388" y="${214+32*i}" style="animation:q${i} ${A}">?</text><text class="goldtext" x="384" y="${214+32*i}" style="animation:t${i} ${A}">✓</text>`});
+  s+=`<circle cx="566" cy="206" r="22" class="fine"/><path class="fine" d="M566 206l2 12"/><path class="fine" d="M566 206h-16" style="transform-box:fill-box;transform-origin:100% 50%;animation:clock ${A}"/>`;
+  s+=`<path class="strong" d="M200 505H335"/><path class="fine" d="M210 505V566M325 505V566M162 536H212M166 536V566M208 536V566M166 536V482"/>`;
+  s+=`<g style="animation:sit ${A}">${fig(196,566,120,{pose:'sit',dress:1,hair:'long',sway:1})}<text class="goldtext" x="172" y="452">?</text><text class="goldtext" x="200" y="434">?</text><text class="goldtext" x="226" y="450">?</text></g>`;
+  s+=fig(486,566,195,{teacher:1,pose:'point',dir:-1})+`<path class="gold flowline" d="M440 402Q340 360 246 452"/>`;
+  for(let i=0;i<7;i++){const f=R(46+i*4.8);st+=op('f'+i,`0%,${f}%{opacity:0}${R(f+1)}%,92%{opacity:1}96%,100%{opacity:0}`);s+=`<ellipse cx="${300+i*68}" cy="560" rx="${R(3+i*1.4)}" ry="${R(1.6+i*.5)}" class="faint" style="animation:f${i} ${A}"/>`}
+  s+=`<rect x="790" y="182" width="130" height="384" class="strong"/><path class="faint" stroke-dasharray="4 6" d="M790 182L750 198V566"/>`;
+  s+=`<g class="ns" style="transform-box:fill-box;transform-origin:50% 100%;animation:walk ${A}">${fig(0,0,368,{pose:'walk',dress:1,hair:'long',sway:1})}</g>`;
+  return `<style>${st}</style>`+s}
+
+const scenes=[
+ {key:'room',label:'The Room',floor:'I / CONTAIN',title:['Nothing','to explore.'],kq:'Can knowledge exist if there is no one to share it with?',svg:sceneI,D:6,freeze:.35,
+  aria:'A teacher alone sends out waves that pass over empty chairs.',icon:'<circle cx="25" cy="25" r="18"/><circle cx="25" cy="25" r="9"/><path d="M25 4V46M4 25H46" stroke-dasharray="2 5"/>'},
+ {key:'recoil',label:'The Recoil',floor:'II / EXCHANGE',title:['Every push','pushes back.'],kq:'When a law is felt in the body, do we know it differently?',svg:sceneII,D:6,freeze:.72,
+  aria:'A girl on a scooter board throws a ball to the teacher and rolls backward while the class cheers.',icon:'<path d="M3 33Q25-21 47 33M3 42Q25-10 47 42"/><circle cx="25" cy="27" r="4"/><path d="M3 45H47"/>'},
+ {key:'return',label:'The Return',floor:'III / REVISE',title:['Again,','differently.'],kq:'How does failure change our perception of ourselves?',svg:sceneIII,D:9,freeze:.72,
+  aria:'Split screen: on the left a girl cries over a failed test while the teacher offers her a pair of binoculars; their line of sight leads to the eyes of a tiger opening in the middle; on the right the same girl holds up 100 percent.',icon:'<path d="M5 25Q25 9 45 25Q25 41 5 25Z"/><circle cx="25" cy="25" r="8"/><path d="M25 18V32"/>'},
+ {key:'world',label:'The World',floor:'IV / EXPLORE',title:['The world','is the laboratory.'],kq:'What changes when the data is our own movement?',svg:sceneIV,D:7,freeze:.78,
+  aria:'A drone records students running; their tracked positions become a motion graph.',icon:'<path d="M2 33Q12 2 24 31T48 20M2 40Q12 10 24 39T48 28M2 47Q12 18 24 47T48 36"/><circle cx="38" cy="12" r="5"/>'},
+ {key:'threshold',label:'The Threshold',floor:'V / CROSS',title:['Who is','stopping you?'],kq:'Is resilience something we choose?',svg:sceneV,D:10,freeze:.86,
+  aria:'After school a small, unsure girl at a desk stays until her questions become ticks, then walks out of the door as a giant.',icon:'<rect x="28" y="6" width="16" height="40"/><circle cx="36" cy="14" r="4"/><circle cx="10" cy="38" r="3"/><path d="M4 46H46M14 42Q22 30 28 26" stroke-dasharray="2 3"/>'}
+];
+const ROM=['I','II','III','IV','V'],N=scenes.length;
+$('floor').innerHTML=scenes.map((s,i)=>`<button type="button" class="floor-button" data-scene="${i}"><div><div class="floor-number">${s.floor}</div><div class="floor-label">${s.label}</div></div><svg viewBox="0 0 50 50" fill="none" stroke="currentColor" aria-hidden="true">${s.icon}</svg></button>`).join('');
+let current=0;
+function setScene(i){
+  current=(i+N)%N;const s=scenes[current],art=$('art');
+  art.querySelector('svg')?.remove();
+  art.insertAdjacentHTML('afterbegin',`<svg viewBox="60 80 980 560" role="img" aria-label="${s.aria}">${defs}${s.svg(s.D)}</svg>`);
+  const svg=art.querySelector('svg'),tl=$('tl');
+  tl.style.animation='none';void tl.offsetWidth;tl.style.animation=reduced?'none':`tl ${s.D}s linear infinite`;if(reduced)tl.style.transform='scaleX(1)';
+  if(reduced)requestAnimationFrame(()=>{svg.getAnimations?.({subtree:true}).forEach(a=>{try{a.currentTime=s.freeze*s.D*1000;a.pause()}catch(e){}})});
+  $('num').textContent=ROM[current];
+  $('plateName').textContent=`Plate ${ROM[current]} · ${s.label}`;
+  $('headline').innerHTML=`<span>${s.title[0]}</span><span><em>${s.title[1]}</em></span>`;
+  $('kq').textContent=s.kq;
+  document.querySelectorAll('[data-scene]').forEach(el=>{const on=+el.dataset.scene===current;el.classList.toggle('current',on);el.setAttribute('aria-current',String(on))});
+  try{history.replaceState(null,'','#'+s.key)}catch(e){}}
+document.querySelectorAll('[data-scene]').forEach(el=>el.addEventListener('click',()=>setScene(+el.dataset.scene)));
+$('prev').onclick=()=>setScene(current-1);$('next').onclick=()=>setScene(current+1);
+$('themeSwitch').addEventListener('click',()=>{const m=document.body.classList.toggle('mono');$('themeSwitch').setAttribute('aria-pressed',String(m))});
+document.addEventListener('keydown',ev=>{if(ev.altKey||ev.ctrlKey||ev.metaKey)return;if(ev.key==='ArrowRight')setScene(current+1);if(ev.key==='ArrowLeft')setScene(current-1)});
+let sx=null;$('art').addEventListener('touchstart',e=>{sx=e.touches[0].clientX},{passive:true});
+$('art').addEventListener('touchend',e=>{if(sx===null)return;const d=e.changedTouches[0].clientX-sx;if(Math.abs(d)>60)setScene(current+(d<0?1:-1));sx=null},{passive:true});
+const h=(location.hash||'').slice(1).toLowerCase();setScene(Math.max(0,scenes.findIndex(s=>s.key===h)));
+</script>
+
+</body>
+</html>

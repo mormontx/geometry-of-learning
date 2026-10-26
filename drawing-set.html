@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Where the Waves Overlap Drawing Set</title>
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Jost:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap">
+<style>
+/* Layout: an architect's drawing set for learning. Each sheet is a real sheet: a sectional drawing
+   with a title strip on its right edge; a magnifier reads the fine print; general notes sit below. */
+:root{
+  --page:#e6e1d0; --bar:#ded8c5; --sheet:#f4f0e2; --ink:#2b2618; --mut:#6c6450; --faint:#b9b096; --rule:#cfc7ae;
+  --accent:#6a5cb0; --hair:#cf621c; --mark:#b2463f; --tear:#5b8fc4;
+  --f-ui:Jost,"Futura","Century Gothic",system-ui,sans-serif;
+  --f-hand:"Architects Daughter","Bradley Hand","Segoe Print",cursive;
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --page:#1d1b14; --bar:#18160f; --sheet:#241f0c; --ink:#e9e2c8; --mut:#958d74; --faint:#4f4935; --rule:#3a3524;
+  --accent:#c9b8f0; --hair:#ee8a46; --mark:#d0645f; --tear:#8fc3ef; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --page:#1d1b14; --bar:#18160f; --sheet:#241f0c; --ink:#e9e2c8; --mut:#958d74; --faint:#4f4935; --rule:#3a3524;
+  --accent:#c9b8f0; --hair:#ee8a46; --mark:#d0645f; --tear:#8fc3ef; color-scheme:dark}
+
+body{background:var(--page);color:var(--ink);font:300 1rem/1.6 var(--f-ui)}
+.wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.in{max-width:1200px;margin:0 auto}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
+:focus-visible{outline:1.5px solid var(--mark);outline-offset:3px}
+.lbl{display:block;font:400 .66rem/1.3 var(--f-ui);letter-spacing:.2em;text-transform:uppercase;color:var(--mut)}
+
+/* sheet bar */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bar)}
+.top{background:var(--bar);border-bottom:1px solid var(--rule);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+.top .in{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;padding-block:12px}
+.mark{display:flex;align-items:center;gap:14px;font-size:.8rem;letter-spacing:.14em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.mark b{font-weight:400;color:var(--mut);letter-spacing:.2em}
+.tabs{display:flex;gap:2px}
+.tabs button{min-width:40px;padding:8px 10px;font-size:.78rem;letter-spacing:.14em;color:var(--mut);border:1px solid transparent}
+.tabs button:hover{color:var(--ink)}
+.tabs button[aria-current="true"]{color:var(--ink);border-color:var(--mark);box-shadow:inset 0 -1px 0 var(--ink)}
+.meta{justify-self:end;font-size:.74rem;letter-spacing:.18em;color:var(--mut);font-variant-numeric:tabular-nums;white-space:nowrap;text-transform:uppercase}
+
+/* the sheet */
+.stage{padding-block:clamp(20px,4vh,44px) 0}
+.sheet{display:grid;grid-template-columns:minmax(0,1fr) 300px;background:var(--sheet);border:1px solid var(--mut);outline:1px solid var(--rule);outline-offset:5px}
+.drawing{position:relative;border-right:1px solid var(--mut);touch-action:none;min-width:0;display:flex;align-items:center}
+.drawing svg{display:block;width:100%;height:auto;cursor:crosshair}
+.drawing svg.lensing{cursor:none}
+.strip{display:flex;flex-direction:column;min-width:0}
+.cell{padding:14px 16px;border-bottom:1px solid var(--rule)}
+.cell:last-child{border-bottom:0}
+.proj b{display:block;font:400 1.02rem/1.25 var(--f-ui);letter-spacing:.06em;text-transform:uppercase;margin-top:6px}
+.proj i{display:block;font-size:.86rem;color:var(--mut);margin-top:2px}
+.detail{flex:1;min-height:9em;display:flex;flex-direction:column;gap:6px}
+.detail .k{font:500 .7rem/1 var(--f-ui);letter-spacing:.18em;color:var(--mark)}
+.detail h2{margin:0;font:400 1.04rem/1.3 var(--f-ui)}
+.detail p{margin:0;font-size:.92rem;line-height:1.5;color:var(--mut)}
+.dl{list-style:none;margin:6px 0 0;padding:0;display:grid}
+.dl button{display:flex;gap:10px;width:100%;text-align:left;padding:3px 0;font-size:.86rem;color:var(--mut)}
+.dl button b{font-weight:500;color:var(--mark);font-size:.7rem;letter-spacing:.12em;min-width:2.2em;padding-top:2px}
+.dl button:hover,.dl button[aria-current="true"]{color:var(--ink)}
+.data{display:grid;grid-template-columns:1fr 1fr;padding:0}
+.data>div{padding:9px 16px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.data>div:nth-child(2n){border-right:0}
+.data .v{font-size:.9rem;font-variant-numeric:tabular-nums;white-space:nowrap}
+.data .no{grid-column:1/-1;border-bottom:0;border-right:0;display:flex;align-items:end;justify-content:space-between;gap:10px}
+.data .no .v{font:300 2.1rem/1 var(--f-ui);letter-spacing:.04em}
+.data .no small{font-size:.78rem;color:var(--mut);text-align:right}
+
+/* svg vocabulary (no svg prefix: these also style the magnifier's <use> copy) */
+.s{fill:none;stroke:var(--ink);stroke-width:1.1;vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round}
+.s.f{stroke:var(--faint)}.s.m{stroke:var(--mut)}.s.dash{stroke-dasharray:3 5}
+.s.grid{stroke:var(--faint);stroke-dasharray:14 4 2 4;stroke-width:.8}
+.s.prop{stroke:var(--mut);stroke-dasharray:18 4 3 4 3 4}
+.cut{fill:url(#hatch);stroke:var(--ink);stroke-width:1.4;vector-effect:non-scaling-stroke}
+.earth{fill:url(#earth);stroke:none}
+.hl{stroke:var(--faint);stroke-width:.9}
+.head-t,.bow{fill:var(--accent);stroke:none}
+.hair{fill:none;stroke:var(--hair);stroke-linecap:round}
+.bo{fill:var(--ink);stroke:var(--ink);stroke-linecap:round;stroke-linejoin:round}
+.bf{stroke:var(--sheet);stroke-linecap:round}.bfp{fill:var(--sheet);stroke:none}.bft{fill:var(--accent);stroke:none}
+.shoe{fill:var(--ink)}.bd{fill:none;stroke:var(--ink);stroke-linecap:round}.bd.f{stroke:var(--mut)}.bdot,.eye{fill:var(--ink)}
+.cap{fill:var(--ink)}.capt{fill:var(--ink);opacity:.55}.tear{fill:var(--tear)}
+.drawin .fig{animation:fade 1s .5s both}
+.tx{font:400 12px var(--f-hand);fill:var(--mut)}
+.tx.ink{fill:var(--ink)}
+.lt{font:400 11px var(--f-ui);letter-spacing:.18em;fill:var(--mut)}
+.lt.big{font-size:13px;fill:var(--ink)}
+.cover-t{font:300 46px var(--f-ui);letter-spacing:.01em;fill:var(--ink)}
+.bub{font:400 10px var(--f-ui);fill:var(--mut)}
+.tiny{font:400 3.3px var(--f-hand);fill:var(--ink)}
+.tiny.r{fill:var(--mark)}
+.dim{stroke:var(--mark);stroke-width:1;vector-effect:non-scaling-stroke;fill:none}
+.dimt{font:400 11px var(--f-hand);fill:var(--mark)}
+.pin{fill:none;stroke:var(--mark);stroke-width:1;vector-effect:non-scaling-stroke}
+.pin.on{stroke-width:2}
+.pinhit{fill:transparent;cursor:pointer}
+.ring{fill:none;stroke:var(--ink);stroke-width:1.2;vector-effect:non-scaling-stroke}
+.ring.halo{stroke:var(--sheet);stroke-width:5}
+.ring.f{stroke:var(--mut);stroke-width:.8}
+.ringt{font:400 9px var(--f-ui);fill:var(--ink);letter-spacing:.08em}
+.lensbg{fill:var(--sheet)}
+.tag{font:500 7px var(--f-ui);letter-spacing:.16em;fill:var(--mark)}
+.marching{animation:march 1.2s linear infinite}
+@keyframes march{to{stroke-dashoffset:-16}}
+.ripple{transform-box:fill-box;transform-origin:center;animation:ripple 3.6s ease-out infinite}
+@keyframes ripple{from{transform:scale(.3);opacity:.9}to{transform:scale(1);opacity:0}}
+.rotor{transform-box:fill-box;transform-origin:center;animation:rotor .25s linear infinite}
+@keyframes rotor{to{transform:rotate(360deg)}}
+.sway{transform-box:fill-box;transform-origin:50% 0;animation:sway 3.2s ease-in-out infinite}
+@keyframes sway{50%{transform:rotate(5deg)}}
+.drawin .s:not(.dash):not(.grid):not(.prop){stroke-dasharray:1;stroke-dashoffset:1;animation:draw 1.7s cubic-bezier(.3,.6,.2,1) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.fadein{animation:fade .6s ease both}
+@keyframes fade{from{opacity:0}}
+
+/* caption bar */
+.cap{display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px;padding-block:18px 16px;margin-top:6px;border-bottom:1px solid var(--rule)}
+.cap h1{margin:0;font:italic 300 1.2rem/1.2 var(--f-ui);letter-spacing:.02em}
+.cap .facts{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.84rem;color:var(--mut);font-variant-numeric:tabular-nums}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin-left:auto}
+.tools button,.arrows button{border:1px solid var(--rule);padding:7px 13px;font-size:.8rem;letter-spacing:.06em;color:var(--mut);display:inline-flex;gap:8px;align-items:center;white-space:nowrap}
+.tools button[aria-pressed="true"]{color:var(--ink);border-color:var(--mut);background:var(--bar)}
+.tools button:hover,.arrows button:hover{color:var(--ink);border-color:var(--mut)}
+.arrows{display:flex;gap:8px}
+.arrows button{padding:7px 15px;font-size:1rem}
+
+/* general notes */
+.notes{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:0;border:1px solid var(--rule);border-top:0;margin-bottom:48px}
+.notes>div{padding:20px 22px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.notes>div+div{border-left:1px solid var(--rule)}
+.note{font:400 1.14rem/1.55 var(--f-hand);margin:0;max-width:62ch}
+.kq{margin:0;font-style:italic;font-size:1.1rem;line-height:1.5}
+.how{margin:0;padding:0;list-style:none;display:grid;gap:8px;font-size:.95rem;color:var(--mut)}
+.how b{font-weight:400;color:var(--ink)}
+.idx{width:100%;border-collapse:collapse;font-size:.92rem;font-variant-numeric:tabular-nums}
+.idx td{padding:7px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+.idx td:first-child{width:4.6em;color:var(--mark);font-size:.8rem;letter-spacing:.08em;padding-top:9px}
+.idx td:last-child{text-align:right;color:var(--mut);white-space:nowrap;padding-left:10px}
+.idx button{text-align:left}
+.idx button:hover{text-decoration:underline}
+footer{border-top:1px solid var(--rule);padding-block:20px 40px;font-size:.88rem;color:var(--mut)}
+footer .in{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px}
+footer a{color:var(--ink)}
+
+@media(max-width:940px){
+  .sheet{grid-template-columns:minmax(0,1fr)}
+  .drawing{border-right:0;border-bottom:1px solid var(--mut)}
+  .strip{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .strip .proj{grid-column:1/-1}.strip .detail{min-height:0;border-right:1px solid var(--rule)}
+  .strip .data{grid-column:1/-1;grid-template-columns:repeat(3,minmax(0,1fr))}
+  .data>div,.data>div:nth-child(2n){border-right:1px solid var(--rule)}
+  .data .no{grid-column:auto;grid-row:span 2;display:block}.data .no small{display:block;text-align:left;margin-top:6px}
+  .notes{grid-template-columns:minmax(0,1fr)}.notes>div+div{border-left:0;border-top:1px solid var(--rule)}
+  .top .in{grid-template-columns:auto 1fr}.meta{display:none}.tabs{justify-self:end}
+  .tools{margin-left:0}
+}
+@media(max-width:560px){
+  .mark span{display:none}.tabs button{min-width:0;padding:7px 7px}
+  .strip{grid-template-columns:minmax(0,1fr)}.strip .detail{border-right:0}
+  .strip .data{grid-template-columns:1fr 1fr}.data .no{grid-column:1/-1;grid-row:auto;display:flex}.data .no small{text-align:right;margin:0}
+  .data>div:nth-child(2n){border-right:1px solid var(--rule)}.data>div:nth-child(2n+1){border-right:0}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}.drawin .s{stroke-dasharray:none!important}}
+</style>
+
+<header class="top"><div class="in wrap">
+<div class="mark"><b>⌜∇⌟</b><span id="count"></span></div>
+<nav class="tabs" id="tabs" aria-label="Sheets"></nav>
+<div class="meta" id="meta"></div>
+</div></header>
+
+<main class="wrap"><div class="in stage">
+<div class="sheet">
+<div class="drawing">
+<svg id="svg" viewBox="0 0 1000 620" role="img" aria-labelledby="ttl">
+<title id="ttl">Sheet drawing</title>
+<defs>
+<pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line class="hl" x1="0" y1="0" x2="0" y2="7"/></pattern>
+<pattern id="earth" width="14" height="10" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r=".8" fill="var(--faint)"/><line class="hl" x1="8" y1="7" x2="12" y2="7"/></pattern>
+<clipPath id="lc"><circle id="lcc" cx="500" cy="300" r="95"/></clipPath>
+</defs>
+<g id="art"></g>
+<g id="dims" hidden></g>
+<g id="pins"></g>
+<g id="lens">
+ <g clip-path="url(#lc)"><rect class="lensbg" x="0" y="0" width="1000" height="620"/><g id="zoom"><use href="#art"/><g id="micro"></g></g></g>
+ <g id="ringg"><circle class="ring halo" id="halo" r="95"/><circle class="ring" id="ring" r="95"/><path class="ring f" id="ticks"/><path class="ring f" id="cross"/><text class="ringt" id="ringt">3.5×</text><text class="tag" id="tag" text-anchor="middle"></text></g>
+</g>
+</svg>
+</div>
+<aside class="strip" aria-label="Title strip">
+<div class="cell proj"><span class="lbl">Project</span><b>Where the waves overlap</b><i>An architecture of learning · Physics, Computer Science, TOK</i></div>
+<div class="cell detail" aria-live="polite"><span class="k" id="rk"></span><h2 id="rh"></h2><p id="rp"></p></div>
+<div class="cell"><span class="lbl">Details on this sheet</span><ul class="dl" id="bdl"></ul></div>
+<div class="cell data">
+<div><span class="lbl">Drawn</span><span class="v">The teacher</span></div>
+<div><span class="lbl">Checked</span><span class="v">The students</span></div>
+<div><span class="lbl">Scale</span><span class="v" id="dscale"></span></div>
+<div><span class="lbl">Time</span><span class="v" id="dtime"></span></div>
+<div class="no"><div><span class="lbl">Sheet</span><span class="v" id="dno"></span></div><small id="dof"></small></div>
+</div>
+</aside>
+</div>
+
+<div class="cap">
+<h1 id="caption"></h1>
+<div class="facts"><span id="lvl"></span><span id="time"></span></div>
+<div class="tools">
+<button id="bLens" aria-pressed="true" title="Show or hide the magnifier">◯ Lens</button>
+<button id="bZoom" title="Change the magnification">3.5×</button>
+<button id="bDims" aria-pressed="false" title="Show or hide dimensions">↔ Dims</button>
+<button id="bNext" title="Move the magnifier to the next detail">⊕ Next detail</button>
+</div>
+<div class="arrows"><button id="prev" aria-label="Previous sheet">←</button><button id="next" aria-label="Next sheet">→</button></div>
+</div>
+
+<section class="notes" aria-label="General notes">
+<div><span class="lbl" id="n1l"></span><div id="n1"></div></div>
+<div><span class="lbl" id="n2l"></span><div id="n2"></div></div>
+</section>
+</div></main>
+
+<footer class="wrap"><div class="in">
+<span>Where the waves overlap, learning happens.</span>
+<span>Other editions: <a href="notebook.html">Notebook</a> · <a href="8bit.html">8-bit</a> · <a href="archive.html">Archive</a> · <a href="geometry-v1.html">Geometry</a></span>
+</div></footer>
+
+<script>
+/* ---------- drawing vocabulary ---------- */
+const R1=n=>Math.round(n*10)/10;
+const L=(a,b,c,d,k='')=>`<line class="s ${k}" x1="${R1(a)}" y1="${R1(b)}" x2="${R1(c)}" y2="${R1(d)}"/>`;
+const Ci=(x,y,r,k='')=>`<circle class="s ${k}" cx="${R1(x)}" cy="${R1(y)}" r="${R1(r)}"/>`;
+const Pa=(d,k='')=>`<path class="s ${k}" d="${d}"/>`;
+const Re=(x,y,w,h,k='')=>`<rect class="s ${k}" x="${x}" y="${y}" width="${w}" height="${h}"/>`;
+const Tx=(x,y,s,k='tx',a='start')=>`<text class="${k}" x="${R1(x)}" y="${R1(y)}" text-anchor="${a}">${s}</text>`;
+const arrow=(x1,y1,x2,y2,k='')=>{const a=Math.atan2(y2-y1,x2-x1),h=7;return L(x1,y1,x2,y2,k)+Pa(`M${R1(x2-h*Math.cos(a-.45))} ${R1(y2-h*Math.sin(a-.45))}L${x2} ${y2}L${R1(x2-h*Math.cos(a+.45))} ${R1(y2-h*Math.sin(a+.45))}`,k)};
+
+/* scale figures (architects call them entourage). Joints are in body-heights: u across (+ = facing side), v up from the ground */
+const BASE={hd:[0,.935],nk:[0,.85],sL:[-.085,.82],sR:[.085,.82],wL:[-.058,.6],wR:[.058,.6],pL:[-.068,.47],pR:[.068,.47],
+  hipL:[-.036,.46],hipR:[.036,.46],eL:[-.1,.64],hL:[-.094,.47],eR:[.1,.64],hR:[.094,.47],kL:[-.042,.26],aL:[-.048,.035],kR:[.042,.26],aR:[.048,.035]};
+const POSES={
+  stand:{},
+  clasp:{eL:[-.09,.64],hL:[.01,.55],eR:[.09,.64],hR:[.02,.56]},
+  reach:{eL:[.11,.72],hL:[.25,.73],eR:[.15,.75],hR:[.29,.78]},
+  point:{eR:[.15,.93],hR:[.25,1.03],eL:[-.08,.64],hL:[-.04,.48]},
+  raise:{eL:[-.12,.98],hL:[-.075,1.12],eR:[.12,.98],hR:[.075,1.12]},
+  cheer:{eR:[.13,.97],hR:[.16,1.1],eL:[-.1,.64],hL:[-.09,.47]},
+  hold:{eR:[.1,.63],hR:[.2,.69],eL:[-.01,.61],hL:[.16,.66]},
+  carry:{eR:[.1,.63],hR:[.13,.48],eL:[-.07,.64],hL:[-.02,.5],hd:[.03,.92]},
+  walk:{kL:[-.06,.26],aL:[-.13,.035],kR:[.1,.27],aR:[.15,.035],eL:[-.06,.64],hL:[-.12,.5],eR:[.08,.64],hR:[.14,.5]},
+  run:{hd:[.06,.925],nk:[.05,.84],sL:[-.03,.81],sR:[.12,.81],wL:[-.03,.6],wR:[.09,.6],kR:[.17,.33],aR:[.12,.1],kL:[-.07,.24],aL:[-.2,.12],
+    eR:[.18,.68],hR:[.25,.79],eL:[-.06,.66],hL:[-.14,.56]},
+  sit:{hd:[.03,.665],nk:[.02,.585],sL:[-.07,.55],sR:[.1,.55],wL:[-.055,.37],wR:[.065,.37],pL:[-.065,.26],pR:[.07,.26],hipL:[-.03,.25],hipR:[.03,.25],
+    kL:[.2,.26],kR:[.22,.27],aL:[.2,.035],aR:[.23,.035],eL:[.05,.39],hL:[.2,.43],eR:[.09,.4],hR:[.23,.44]},
+  board:{hd:[.02,.47],nk:[.01,.39],sL:[-.075,.355],sR:[.09,.355],wL:[-.055,.17],wR:[.06,.17],pL:[-.065,.06],pR:[.065,.06],hipL:[-.03,.06],hipR:[.03,.06],
+    kL:[.15,.18],kR:[.17,.19],aL:[.3,.04],aR:[.32,.04],eL:[.12,.38],hL:[.24,.44],eR:[.14,.4],hR:[.27,.47]}};
+function person(x,y,h,o={}){
+  const d=o.dir||1,J=Object.assign({},BASE,POSES[o.pose||'stand']),ow=Math.max(.45,Math.min(1.2,h*.0068));
+  const X=p=>R1(x+d*p[0]*h),Y=p=>R1(y-p[1]*h),Q=(a,b)=>[a[0]+b[0],a[1]+b[1]];
+  const ln=(a,b,w)=>({a,b,w:w*h}),sat=o.pose==='sit'||o.pose==='board';
+  function sil(lines,polys,circs){let A='',B='';
+    lines.forEach(l=>{const c=`x1="${X(l.a)}" y1="${Y(l.a)}" x2="${X(l.b)}" y2="${Y(l.b)}"`;A+=`<line class="bo" ${c} stroke-width="${R1(l.w+2*ow)}"/>`;B+=`<line class="bf" ${c} stroke-width="${R1(l.w)}"/>`});
+    polys.forEach(p=>{const pts=p.map(q=>X(q)+','+Y(q)).join(' ');A+=`<polygon class="bo" points="${pts}" stroke-width="${R1(2*ow)}"/>`;B+=`<polygon class="bfp" points="${pts}"/>`});
+    circs.forEach(c=>{A+=`<circle class="bo" cx="${X(c.p)}" cy="${Y(c.p)}" r="${R1(c.r*h+ow)}" stroke="none"/>`;B+=`<circle class="${c.k||'bfp'}" cx="${X(c.p)}" cy="${Y(c.p)}" r="${R1(c.r*h)}"/>`});
+    return A+B}
+  const shoe=a=>`<ellipse class="shoe" cx="${R1(x+d*(a[0]+.022)*h)}" cy="${R1(y-(a[1]-.012)*h)}" rx="${R1(.04*h)}" ry="${R1(.017*h)}"/>`;
+  const dress=o.dress,skirt=dress?(sat?[J.wL,J.wR,Q(J.kR,[.02,.035]),Q(J.kR,[.02,-.035]),Q(J.pL,[0,-.03])]:[J.wL,J.wR,[.13,.31],[-.13,.31]]):null;
+  let s='',hairBack='',hairFront='';
+  if(o.hair==='long'){const top=J.hd[1]+.06;for(let i=-3;i<=3;i++){const sd=i<0?-1:i>0?1:-1,ai=Math.abs(i);
+      const p0=[J.hd[0]+i*.011,top-ai*.004],c=[J.hd[0]+sd*(.098+ai*.004),J.hd[1]-.01],e=[J.hd[0]+sd*(.07+ai*.013),J.hd[1]-.2-ai*.012];
+      hairFront+=`<path class="hair" stroke-width="${R1(Math.max(.8,.0055*h))}" d="M${X(p0)} ${Y(p0)}Q${X(c)} ${Y(c)} ${X(e)} ${Y(e)}"/>`}
+    hairFront=`<g class="${o.sway?'sway':''}">${hairFront}</g>`}
+  else if(o.hair==='pony'){const b=[J.hd[0]-.05,J.hd[1]+.03];hairBack=`<path class="hair" stroke-width="${R1(.012*h)}" d="M${X(b)} ${Y(b)}Q${X([J.hd[0]-.13,J.hd[1]+.02])} ${Y([0,J.hd[1]+.02])} ${X([J.hd[0]-.12,J.hd[1]-.09])} ${Y([0,J.hd[1]-.09])}"/>`}
+  const cap=o.hair==='bob'||o.hair==='short'||o.hair==='pony'||o.teacher;
+  s+=hairBack;
+  s+='<g>'+sil([ln(J.sL,J.eL,.042),ln(J.eL,J.hL,.035),ln(J.hipL,J.kL,.062),ln(J.kL,J.aL,.05)],[],[{p:J.hL,r:.022}])+shoe(J.aL)+'</g>';
+  s+='<g>'+sil([ln(J.hipR,J.kR,.062),ln(J.kR,J.aR,.05),ln(J.nk,Q(J.hd,[0,-.04]),.036)],[[J.sL,J.sR,J.wR,J.pR,J.pL,J.wL]].concat(skirt?[skirt]:[]),[{p:J.hd,r:.064,k:o.teacher?'bft':'bfp'}])+shoe(J.aR)+'</g>';
+  /* clothing and face details */
+  const dl=(a,b,k='bd')=>`<line class="${k}" x1="${X(a)}" y1="${Y(a)}" x2="${X(b)}" y2="${Y(b)}" stroke-width="${R1(Math.max(.5,ow*.8))}"/>`;
+  if(o.teacher){s+=dl(Q(J.nk,[-.03,.0]),Q(J.nk,[0,-.04]))+dl(Q(J.nk,[.03,0]),Q(J.nk,[0,-.04]));
+    const bw=Q(J.nk,[0,-.02]),r=.022;s+=`<path class="bow" d="M${X(bw)} ${Y(bw)}l${R1(-d*r*h)} ${R1(-r*.6*h)}v${R1(r*1.2*h)}zM${X(bw)} ${Y(bw)}l${R1(d*r*h)} ${R1(-r*.6*h)}v${R1(r*1.2*h)}z"/>`;
+    if(!sat)s+=dl(J.wL,J.wR)+[.75,.69,.63].map(v=>`<circle class="bdot" cx="${X([J.nk[0]+(J.wR[0]+J.wL[0])/2*.3,v])}" cy="${Y([0,v])}" r="${R1(.005*h)}"/>`).join('')}
+  else if(skirt&&!sat)s+=dl([-.11,.36],[.11,.36],'bd f');
+  else s+=`<path class="bd" stroke-width="${R1(Math.max(.5,ow*.8))}" d="M${X(Q(J.nk,[-.03,.01]))} ${Y(Q(J.nk,[-.03,.01]))}Q${X(Q(J.nk,[0,-.035]))} ${Y(Q(J.nk,[0,-.035]))} ${X(Q(J.nk,[.03,.01]))} ${Y(Q(J.nk,[.03,.01]))}"/>`;
+  if(cap){const a=Q(J.hd,[-.066,.005]),b=Q(J.hd,[.066,.005]),t=Q(J.hd,[0,.09]);s+=`<path class="${o.teacher?'capt':'cap'}" d="M${X(a)} ${Y(a)}Q${X(t)} ${Y(t)} ${X(b)} ${Y(b)}Q${X(Q(J.hd,[0,.03]))} ${Y(Q(J.hd,[0,.03]))} ${X(a)} ${Y(a)}Z"/>`;
+    if(o.hair==='bob')s+=`<path class="cap" d="M${X(a)} ${Y(a)}L${X(Q(J.hd,[-.07,-.05]))} ${Y(Q(J.hd,[-.07,-.05]))}L${X(Q(J.hd,[-.05,-.05]))} ${Y(Q(J.hd,[-.05,-.05]))}Z"/>`}
+  if(h>=60){const e1=Q(J.hd,[.012,.008]),e2=Q(J.hd,[.042,.008]),m=Q(J.hd,[.027,-.028]),fr=Math.max(.6,.0055*h);
+    s+=`<circle class="eye" cx="${X(e1)}" cy="${Y(e1)}" r="${R1(fr)}"/><circle class="eye" cx="${X(e2)}" cy="${Y(e2)}" r="${R1(fr)}"/>`;
+    const mw=.016*h,mx=X(m),my=Y(m),cv=o.mood==='happy'?.012*h:o.mood==='sad'?-.01*h:0;
+    s+=`<path class="bd" stroke-width="${R1(Math.max(.5,ow*.8))}" d="M${R1(mx-mw)} ${R1(my-cv/2)}Q${mx} ${R1(my+cv)} ${R1(mx+mw)} ${R1(my-cv/2)}"/>`;
+    if(o.mood==='sad')s+=`<circle class="tear" cx="${X(Q(e1,[0,-.02]))}" cy="${Y(Q(e1,[0,-.02]))}" r="${R1(fr*1.1)}"/><circle class="tear" cx="${X(Q(e2,[.004,-.035]))}" cy="${Y(Q(e2,[.004,-.035]))}" r="${R1(fr)}"/>`}
+  s+=hairFront;
+  s+='<g>'+sil([ln(J.sR,J.eR,.042),ln(J.eR,J.hR,.035)],[],[{p:J.hR,r:.022}])+'</g>';
+  return `<g class="fig">${s}</g>`}
+const chair=(x,y,s)=>L(x,y-55*s,x,y+40*s)+L(x,y,x+38*s,y)+L(x+38*s,y,x+38*s,y+40*s);
+const tree=(x,y,s)=>L(x,y,x,y-30*s,'f')+Ci(x-6*s,y-44*s,20*s,'f')+Ci(x+10*s,y-50*s,16*s,'f');
+
+/* the sheet's architectural frame: cut walls, slab, grid, drawing title, north arrow */
+function frame(o){let s='';
+  const gx=[230,410,590,770];
+  gx.forEach((x,i)=>{s+=`<circle class="s m" cx="${x}" cy="88" r="11"/>`+Tx(x,92,i+1,'bub','middle')+L(x,99,x,o.out?470:132,'grid')});
+  if(o.out){s+=`<rect class="earth" x="128" y="471" width="744" height="24"/>`+L(128,470,872,470)}
+  else{s+=`<rect class="cut" x="128" y="470" width="744" height="22"/><rect class="cut" x="128" y="120" width="744" height="12"/>`+
+    `<rect class="cut" x="${o.lw||110}" y="120" width="18" height="372"/><rect class="cut" x="872" y="120" width="18" height="372"/>`}
+  s+=`<circle class="s" cx="150" cy="562" r="16"/>`+L(134,562,166,562)+Tx(150,558,o.id,'bub','middle')+Tx(150,575,o.no,'bub','middle');
+  s+=Tx(180,558,o.kind+' · '+o.title.toUpperCase(),'lt big')+L(180,566,560,566,'m')+Tx(180,582,'SCALE '+o.scale.replace(/ /g,''),'lt');
+  s+=Ci(902,560,14,'m')+Pa('M902 542L908 566L902 561L896 566Z','m')+Tx(902,592,'N','bub','middle');
+  return s}
+
+/* ---------- sheets ---------- */
+const SHEETS=[
+{id:'cover',tab:'Cover',no:'L-000',title:'Where the Waves Overlap',kind:'SITE PLAN',scale:'1 : 500',lvl:'∇ datum',time:'one school year',
+ n1l:'Introduction & legend',n2l:'Drawing index',
+ art:()=>{let s=`<clipPath id="site"><rect x="140" y="112" width="720" height="380"/></clipPath>`+Re(140,112,720,380,'prop');
+  const src=[[380,300,'PHYSICS'],[620,300,'COMPUTER SCIENCE'],[500,440,'TOK']];
+  s+='<g clip-path="url(#site)">';src.forEach(p=>{for(let r=22;r<=430;r+=22)s+=Ci(p[0],p[1],r,r%66===0?'m':'f')});s+='</g>';
+  src.forEach(p=>{s+=`<circle class="head-t" cx="${p[0]}" cy="${p[1]}" r="4"/>`+Tx(p[0],p[1]-12,p[2],'lt','middle')});
+  s+=Ci(500,346,30,'dash marching')+person(500,374,48,{teacher:1})+Tx(540,342,'learning','tx ink')+Tx(540,356,'happens here','tx ink');
+  s+=`<circle class="s m" cx="150" cy="562" r="16"/>`+L(134,562,166,562,'m')+Tx(150,558,'0','bub','middle')+Tx(150,575,'L-000','bub','middle');
+  s+=Tx(180,566,'Where the waves overlap','cover-t')+Tx(182,594,'SITE PLAN · AN ARCHITECTURE OF LEARNING · SHEETS L-101 TO L-105','lt');
+  s+=Ci(902,560,14,'m')+Pa('M902 542L908 566L902 561L896 566Z','m')+Tx(902,592,'N','bub','middle');
+  return s},
+ dims:()=>`<line class="dim" x1="380" y1="300" x2="620" y2="300"/>`+Tx(500,292,'shared ground','dimt','middle'),
+ details:[
+  {x:380,y:300,n:'Source 1 · Physics',m:['laws we can feel','scooters, drones, runs'],t:'The first wave: physics taught through the body. Momentum on a scooter board, motion on a running track.'},
+  {x:620,y:300,n:'Source 2 · Computer Science',m:['data, models, code','our motion as numbers'],t:'The second wave: turning what we do into data, and data into graphs we can read and argue about.'},
+  {x:500,y:440,n:'Source 3 · TOK',m:['how do we know?','one question per sheet'],t:'The third wave: Theory of Knowledge. Every sheet in this set ends with a knowledge question.'},
+  {x:500,y:346,n:'Where they overlap',m:['constructive','interference'],t:'Where the three waves meet, the amplitude adds up. That is where the teacher stands, and where learning happens.'}]},
+{id:'I',tab:'I',no:'L-101',title:'Nothing to Explore',kind:'SECTION A',scale:'1 : 20',lvl:'∇ +0.00',time:'07:45',
+ n1l:'General note',n2l:'Knowledge question',note:'One wave with nothing to meet. Without students, there is nothing to explore.',kq:'Can knowledge exist if there is no one to share it with?',
+ art:o=>frame(o)+
+  Re(370,186,230,112,'f')+Tx(485,246,'(blank)','tx','middle')+
+  Re(680,182,118,150,'')+L(739,182,739,332,'f')+L(680,256,798,256,'f')+L(672,332,806,332)+
+  Ci(300,206,16,'f')+L(300,206,300,196,'f')+L(300,206,309,211,'f')+
+  Pa('M330 395H560L585 425H305Z')+L(315,425,315,470)+L(575,425,575,470)+L(560,395,560,418,'f')+
+  [640,710,780].map(x=>chair(x,372,.85)).join('')+[600,680,760].map(x=>chair(x,420,1)).join('')+
+  L(305,425,180,470,'f dash')+L(585,425,830,470,'f dash')+
+  Pa('M802 332L842 470','f dash')+Pa('M680 332L640 470','f dash')+
+  Ci(220,306,44,'f ripple')+`<circle class="s f ripple" cx="220" cy="306" r="44" style="animation-delay:1.8s"/>`+person(220,470,175,{teacher:1,pose:'clasp'}),
+ dims:()=>dimH(220,600,512,'3.80 m · to the nearest learner'),
+ details:[
+  {x:680,y:420,n:'Empty chair',m:['seat h 450 · load 0','designed for one'],t:'Seat height 450 mm, designed load: one student. Current load: zero. A room is drawn for the people who use it, and here they are missing.'},
+  {x:220,y:306,n:'A single source',m:['1 source · 0 echoes','amplitude, no pattern'],t:'One wave travelling outward with nothing to interfere with. However strong the teaching, without a learner there is no pattern, only amplitude.'},
+  {x:485,y:242,n:'The blank board',m:['no questions yet','nothing to answer'],t:'The board is clean because nobody has asked anything yet. Questions are what fill a classroom.'},
+  {x:739,y:256,n:'Daylight, 07:45',m:['07:45 · plan ready','room not yet a class'],t:'The lesson plan is ready before the room is. Preparation matters, but it only becomes teaching once someone walks in.'}]},
+{id:'II',tab:'II',no:'L-102',title:'The Recoil',kind:'SECTION B',scale:'1 : 5',lvl:'∇ +0.45',time:'10:05',
+ n1l:'General note',n2l:'Knowledge question',note:'She throws the ball forward and slides backward on the board, and the whole class steps in. Conservation of momentum stopped being a formula and became something we all felt.',kq:'When a law is felt in the body, do we know it differently?',
+ art:o=>{let s=frame(o);const ring=[];for(let i=0;i<9;i++){const a=Math.PI*(.1+.8*i/8),dep=Math.sin(a);ring.push({x:500-185*Math.cos(a),y:466-40*dep,h:146-40*dep,dep,i})}ring.sort((p,q)=>q.dep-p.dep).forEach(p=>{s+=person(p.x,p.y,p.h,{dir:p.x<500?1:-1,pose:['cheer','stand','clasp','raise','stand','cheer','clasp','stand','raise'][p.i],dress:p.i%2===0,hair:['long','short','bob','short','pony','short','long','short','bob'][p.i],mood:'happy'})})
+  s+=Re(236,451,98,7)+Ci(250,464,5.5)+Ci(285,464,5.5)+Ci(320,464,5.5);
+  s+=person(256,451,128,{pose:'board',dress:1,hair:'pony',mood:'happy'});
+  s+=Ci(520,410,15)+Pa('M506 403Q520 410 534 403M520 395V425','m')+L(455,410,481,410,'m dash marching')+L(420,410,446,410,'m dash');
+  s+=person(770,470,172,{teacher:1,pose:'reach',dir:-1,mood:'happy'})+L(800,350,846,343,'f')+L(800,362,852,357,'f');
+  s+=arrow(228,402,172,402,'m')+Tx(172,392,'v ≈ 0.07 m/s')+arrow(548,378,616,378,'m')+Tx(550,368,'v ≈ 5 m/s');
+  return s},
+ dims:()=>dimH(172,284,512,'p = −3.0 kg·m/s')+dimH(520,632,512,'p = +3.0 kg·m/s')+Tx(402,540,'Σp before = Σp after = 0','dimt','middle'),
+ details:[
+  {x:285,y:464,n:'Low-friction bearings',m:['μ ≈ 0','m₁v₁ + m₂v₂ = 0'],t:'With friction almost removed, the only story left is momentum. Her push on the ball is the ball’s push on her: m₁v₁ + m₂v₂ = 0.'},
+  {x:520,y:410,n:'The ball',m:['0.6 kg × 5 m/s','= 3.0 kg·m/s'],t:'A 0.6 kg ball at about 5 m/s carries 3.0 kg·m/s. She is about 45 kg, so she recoils at roughly 0.07 m/s. Small, but every student saw it.'},
+  {x:500,y:331,n:'The class steps in',m:['ring · 13 sightlines','no back row'],t:'The seating plan gave way to a ring. Everyone had a sightline, and everyone wanted a turn on the board.'},
+  {x:722,y:338,n:'The catch',m:['teacher recoils too','+2 cm'],t:'The teacher catches the ball and is pushed back a little as well. Nobody is outside the system, the teacher included.'}]},
+{id:'III',tab:'III',no:'L-103',title:'The Return',kind:'SECTION C',scale:'1 : 10',lvl:'∇ −0.20 → +1.00',time:'then → later',
+ n1l:'General note',n2l:'Knowledge question',note:'The tears on the left and the 100% on the right belong to the same girl. The line between them is the resilience we built together, and I’m proud of both.',kq:'How does failure become knowledge?',
+ art:o=>{let s=frame(Object.assign({lw:110},o));
+  s+=Re(222,262,62,208)+L(222,262,244,272,'f')+Ci(274,370,2.5,'m')+arrow(214,360,170,360,'m')+Tx(150,346,'out');
+  s+=person(352,470,138,{pose:'carry',dir:-1,dress:1,hair:'bob',mood:'sad'})+`<g transform="rotate(-10 334 412)">${Re(325,404,18,15)}${L(329,407,339,416,'m')}${L(339,407,329,416,'m')}</g>`;
+  s+=person(440,470,165,{teacher:1,dir:-1});
+  s+=L(500,104,500,512,'f dash')+Pa('M486 104H514L500 116Z','m')+Tx(522,112,'A','lt big')+Pa('M486 512H514L500 500Z','m')+Tx(522,512,'A′','lt big');
+  s+=`<path class="cut" d="M600 470V453H632V436H664V419H770V470Z"/>`;
+  s+=person(708,419,140,{pose:'raise',dress:1,hair:'bob',mood:'happy'})+`<rect class="bfp" x="679" y="232" width="58" height="30"/>`+Re(679,232,58,30)+Tx(708,252,'100%','tx ink','middle');
+  s+=Pa('M683 222A25 25 0 0 1 733 222','m')+L(708,192,708,184,'m')+L(675,200,670,194,'m')+L(741,200,746,194,'m');
+  s+=person(820,470,172,{teacher:1,pose:'reach',dir:-1,mood:'happy'});
+  return s},
+ dims:()=>level(560,470,'∇ −0.20')+level(742,419,'∇ +1.00')+dimV(856,419,470,'+1.20','end')+Tx(616,446,'3 risers × 17','dimt'),
+ details:[
+  {x:334,y:412,n:'The failed test',m:['folded twice','kept, not thrown away'],t:'Folded twice and taken home, not thrown away. The mark mattered less than what she decided to do with it.'},
+  {x:500,y:300,n:'Section A–A′',m:['not shown:','the weeks between'],t:'This cut leaves out the weeks in between: extra sessions, re-dos, small wins. A section shows what holds a building up.'},
+  {x:632,y:445,n:'Three risers',m:['built, not given','one step at a time'],t:'The rise from −0.20 to +1.00 is not a jump. It is three steps, and she climbed each one herself.'},
+  {x:708,y:247,n:'100%',m:['same hand','level +1.20'],t:'Same student, same handwriting. The paper she holds up is the same kind she once folded away.'}]},
+{id:'IV',tab:'IV',no:'L-104',title:'Out and About',kind:'ELEVATION D',scale:'1 : 50',lvl:'∇ +2.40',time:'13:10',
+ n1l:'General note',n2l:'Knowledge question',note:'We took the lesson outside. The drone recorded all of us running, and that recording was the point: tracker analysis of the footage, combined with the drone’s sensor telemetry, turned our own motion into a motion graph.',kq:'What changes when the data is our own movement?',
+ art:o=>{let s=frame(Object.assign({out:1},o));
+  for(let i=0;i<=8;i++){const x=200+i*70;s+=L(x,470,x,463,'m')+Tx(x,486,i*5,'bub','middle')}
+  s+=tree(160,470,1.1)+tree(850,470,.9);
+  s+=Ci(250,190,18)+[0,1,2,3,4,5,6,7].map(i=>{const a=i*Math.PI/4;return L(250+25*Math.cos(a),190+25*Math.sin(a),250+32*Math.cos(a),190+32*Math.sin(a))}).join('');
+  s+=L(462,302,478,302)+Re(467,299,6,6)+`<g class="rotor">${L(458,297,466,297)}</g><g class="rotor">${L(474,297,482,297)}</g>`+L(462,302,460,297,'f')+L(478,302,480,297,'f');
+  s+=L(470,306,472,444,'m dash marching');
+  s+=person(424,470,24,{pose:'run',hair:'short'})+person(446,470,25,{pose:'run',dress:1,hair:'long'})+person(470,470,26,{pose:'run',hair:'pony'})+L(400,456,414,456,'f')+L(398,461,412,461,'f');
+  s+=person(806,470,27,{teacher:1,pose:'hold'})+`<rect class="bfp" x="809" y="448" width="7" height="5"/>`+Re(809,448,7,5,'m');
+  s+=Re(600,156,236,150,'m')+Tx(612,174,'INSET 1 · x–t GRAPH','lt')+Tx(600,322,'tracker analysis + sensor telemetry');
+  for(let i=1;i<5;i++)s+=L(630+i*40,190,630+i*40,286,'f')+L(630,286-i*20,824,286-i*20,'f');
+  s+=L(630,190,630,286)+L(630,286,824,286)+Pa('M632 284C670 280 700 256 730 236S790 200 820 194')+Tx(616,192,'x','tx')+Tx(820,300,'t','tx');
+  s+=Pa('M780 306Q800 400 801 450','f dash');
+  return s},
+ dims:()=>dimH(200,480,512,'Δx = 20.0 m in 3.6 s · v ≈ 5.6 m/s')+dimV(500,302,470,'h = 12.0 m'),
+ details:[
+  {x:480,y:466,n:'Cones every 5.0 m',m:['Δx = 5.0 m','the track is the x-axis'],t:'The running track became the x-axis. Students placed the cones themselves, so they knew exactly what each mark meant.'},
+  {x:470,y:302,n:'The drone recording',m:['30 fps · h 12 m','+ sensor telemetry'],t:'The drone is the point of the lesson. It records the run from twelve metres up at thirty frames a second, while its sensors log position, height and time.'},
+  {x:458,y:452,n:'The runners',m:['all of us','teacher included'],t:'Drawn to scale, the people are tiny. Seen through the data, each of them has a line of their own on the graph.'},
+  {x:812,y:450,n:'The motion graph',m:['tracker + telemetry','slope = v'],t:'Tracker analysis follows each runner frame by frame, and the drone’s sensor telemetry fixes the distances and times. Together they give an x–t graph of our own motion: the steeper the line, the faster the run.'}]},
+{id:'V',tab:'V',no:'L-105',title:'Staying After',kind:'SECTION E',scale:'1 : 20',lvl:'∇ −0.60 → +3.00',time:'15:30 → 17:45',
+ n1l:'General note',n2l:'Knowledge question',note:'She came after school, lost, with an assessment the next day and big targets. I told her she could go home, or we could stay together until the concepts made sense. I’m here, and it’s your choice. She stayed, asked question after question, and left a different person.',kq:'Is resilience something we choose?',
+ art:o=>{let s=frame(o);
+  s+=Re(190,186,240,132)+Tx(206,216,'F = ma')+Tx(206,244,'p = mv')+Tx(206,272,'v = Δx/Δt')+Tx(206,300,'a = Δv/Δt')+Tx(340,216,'? → ✓')+Tx(340,244,'? → ✓')+Tx(340,272,'?? → ✓')+Tx(340,300,'? → ✓');
+  s+=Ci(560,200,17,'m')+L(560,200,560,188,'m')+L(560,200,570,207,'m')+Tx(560,234,'15:30 → 17:45','tx','middle');
+  s+=L(214,408,330,408)+L(222,408,222,470)+L(322,408,322,470)+L(178,440,226,440,'m')+L(184,440,184,470,'m')+L(220,440,220,470,'m')+L(184,440,180,392,'m');
+  s+=person(200,470,118,{pose:'sit',dress:1,hair:'long',sway:1,mood:'sad'});
+  s+=Tx(186,366,'?')+Tx(226,352,'?')+Tx(206,340,'?');
+  s+=person(446,470,172,{teacher:1,pose:'point',dir:-1})+Pa('M424 336Q330 318 252 372','m dash marching');
+  s+=Re(742,166,100,304)+L(742,166,706,182,'m dash')+L(706,182,706,470,'m dash')+Ci(752,330,3,'m');
+  s+=person(792,470,290,{pose:'walk',dress:1,hair:'long',sway:1,mood:'happy'});
+  for(let x=350;x<720;x+=26)s+=L(x,476,x+8,476,'f');
+  return s},
+ dims:()=>dimV(338,386,470,'')+Tx(338,378,'0.9 m (felt)','dimt','middle')+dimV(856,166,470,'')+Tx(850,156,'3.0 m (felt)','dimt','end'),
+ details:[
+  {x:206,y:392,n:'Height on arrival',m:['0.9 m (felt)','hope low, targets high'],t:'An assessment the next day, ambitious targets, and almost no hope left. She looked smaller than she was.'},
+  {x:446,y:309,n:'The choice',m:['“Who is stopping you?','I’m here.”'],t:'“Who is stopping you from asking questions and learning? I’m here.” She could head home for the evening, or we could stay and work through it together until the concepts made sense. I left the choice with her, and she chose to stay.'},
+  {x:360,y:258,n:'Questions asked',m:['Σ ? → ✓','each one, on the board'],t:'Question after question, each one worked through on the board until it made sense. The ticks are still there.'},
+  {x:792,y:199,n:'Height on leaving',m:['3.0 m (felt)','head at the door frame'],t:'Same girl, two hours later. Her head reaches the door frame: confident and ready for tomorrow.'}]}
+];
+function dimH(x1,x2,y,t){return `<line class="dim" x1="${x1}" y1="${y}" x2="${x2}" y2="${y}"/><line class="dim" x1="${x1}" y1="${y-7}" x2="${x1}" y2="${y+7}"/><line class="dim" x1="${x2}" y1="${y-7}" x2="${x2}" y2="${y+7}"/><line class="dim" x1="${x1-4}" y1="${y+4}" x2="${x1+4}" y2="${y-4}"/><line class="dim" x1="${x2-4}" y1="${y+4}" x2="${x2+4}" y2="${y-4}"/><text class="dimt" x="${(x1+x2)/2}" y="${y-7}" text-anchor="middle">${t}</text>`}
+function dimV(x,y1,y2,t,a='start'){return `<line class="dim" x1="${x}" y1="${y1}" x2="${x}" y2="${y2}"/><line class="dim" x1="${x-7}" y1="${y1}" x2="${x+7}" y2="${y1}"/><line class="dim" x1="${x-7}" y1="${y2}" x2="${x+7}" y2="${y2}"/><text class="dimt" x="${a==='start'?x+10:x-10}" y="${(y1+y2)/2+4}" text-anchor="${a}">${t}</text>`}
+function level(x,y,t){return `<path class="dim" d="M${x-6} ${y-11}h12l-6 11z"/><text class="dimt" x="${x+10}" y="${y-3}">${t}</text>`}
+
+/* ---------- state ---------- */
+const $=id=>document.getElementById(id),svg=$('svg'),reduce=matchMedia('(prefers-reduced-motion:reduce)').matches,ZS=[2,3.5,5];
+let cur=0,lx=500,ly=300,RL=95,Z=3.5,lensOn=true,dimsOn=false,active=-1;
+const tabs=$('tabs');
+SHEETS.forEach((s,i)=>{const b=document.createElement('button');b.textContent=s.tab;b.setAttribute('aria-label',s.no+' '+s.title);b.onclick=()=>go(i);tabs.appendChild(b)});
+
+function go(i,first){
+  cur=(i+SHEETS.length)%SHEETS.length;const S=SHEETS[cur],art=$('art');
+  art.innerHTML=S.art(S);$('dims').innerHTML=S.dims();
+  if(!reduce&&!first){art.querySelectorAll('.s:not(.dash):not(.grid):not(.prop)').forEach(e=>e.setAttribute('pathLength','1'));
+    art.classList.remove('drawin');void art.getBBox();art.classList.add('drawin');
+    clearTimeout(go.t);go.t=setTimeout(()=>{art.classList.remove('drawin');art.querySelectorAll('[pathLength]').forEach(e=>e.removeAttribute('pathLength'))},1900);
+    document.querySelectorAll('.strip .cell,.notes>div').forEach(e=>{e.classList.remove('fadein');void e.offsetWidth;e.classList.add('fadein')})}
+  $('pins').innerHTML=S.details.map((d,k)=>`<g><circle class="pinhit" data-k="${k}" cx="${d.x}" cy="${d.y}" r="16"/><circle class="pin" data-k="${k}" cx="${d.x}" cy="${d.y}" r="7"/><line class="dim" x1="${d.x-11}" y1="${d.y}" x2="${d.x+11}" y2="${d.y}"/><line class="dim" x1="${d.x}" y1="${d.y-11}" x2="${d.x}" y2="${d.y+11}"/></g>`).join('');
+  $('pins').querySelectorAll('.pinhit').forEach(p=>p.addEventListener('click',()=>{if(!lensOn)toggleLens();focusDetail(+p.dataset.k)}));
+  $('micro').innerHTML=S.details.map((d,k)=>{const y0=d.y+12.5;return `<path class="dim" d="M${d.x+5} ${d.y+5}L${d.x+8} ${y0-3.4}"/>`+`<text class="tiny r" x="${d.x}" y="${y0}" text-anchor="middle">D${k+1}</text>`+d.m.map((l,j)=>`<text class="tiny" x="${d.x}" y="${R1(y0+4.3*(j+1))}" text-anchor="middle">${l}</text>`).join('')}).join('');
+  $('ttl').textContent=S.no+' '+S.title+'. '+S.kind;
+  [...tabs.children].forEach((b,k)=>b.setAttribute('aria-current',k===cur));
+  $('count').textContent=S.no+'  ·  '+(cur===0?'cover':S.id+' / V');
+  $('meta').textContent='Scale '+S.scale.replace(/ /g,'')+'  ·  '+S.lvl;
+  $('caption').textContent=(cur===0?'':S.id+'. ')+S.title;$('lvl').textContent=S.lvl;$('time').textContent=S.time;
+  $('dscale').textContent=S.scale;$('dtime').textContent=S.time;$('dno').textContent=S.no;$('dof').textContent=(cur+1)+' of '+SHEETS.length;
+  $('bdl').innerHTML=S.details.map((d,k)=>`<li><button data-k="${k}"><b>D${k+1}</b>${d.n}</button></li>`).join('');
+  $('bdl').querySelectorAll('button').forEach(b=>b.onclick=()=>{if(!lensOn)toggleLens();focusDetail(+b.dataset.k)});
+  $('n1l').textContent=S.n1l;$('n2l').textContent=S.n2l;
+  if(cur===0){
+    $('n1').innerHTML='<p class="note" style="margin-bottom:14px">Teaching and learning as an art, told in five sheets. A teacher designs the room, but only students make it a place.</p><ul class="how"><li><b>∇ Level</b>: the student’s confidence above the datum.</li><li><b>Scale</b>: how closely each sheet looks.</li><li><b>⊕</b>: a detail.</li><li><b>↔</b>: a measurement that matters.</li></ul>';
+    $('n2').innerHTML='<table class="idx"><tbody>'+SHEETS.slice(1).map((s,k)=>`<tr><td>${s.no}</td><td><button data-i="${k+1}">${s.id}. ${s.title}</button></td><td>${s.scale.replace(/ /g,'')}</td></tr>`).join('')+'</tbody></table>';
+    $('n2').querySelectorAll('button').forEach(b=>b.onclick=()=>go(+b.dataset.i));
+  }else{$('n1').innerHTML='<p class="note"></p>';$('n1').firstChild.textContent=S.note;$('n2').innerHTML='<p class="kq"></p>';$('n2').firstChild.textContent=S.kq}
+  try{history.replaceState(null,'','#'+S.id)}catch(e){}
+  active=-9;focusDetail(cur===0?3:0,true)}
+
+function placeLens(x,y){
+  lx=Math.max(0,Math.min(1000,x));ly=Math.max(0,Math.min(620,y));
+  $('lcc').setAttribute('cx',lx);$('lcc').setAttribute('cy',ly);$('lcc').setAttribute('r',RL);
+  $('zoom').setAttribute('transform',`translate(${lx} ${ly}) scale(${Z}) translate(${-lx} ${-ly})`);
+  $('ringg').setAttribute('transform',`translate(${R1(lx)} ${R1(ly)})`);$('ring').setAttribute('r',RL);$('halo').setAttribute('r',RL+2);
+  let t='';for(let a=0;a<360;a+=10){const k=a%90===0?10:a%30===0?6:3,c=Math.cos(a*Math.PI/180),s=Math.sin(a*Math.PI/180);t+=`M${R1(c*RL)} ${R1(s*RL)}L${R1(c*(RL-k))} ${R1(s*(RL-k))}`}
+  $('ticks').setAttribute('d',t);$('cross').setAttribute('d','M-6 0H6M0 -6V6');
+  const rt=$('ringt');rt.textContent=Z+'×';rt.setAttribute('x',R1(RL*.72+4));rt.setAttribute('y',R1(-RL*.72));
+  const tag=$('tag');tag.setAttribute('y',ly+RL+16>612?-RL-9:RL+16);
+  const S=SHEETS[cur];let best=-1,bd=1e9;S.details.forEach((d,k)=>{const q=Math.hypot(d.x-lx,d.y-ly);if(q<bd){bd=q;best=k}});
+  setActive(bd<Math.max(18,RL/Z*1.4)?best:-1)}
+function setActive(k){if(k===active)return;active=k;const S=SHEETS[cur];
+  $('pins').querySelectorAll('.pin').forEach(p=>p.classList.toggle('on',+p.dataset.k===k));
+  $('bdl').querySelectorAll('button').forEach(b=>b.setAttribute('aria-current',+b.dataset.k===k));
+  if(k<0){$('rk').textContent=S.no+'  ·  '+S.kind;$('rh').textContent=S.title;$('rp').textContent=S.details.length+' details on this sheet.';$('tag').textContent=''}
+  else{const d=S.details[k];$('rk').textContent='DETAIL '+(k+1)+' / '+S.details.length+'  ·  '+S.no;$('rh').textContent=d.n;$('rp').textContent=d.t;$('tag').textContent='D'+(k+1)+' · '+d.n.toUpperCase()}}
+function focusDetail(k,quiet){const d=SHEETS[cur].details[k];if(!d)return;
+  if(quiet||reduce){placeLens(d.x,d.y);return}
+  const sx=lx,sy=ly,t0=performance.now(),step=n=>{const u=Math.min(1,(n-t0)/450),e=u*u*(3-2*u);placeLens(sx+(d.x-sx)*e,sy+(d.y-sy)*e);if(u<1)requestAnimationFrame(step)};requestAnimationFrame(step)}
+function sizeLens(){const w=svg.getBoundingClientRect().width||1000;RL=Math.max(70,Math.min(120,(w<600?54:108)*1000/w));placeLens(lx,ly)}
+function toSvg(e){const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse())}
+function track(e){if(!lensOn)return;const q=toSvg(e);placeLens(q.x,q.y-(e.pointerType==='touch'?RL*.85:0))}
+svg.addEventListener('pointermove',track);svg.addEventListener('pointerdown',track);
+function toggleLens(){lensOn=!lensOn;$('bLens').setAttribute('aria-pressed',lensOn);$('lens').style.display=lensOn?'':'none';svg.classList.toggle('lensing',lensOn);active=-9;placeLens(lx,ly)}
+$('bLens').onclick=toggleLens;svg.classList.add('lensing');
+$('bZoom').onclick=()=>{Z=ZS[(ZS.indexOf(Z)+1)%ZS.length];$('bZoom').textContent=Z+'×';if(!lensOn)toggleLens();active=-9;placeLens(lx,ly)};
+$('bDims').onclick=()=>{dimsOn=!dimsOn;$('bDims').setAttribute('aria-pressed',dimsOn);$('dims').hidden=!dimsOn};
+$('bNext').onclick=()=>{if(!lensOn)toggleLens();focusDetail(((active<0?-1:active)+1)%SHEETS[cur].details.length)};
+$('prev').onclick=()=>go(cur-1);$('next').onclick=()=>go(cur+1);
+addEventListener('keydown',e=>{if(e.altKey||e.ctrlKey||e.metaKey)return;if(e.key==='ArrowRight')go(cur+1);else if(e.key==='ArrowLeft')go(cur-1)});
+addEventListener('resize',sizeLens);
+const h=(location.hash||'').slice(1).toLowerCase(),start=Math.max(0,SHEETS.findIndex(s=>s.id.toLowerCase()===h));
+go(start,true);sizeLens();focusDetail(start===0?3:0,true);
+</script>
+
+</body>
+</html>

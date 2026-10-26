@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Geometry of Learning v1</title>
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<style>
+/* Layout: the original atlas, kept: a dark drafting board beside a paper plate, a floor of five plate
+   buttons, then plate notes. Five moments from one classroom, each drawn as one geometric idea. */
+:root{
+  --paper:#efecdf; --paper2:#e8e2d2; --card:#f7f4e9; --ink:#23241f; --muted:#757569; --stroke:#b6b3a2;
+  --yellow:#e4c447; --hl-ink:#191a17;
+  --canvas:#141714; --artline:#e7e7d8; --ghost:#6b7069; --accent:#f0ce43; --hair:#e8894a; --shade:#0006;
+  --serif:Georgia,'Times New Roman',serif; --mono:Consolas,ui-monospace,'SFMono-Regular',Menlo,monospace; --sans:Arial,Helvetica,sans-serif;
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#191a16; --paper2:#20211c; --card:#1f201b; --ink:#ebe8da; --muted:#a09f90; --stroke:#3f4036;
+  --yellow:#d9b93c; --canvas:#0f110e; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#191a16; --paper2:#20211c; --card:#1f201b; --ink:#ebe8da; --muted:#a09f90; --stroke:#3f4036;
+  --yellow:#d9b93c; --canvas:#0f110e; color-scheme:dark}
+body.mono{--yellow:#c9c8bf;--accent:#f4f4ec;--hair:#c4c4ba}
+
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--yellow);outline-offset:4px}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--yellow);color:var(--hl-ink)}
+.layout{max-width:1820px;margin:0 auto}
+.gut{padding-left:max(clamp(16px,3vw,55px),env(safe-area-inset-left,0px));padding-right:max(clamp(16px,3vw,55px),env(safe-area-inset-right,0px))}
+.meta{font:10px/1.5 var(--mono);letter-spacing:.11em;text-transform:uppercase;color:var(--muted)}
+
+.top{min-height:84px;border-bottom:1px solid var(--stroke);display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:24px;padding-block:10px}
+.brand{display:flex;align-items:center;gap:15px}
+.brandglyph{width:40px;height:40px;border:1px solid var(--ink);border-radius:50%;display:grid;place-items:center;position:relative;font:20px var(--serif);flex:none}
+.brandglyph::after{content:'';height:46px;border-left:1px solid var(--ink);position:absolute;transform:rotate(44deg)}
+.brandtext{font-size:10px;letter-spacing:.21em;line-height:1.65;font-weight:700}
+.brandtext span{display:block;color:var(--muted);font-size:9px;font-weight:400}
+.top-nav{display:flex;gap:4px;align-items:center}
+.top-nav button{width:46px;height:36px;background:none;border:0;color:var(--muted);font:11px var(--mono);letter-spacing:.08em;position:relative}
+.top-nav button::after{content:'';position:absolute;left:8px;right:8px;bottom:2px;height:1px}
+.top-nav button[aria-current="true"]{color:var(--ink)}.top-nav button[aria-current="true"]::after{background:var(--ink)}
+.top-right{display:flex;gap:26px;align-items:center;justify-content:flex-end}
+.themebutton{background:none;border:1px solid var(--stroke);padding:9px 12px;font:10px var(--mono);letter-spacing:.08em}
+
+.masthead{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding-block:30px 20px}
+.eyebrow{font:10px var(--mono);letter-spacing:.2em;color:var(--muted)}
+.masthead h1{font:italic 43px/1 var(--serif);letter-spacing:-.05em;margin:8px 0 0;font-weight:400}
+.mast-right{max-width:330px;text-align:right;font:italic 13px/1.55 var(--serif);color:var(--muted)}
+
+.showcase{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(355px,.85fr)}
+.artside{background:var(--canvas);color:var(--artline);min-width:0;position:relative;display:flex;flex-direction:column;min-height:min(66vh,700px);overflow:hidden}
+.arthead{position:absolute;z-index:5;left:22px;right:22px;top:21px;display:flex;justify-content:space-between;gap:15px;pointer-events:none}
+.arthead span{font:9px/1.5 var(--mono);letter-spacing:.16em;opacity:.72}
+.arthead span:last-child{text-align:right}
+.artboard{flex:1;position:relative;min-height:480px}
+.scene-svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.artfoot{position:absolute;bottom:20px;left:25px;right:25px;display:flex;justify-content:space-between;gap:20px;align-items:flex-end;z-index:5;pointer-events:none}
+.artfoot span{font:9px/1.5 var(--mono);letter-spacing:.12em;opacity:.65}
+.artfoot .art-index{font:italic 31px var(--serif);opacity:1;letter-spacing:-.03em}
+.signal-note{position:absolute;right:28px;bottom:70px;z-index:8;max-width:330px;width:calc(100% - 54px);background:var(--card);color:var(--ink);box-shadow:0 18px 55px var(--shade);padding:20px 26px 23px;opacity:0;transform:translateY(8px);pointer-events:none;transition:opacity .2s,transform .2s}
+.signal-note.show{opacity:1;transform:none;pointer-events:auto}
+.signal-note .label{font:9px var(--mono);letter-spacing:.15em;color:var(--muted)}
+.signal-note h3{font:italic 23px/1.07 var(--serif);letter-spacing:-.04em;margin:12px 0 9px;font-weight:400}
+.signal-note p{font:14px/1.5 var(--serif);margin:0}
+.close-note{position:absolute;right:11px;top:9px;border:0;background:none;font-size:21px}
+
+.plate-right{border:1px solid var(--stroke);border-left:0;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(27px,3.25vw,58px);background:var(--card);min-height:min(66vh,700px);min-width:0}
+.chapter-num{display:flex;justify-content:space-between;align-items:start;gap:10px}
+.chapter-num .no{font:11px var(--mono);letter-spacing:.17em}
+.chapter-num .code{font:10px var(--mono);color:var(--muted);letter-spacing:.09em;text-align:right}
+.headline-box{margin:auto 0;padding:54px 0 30px}
+.plate-right h2{font:400 clamp(58px,6.4vw,118px)/.84 var(--serif);letter-spacing:-.075em;margin:0;text-wrap:balance}
+.plate-right h2 em{color:var(--muted)}
+.plate-right h2 span{display:block}
+.one-line{max-width:420px;font:italic clamp(19px,1.8vw,27px)/1.2 var(--serif);letter-spacing:-.025em;margin:32px 0 0}
+.plate-bottom{border-top:1px solid var(--stroke);padding-top:20px;display:flex;justify-content:space-between;gap:18px;align-items:flex-end}
+.plate-bottom .micro{font:10px/1.6 var(--mono);color:var(--muted);letter-spacing:.12em}
+.next-scene{border:1px solid var(--ink);width:62px;height:62px;border-radius:50%;background:transparent;font-size:25px;flex:none;transition:.2s}
+.next-scene:hover{background:var(--ink);color:var(--paper)}
+
+.floor{padding-block:24px 0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}
+.floor-button{min-height:113px;background:none;border:0;border-top:1px solid var(--stroke);border-right:1px solid var(--stroke);text-align:left;padding:22px 20px 18px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;transition:background .2s,color .2s;min-width:0}
+.floor-button:first-child{border-left:1px solid var(--stroke)}
+.floor-button.current,.floor-button:hover{background:var(--yellow);color:var(--hl-ink)}
+.floor-number{font:10px var(--mono);letter-spacing:.14em;margin-bottom:16px}
+.floor-label{font:italic 24px/1 var(--serif);letter-spacing:-.04em}
+.floor-button svg{width:50px;height:50px;opacity:.65;flex:none}
+
+.notes{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) minmax(0,1fr);border:1px solid var(--stroke);border-top:0;margin-inline:max(clamp(16px,3vw,55px),env(safe-area-inset-left,0px)) max(clamp(16px,3vw,55px),env(safe-area-inset-right,0px))}
+.notes>div{padding:24px 24px 28px;min-width:0;display:flex;flex-direction:column;gap:12px}
+.notes>div+div{border-left:1px solid var(--stroke)}
+.notes .reflection{font:17px/1.6 var(--serif);margin:0;max-width:62ch}
+.notes .kq{font:italic 24px/1.25 var(--serif);letter-spacing:-.025em;margin:0}
+.siglist{list-style:none;margin:0;padding:0;display:grid}
+.siglist button{display:flex;gap:12px;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--stroke);padding:9px 0;font:italic 17px var(--serif)}
+.siglist button b{font:normal 10px var(--mono);letter-spacing:.12em;color:var(--muted);padding-top:4px;min-width:2.4em}
+.siglist button:hover,.siglist button[aria-current="true"]{color:var(--ink);background:linear-gradient(transparent 80%,var(--yellow) 80%)}
+
+.epilogue{min-height:300px;margin-top:62px;display:grid;grid-template-columns:1fr 1fr;gap:30px}
+.epilogue>div:first-child{border-top:1px solid var(--ink);padding-top:25px}
+.epilogue .right{border-top:1px solid var(--ink);padding-top:25px;font:italic clamp(40px,5vw,84px)/.98 var(--serif);letter-spacing:-.06em;max-width:760px}
+.epilogue .right em{font-style:normal;background:linear-gradient(transparent 80%,var(--yellow) 80%)}
+.bottom{padding-block:0 30px}
+.bottom>div{border-top:1px solid var(--stroke);padding-top:23px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:15px 30px;align-items:center}
+.bottom small{font:10px/1.7 var(--mono);letter-spacing:.12em;color:var(--muted)}
+.bottom a{font:10px var(--mono);text-decoration:underline;text-underline-offset:5px;letter-spacing:.08em}
+.bottom .eds{display:flex;flex-wrap:wrap;gap:8px 18px}
+
+/* drafting vocabulary */
+.scene-svg .fine{fill:none;stroke:var(--artline);stroke-width:1.25;stroke-linecap:round;stroke-linejoin:round}
+.scene-svg .faint{fill:none;stroke:var(--ghost);stroke-width:1;stroke-linecap:round;stroke-linejoin:round}
+.scene-svg .strong{fill:none;stroke:var(--artline);stroke-width:2.6;stroke-linejoin:round}
+.scene-svg .gold{fill:none;stroke:var(--accent);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.scene-svg .cut{fill:url(#hatch);stroke:var(--artline);stroke-width:1.4}
+.scene-svg .body{fill:var(--canvas)}
+.scene-svg .goldfill{fill:var(--accent);stroke:none}
+.scene-svg .pale{fill:var(--artline)}
+.scene-svg .hair{fill:none;stroke:var(--hair);stroke-width:1.6;stroke-linecap:round}
+.scene-svg .hatch{stroke:var(--ghost);stroke-width:.8;opacity:.5}
+.scene-svg .small-label{fill:var(--ghost);font:10px var(--mono);letter-spacing:2px}
+.scene-svg .big-label{fill:var(--artline);font:11px var(--mono);letter-spacing:2px}
+.scene-svg .gold-label{fill:var(--accent);font:10px var(--mono);letter-spacing:1.5px}
+.scene-svg .gold-big{fill:var(--accent);font:italic 18px var(--serif)}
+.scene-svg .dashed{stroke-dasharray:5 9}
+.scene-svg .flowline{stroke-dasharray:5 18;animation:flow 16s linear infinite}
+.scene-svg .breath{animation:breath 3.4s ease-in-out infinite}
+.scene-svg .draw{stroke-dasharray:250;animation:drawloop 8s linear infinite alternate}
+.scene-svg .ripple{transform-box:fill-box;transform-origin:center;animation:ripple 4.2s ease-out infinite}
+.scene-svg .rotor{transform-box:fill-box;transform-origin:center;animation:rotor .14s linear infinite alternate}
+.scene-svg .sway{transform-box:fill-box;transform-origin:50% 0;animation:sway 3.4s ease-in-out infinite}
+.scene-svg .hotspot{cursor:pointer}
+.scene-svg .hotspot .hot-ring{fill:var(--canvas);stroke:var(--accent);stroke-width:1.5;opacity:.94;transition:fill .2s}
+.scene-svg .hotspot .hot-text{font:10px var(--mono);fill:var(--accent);pointer-events:none}
+.scene-svg .hotspot:hover .hot-ring,.scene-svg .hotspot.active .hot-ring{fill:var(--accent)}
+.scene-svg .hotspot:hover .hot-text,.scene-svg .hotspot.active .hot-text{fill:var(--canvas)}
+.scene-svg .hotspot:focus{outline:none}.scene-svg .hotspot:focus-visible .hot-ring{stroke-width:4}
+.scene-svg.drawin .dl{stroke-dasharray:1;stroke-dashoffset:1;animation:drawin 1.5s cubic-bezier(.3,.6,.2,1) forwards}
+@keyframes drawin{to{stroke-dashoffset:0}}
+@keyframes breath{0%,100%{opacity:.45}50%{opacity:1}}
+@keyframes flow{to{stroke-dashoffset:-180}}
+@keyframes drawloop{to{stroke-dashoffset:250}}
+@keyframes ripple{from{transform:scale(.15);opacity:.9}to{transform:scale(1);opacity:0}}
+@keyframes rotor{to{transform:scaleX(.35)}}
+@keyframes sway{50%{transform:rotate(4deg)}}
+
+@media(max-width:1200px){.showcase{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr)}.artboard{min-height:430px}.floor-label{font-size:20px}.floor-button svg{width:40px;height:40px}}
+@media(max-width:900px){
+  .top{grid-template-columns:1fr auto}.top-nav{grid-column:1/-1;grid-row:2;justify-content:center}.top-right .meta{display:none}
+  .mast-right{display:none}.masthead h1{font-size:37px}
+  .showcase{display:flex;flex-direction:column}.artside{min-height:0}.artboard{min-height:0;height:clamp(340px,64vw,660px);flex:none}
+  .plate-right{border-left:1px solid var(--stroke);min-height:0;padding:28px}.headline-box{padding:26px 0 24px}
+  .floor{grid-template-columns:repeat(6,minmax(0,1fr))}.floor-button{grid-column:span 2}.floor-button:nth-child(n+4){grid-column:span 3}.floor-button:nth-child(4){border-left:1px solid var(--stroke)}
+  .notes{grid-template-columns:minmax(0,1fr)}.notes>div+div{border-left:0;border-top:1px solid var(--stroke)}
+  .epilogue{grid-template-columns:1fr;min-height:0}.epilogue>div:first-child{border-top:0;padding-top:0}
+  .signal-note{max-width:300px}
+}
+@media(max-width:560px){
+  .brandtext{letter-spacing:.1em}.brandtext span{font-size:8px}.themebutton{padding:8px;font-size:9px}
+  .masthead h1{font-size:32px}.artboard{height:auto;aspect-ratio:1100/760}
+  .arthead{left:11px;right:11px;top:10px}.arthead span{font-size:7px}.artfoot{left:12px;right:12px;bottom:9px}.artfoot span{font-size:7px}.artfoot .art-index{font-size:22px}
+  .plate-right{padding:22px}.plate-right h2{font-size:clamp(46px,14vw,64px)}.one-line{font-size:19px;margin-top:20px}.next-scene{width:46px;height:46px;font-size:21px}
+  .floor{grid-template-columns:minmax(0,1fr)}.floor-button,.floor-button:nth-child(n+4){grid-column:auto;border-left:1px solid var(--stroke);min-height:0;padding:14px 16px}
+  .floor-number{margin-bottom:8px}.floor-label{font-size:19px}.floor-button svg{width:30px;height:30px}
+  .notes .kq{font-size:21px}.epilogue .right{font-size:44px}
+  .signal-note{right:10px;bottom:38px;padding:16px;width:calc(100% - 20px)}.signal-note h3{font-size:19px}.signal-note p{font-size:13px}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+</style>
+
+<div class="layout">
+<header class="top gut"><div class="brand"><div class="brandglyph" aria-hidden="true">∿</div><div class="brandtext">THE GEOMETRY OF LEARNING <span>VERSION 1 · AN ATLAS IN FIVE PLATES / 001—005</span></div></div>
+<nav class="top-nav" id="topNav" aria-label="Plates"></nav>
+<div class="top-right"><span class="meta">DRAWN, NOT TOLD</span><button class="themebutton" id="themeSwitch" type="button" aria-pressed="false">◐ GOLD / GRAPHITE</button></div></header>
+<div class="masthead gut"><div><div class="eyebrow">FIVE MOMENTS FROM ONE CLASSROOM, DRAWN AS GEOMETRY</div><h1>Learning as architecture.</h1></div><div class="mast-right">Teaching begins when the conditions of discovery are designed.</div></div>
+<main>
+<section class="showcase gut" aria-label="Plates">
+<div class="artside"><div class="arthead"><span id="artplate"></span><span>OBSERVATION / MOVEMENT / POSSIBILITY<br>1 : ∞ &nbsp;·&nbsp; EXPERIMENTAL ATLAS</span></div><div class="artboard" id="artboard"></div>
+<div class="artfoot"><span class="art-index" id="artindex"></span><span id="artcoordinates"></span></div>
+<div class="signal-note" id="signalNote" role="status" aria-live="polite"><button type="button" class="close-note" id="closeNote" aria-label="Close signal">×</button><div class="label" id="noteIndex"></div><h3 id="noteTitle"></h3><p id="noteBody"></p></div>
+</div>
+<div class="plate-right"><div class="chapter-num"><span class="no" id="chapNumber"></span><span class="code" id="chapCode"></span></div><div class="headline-box"><h2 id="headline"></h2><p class="one-line" id="oneLine"></p></div><div class="plate-bottom"><div class="micro" id="prompt"></div><button type="button" id="nextScene" class="next-scene" aria-label="Next plate">↗</button></div></div>
+</section>
+<div class="floor gut" id="floor"></div>
+<section class="notes" aria-label="Plate notes" aria-live="polite">
+<div><span class="meta">Reflection</span><p class="reflection" id="nReflection"></p></div>
+<div><span class="meta">Knowledge question</span><p class="kq" id="nKq"></p></div>
+<div><span class="meta">Signals in this plate</span><ul class="siglist" id="nSignals"></ul></div>
+</section>
+<section class="epilogue gut"><div class="meta">AFTER FIVE EXPERIMENTS<br>THE QUESTION REMAINS</div><div class="right">We do not give students a world to remember. We create the <em>conditions</em> to discover one.</div></section>
+</main>
+<footer class="bottom gut"><div><small>PHYSICS · COMPUTER SCIENCE · THEORY OF KNOWLEDGE<br>WHERE THE WAVES OVERLAP, LEARNING HAPPENS.</small>
+<span class="eds"><a href="index.html">GEOMETRY · VERSION 2 ↗</a><a href="notebook.html">NOTEBOOK ↗</a><a href="drawing-set.html">DRAWING SET ↗</a><a href="archive.html">ARCHIVE ↗</a><a href="8bit.html">8-BIT ↗</a></span>
+<a href="#" id="backToTop">RETURN TO THE BEGINNING ↑</a></div></footer>
+</div>
+
+<script>
+const $=id=>document.getElementById(id),R=n=>Math.round(n*10)/10;
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const defs=`<defs><pattern id="hatch" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(35)"><path d="M0 0V8" class="hatch"/></pattern><pattern id="dots" width="26" height="26" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".8" fill="var(--ghost)" opacity=".4"/></pattern><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0L7 4L0 8" fill="none" stroke="var(--accent)" stroke-width="1.4"/></marker></defs>`;
+const common=`<rect width="1100" height="720" fill="url(#dots)" opacity=".34"/><rect x="84" y="92" width="925" height="536" class="faint" opacity=".5"/><path class="faint" stroke-dasharray="2 10" d="M84 360H1009M548 92V628" opacity=".3"/><path class="faint" d="M84 106v-14h15M994 92h15v15M84 615v13h15M994 628h15v-15"/><text class="small-label" x="102" y="110">0.00 / DATUM</text><text class="small-label" x="905" y="620">Y+00.00</text>`;
+const room=(o={})=>`<rect x="100" y="118" width="20" height="470" class="cut"/><rect x="980" y="118" width="20" height="470" class="cut"/>${o.noCeil?'':'<rect x="100" y="118" width="900" height="22" class="cut"/>'}<rect x="100" y="566" width="900" height="22" class="cut"/>`;
+const lvl=(y,t)=>`<path class="faint" d="M1009 ${y}h12"/><text class="small-label" x="1024" y="${y+4}">${t}</text>`;
+
+/* drafting figures: joints in body-heights, u across (+ = facing side), v up from the feet */
+const BASE={hd:[0,.935],nk:[0,.85],sL:[-.085,.82],sR:[.085,.82],wL:[-.058,.6],wR:[.058,.6],pL:[-.068,.47],pR:[.068,.47],
+  hipL:[-.036,.46],hipR:[.036,.46],eL:[-.1,.64],hL:[-.094,.47],eR:[.1,.64],hR:[.094,.47],kL:[-.042,.26],aL:[-.048,.035],kR:[.042,.26],aR:[.048,.035]};
+const POSES={stand:{},
+  clasp:{eL:[-.09,.64],hL:[.01,.55],eR:[.09,.64],hR:[.02,.56]},
+  reach:{eL:[.11,.72],hL:[.25,.73],eR:[.15,.75],hR:[.29,.78]},
+  point:{eR:[.15,.93],hR:[.25,1.03],eL:[-.08,.64],hL:[-.04,.48]},
+  raise:{eL:[-.12,.98],hL:[-.075,1.12],eR:[.12,.98],hR:[.075,1.12]},
+  cheer:{eR:[.13,.97],hR:[.16,1.1]},
+  hold:{eR:[.1,.63],hR:[.2,.69],eL:[-.01,.61],hL:[.16,.66]},
+  carry:{eR:[.1,.63],hR:[.13,.48],eL:[-.07,.64],hL:[-.02,.5],hd:[.03,.92]},
+  walk:{kL:[-.06,.26],aL:[-.13,.035],kR:[.1,.27],aR:[.15,.035],eL:[-.06,.64],hL:[-.12,.5],eR:[.08,.64],hR:[.14,.5]},
+  run:{hd:[.06,.925],nk:[.05,.84],sL:[-.03,.81],sR:[.12,.81],wL:[-.03,.6],wR:[.09,.6],kR:[.17,.33],aR:[.12,.1],kL:[-.07,.24],aL:[-.2,.12],eR:[.18,.68],hR:[.25,.79],eL:[-.06,.66],hL:[-.14,.56]},
+  sit:{hd:[.03,.665],nk:[.02,.585],sL:[-.07,.55],sR:[.1,.55],wL:[-.055,.37],wR:[.065,.37],pL:[-.065,.26],pR:[.07,.26],hipL:[-.03,.25],hipR:[.03,.25],kL:[.2,.26],kR:[.22,.27],aL:[.2,.035],aR:[.23,.035],eL:[.05,.39],hL:[.2,.43],eR:[.09,.4],hR:[.23,.44]},
+  board:{hd:[.02,.47],nk:[.01,.39],sL:[-.075,.355],sR:[.09,.355],wL:[-.055,.17],wR:[.06,.17],pL:[-.065,.06],pR:[.065,.06],hipL:[-.03,.06],hipR:[.03,.06],kL:[.15,.18],kR:[.17,.19],aL:[.3,.04],aR:[.32,.04],eL:[.12,.38],hL:[.24,.44],eR:[.14,.4],hR:[.27,.47]}};
+function fig(x,y,h,o={}){
+  const d=o.dir||1,J=Object.assign({},BASE,POSES[o.pose||'stand']),sat=o.pose==='sit'||o.pose==='board';
+  const X=p=>R(x+d*p[0]*h),Y=p=>R(y-p[1]*h),P=p=>X(p)+' '+Y(p),add=(a,b)=>[a[0]+b[0],a[1]+b[1]];
+  const k=o.faint?'faint':'fine',ks=o.faint?'faint':'strong',hd=J.hd;
+  const leg=(hp,kn,an)=>`<path class="${k}" d="M${P(hp)}L${P(kn)}L${P(an)}M${P(an)}l${R(d*.055*h)} 0"/>`;
+  const arm=(s,e,hn)=>`<path class="${k}" d="M${P(s)}L${P(e)}L${P(hn)}"/><circle class="${k} body" cx="${X(hn)}" cy="${Y(hn)}" r="${R(Math.max(1.2,.012*h))}"/>`;
+  let s=arm(J.sL,J.eL,J.hL)+leg(J.hipL,J.kL,J.aL)+leg(J.hipR,J.kR,J.aR);
+  s+=`<path class="${ks} body" d="M${[J.sL,J.sR,J.wR,J.pR,J.pL,J.wL].map(P).join('L')}Z"/>`;
+  if(o.dress){const sk=sat?[J.wL,J.wR,add(J.kR,[.02,.035]),add(J.kR,[.02,-.035]),add(J.pL,[0,-.03])]:[J.wL,J.wR,[.13,.31],[-.13,.31]];s+=`<path class="${k} body" d="M${sk.map(P).join('L')}Z"/>`}
+  else if(!sat)s+=`<path class="${k}" d="M${P(J.wL)}L${P(J.wR)}"/>`;
+  s+=`<path class="${k}" d="M${P(J.nk)}L${P(add(hd,[0,-.055]))}"/>`;
+  s+=`<ellipse class="${k} body" cx="${X(hd)}" cy="${Y(hd)}" rx="${R(.052*h)}" ry="${R(.066*h)}"/>`;
+  const hw=R(Math.max(1,.0055*h)),hc=o.faint?'faint':'hair';
+  if(o.hair==='long'){let hs='';for(let i=-3;i<=3;i++){const sd=i<0?-1:i>0?1:-1,ai=Math.abs(i);
+      hs+=`<path class="${hc}" stroke-width="${hw}" d="M${P(add(hd,[i*.011,.062-ai*.004]))}Q${P(add(hd,[sd*(.088+ai*.004),-.01]))} ${P(add(hd,[sd*(.064+ai*.012),-.2-ai*.012]))}"/>`}
+    s+=`<g class="${o.sway?'sway':''}">${hs}</g>`}
+  else if(o.hair==='bob')s+=`<path class="${hc}" stroke-width="${hw}" d="M${P(add(hd,[-.056,-.05]))}L${P(add(hd,[-.056,.005]))}Q${P(add(hd,[0,.105]))} ${P(add(hd,[.056,.005]))}L${P(add(hd,[.056,-.05]))}"/>`;
+  else if(o.hair==='pony')s+=`<path class="${hc}" stroke-width="${hw}" d="M${P(add(hd,[-.054,.01]))}Q${P(add(hd,[0,.1]))} ${P(add(hd,[.054,.01]))}M${P(add(hd,[-.045,.035]))}Q${P(add(hd,[-.12,.02]))} ${P(add(hd,[-.11,-.09]))}"/>`;
+  if(o.teacher){const b=add(J.nk,[0,-.015]),w=R(.022*h),v=R(.013*h);s+=`<path class="goldfill" d="M${P(b)}l${R(-d*w)} ${-v}v${2*v}zM${P(b)}l${R(d*w)} ${-v}v${2*v}z"/>`}
+  s+=arm(J.sR,J.eR,J.hR);
+  return `<g>${s}</g>`}
+const chair=(x,y,s)=>`<path class="fine" d="M${x} ${y-50*s}V${y+40*s}M${x} ${y}H${x+38*s}V${y+40*s}"/>`;
+
+/* ---------- the five plates ---------- */
+function sceneI(){let s=common+room();
+  s+=`<rect x="560" y="182" width="330" height="150" class="fine"/><text class="small-label" x="578" y="206">BOARD / BLANK</text><path class="fine" d="M552 340h346"/>`;
+  s+=`<circle cx="470" cy="214" r="22" class="fine"/><path class="fine" d="M470 214h-16M470 214l-9 6"/><text class="small-label" x="447" y="258">07:45</text>`;
+  [640,712,784,856].forEach(x=>{s+=chair(x,500,.8)+`<circle cx="${x+15}" cy="450" r="9" class="faint" stroke-dasharray="2 4"/>`});
+  [604,684,764,844].forEach(x=>{s+=chair(x,526,1)+`<circle cx="${x+19}" cy="464" r="11" class="faint" stroke-dasharray="2 4"/>`});
+  s+=`<circle cx="300" cy="430" r="60" class="faint" stroke-dasharray="2 8"/><circle cx="300" cy="430" r="112" class="faint" stroke-dasharray="2 8"/>`;
+  [0,-1.4,-2.8].forEach(dl=>s+=`<circle cx="300" cy="430" r="200" class="gold ripple" style="animation-delay:${dl}s"/>`);
+  s+=`<path class="gold flowline" d="M345 400H955" marker-end="url(#arr)"/><text class="small-label" x="600" y="388">ONE SOURCE / ZERO RECEIVERS</text>`;
+  s+=fig(300,566,195,{teacher:1,pose:'clasp'});
+  return s+`<text class="big-label" x="141" y="618">THE EMPTY ROOM</text>`+lvl(563,'∇ +0.00')}
+function sceneII(){let s=common+room();
+  [200,250,300].forEach(r=>s+=`<path class="faint" d="M${550-r} 470A${r} ${R(r*.6)} 0 0 1 ${550+r} 470" opacity=".45"/>`);
+  const ring=[];for(let i=0;i<9;i++){const t=Math.PI*(.12+.76*i/8),sn=Math.sin(t);ring.push({x:550-260*Math.cos(t),y:520-34*sn,h:118-20*sn,sn,i})}
+  ring.sort((a,b)=>b.sn-a.sn).forEach(p=>s+=fig(R(p.x),R(p.y),R(p.h),{faint:1,dir:p.x<550?1:-1,pose:['cheer','stand','clasp','raise','stand','cheer','clasp','stand','raise'][p.i],dress:p.i%2===0,hair:['long','bob','pony','bob','long','pony','bob','long','pony'][p.i]}));
+  s+=`<rect x="158" y="538" width="112" height="9" class="strong body"/><circle cx="176" cy="556" r="8" class="fine"/><circle cx="252" cy="556" r="8" class="fine"/>`;
+  s+=fig(200,538,150,{pose:'board',dress:1,hair:'pony'});
+  s+=`<path class="gold flowline" d="M244 466Q520 140 795 418"/><circle cx="520" cy="291" r="13" class="faint"/>`;
+  s+=reduced?`<circle cx="520" cy="291" r="13" class="goldfill"/>`:`<circle r="13" class="goldfill"><animateMotion dur="3.4s" repeatCount="indefinite" path="M244 466Q520 140 795 418"/></circle>`;
+  s+=fig(850,566,195,{teacher:1,pose:'reach',dir:-1});
+  s+=`<path class="gold" d="M196 420H130" marker-end="url(#arr)"/><text class="gold-label" x="132" y="408">v ≈ 0.07 m/s</text>`;
+  s+=`<path class="gold" d="M470 250H590" marker-end="url(#arr)"/><text class="gold-label" x="440" y="238">p = 0.6 × 5 = 3.0 kg·m/s</text>`;
+  s+=`<rect x="720" y="160" width="240" height="118" class="fine body"/><text class="small-label" x="736" y="182">FIG. B1 — MOMENTUM</text>`+
+     `<text class="small-label" x="736" y="216">BALL</text><path class="gold" d="M830 212H930" marker-end="url(#arr)"/><text class="small-label" x="736" y="244">GIRL</text><path class="gold" d="M930 240H830" marker-end="url(#arr)"/>`+
+     `<text class="big-label" x="736" y="268">Σp = 0</text><text class="small-label" x="818" y="268">m₁v₁ + m₂v₂ = 0</text>`;
+  return s+`<text class="small-label" x="140" y="170">IMPULSE / EXCHANGE / RESPONSE</text><text class="big-label" x="141" y="618">EVERY PUSH PUSHES BACK</text>`+lvl(563,'∇ +0.45')}
+function sceneIII(){let s=common+room({noCeil:1});
+  s+=`<path class="cut" d="M230 566V516H330V466H430V416H530V366H630V316H730V266H980V566Z"/><path class="strong" d="M120 566H230V516H330V466H430V416H530V366H630V316H730V266H980"/>`;
+  s+=`<path class="gold draw" d="M230 566V516H330V466H430V416H530V366H630V316H730V266H980"/>`;
+  ['EXTRA SESSION','RE-DO','QUESTIONS','SMALL WIN','RE-DO','READY'].forEach((t,i)=>s+=`<text class="small-label" x="${240+100*i}" y="${538-50*i}">${t}</text>`);
+  s+=`<rect x="128" y="390" width="54" height="176" class="fine"/><circle cx="172" cy="480" r="3" class="pale"/><text class="small-label" x="130" y="380">OUT</text>`;
+  s+=`<path class="faint dashed" d="M205 400Q520 130 880 150"/><text class="small-label" x="420" y="186">THE WEEKS BETWEEN</text>`;
+  s+=fig(205,566,150,{pose:'carry',dir:-1,dress:1,hair:'bob'})+`<g transform="rotate(-12 186 496)"><rect x="176" y="486" width="20" height="16" class="fine body"/><path class="gold" d="M180 490l12 9M192 490l-12 9"/></g>`;
+  s+=fig(480,416,170,{teacher:1,pose:'reach',dir:-1});
+  s+=fig(880,266,120,{pose:'raise',dress:1,hair:'bob'})+`<rect x="852" y="106" width="56" height="26" class="fine body"/><text class="gold-label" x="861" y="124">100%</text><path class="gold breath" d="M880 98v-8M858 102l-6-6M902 102l6-6"/>`;
+  return s+`<text class="small-label" x="140" y="150">ASK / TEST / REVISE</text><text class="big-label" x="141" y="618">AGAIN, DIFFERENTLY</text>`+lvl(563,'∇ −0.20')+lvl(263,'∇ +1.00')}
+function sceneIV(){let s=common;
+  for(let i=0;i<7;i++)s+=`<path class="${i===3?'gold':'faint'}" d="M84 ${400+i*14}C260 ${330+i*12} 420 ${430+i*10} 600 ${380+i*12}S860 ${330+i*14} 1009 ${370+i*12}" opacity="${R(i===3?.5:.8-i*.08)}"/>`;
+  s+=`<rect x="84" y="540" width="925" height="58" fill="url(#hatch)"/><path class="strong" d="M84 540H1009"/>`;
+  [150,355,560,765,970].forEach((x,i)=>s+=`<path class="fine" d="M${x} 540v12"/><text class="small-label" x="${x+5}" y="572">${i*5} m</text>`);
+  s+=`<path class="goldfill" opacity=".06" d="M560 222L420 540H700Z"/><path class="faint" stroke-dasharray="3 6" d="M560 222L420 540M560 222L700 540"/>`;
+  s+=`<path class="fine" d="M528 204H592M532 204V197M588 204V197"/><rect x="546" y="200" width="28" height="12" class="fine body"/><ellipse cx="532" cy="195" rx="16" ry="3" class="fine rotor"/><ellipse cx="588" cy="195" rx="16" ry="3" class="fine rotor"/><circle cx="560" cy="216" r="4" class="gold"/><circle cx="606" cy="182" r="3" class="goldfill breath"/><text class="gold-label" x="614" y="186">REC</text>`;
+  for(let j=0;j<11;j++){const x=170+j*36,y=460+(j%2?-2:1);s+=`<circle cx="${x}" cy="${y}" r="2.2" class="goldfill" opacity=".85"/>`;if(j%5===0)s+=`<text class="small-label" x="${x-8}" y="${y-10}">f${String(j*9).padStart(2,'0')}</text>`}
+  s+=fig(440,540,68,{pose:'run'})+fig(498,540,70,{pose:'run',dress:1,hair:'long'})+fig(560,540,72,{pose:'run',hair:'pony'});
+  s+=`<path class="faint" d="M396 506h18M392 516h20"/><rect x="532" y="462" width="58" height="82" class="gold" stroke-dasharray="4 4"/><text class="gold-label" x="532" y="454">ID 03 · 5.6 m/s</text>`;
+  s+=fig(930,540,76,{teacher:1,pose:'hold',dir:-1})+`<rect x="904" y="482" width="13" height="9" class="fine body"/><path class="faint" stroke-dasharray="3 6" d="M910 480Q902 420 880 352"/>`;
+  s+=`<rect x="740" y="140" width="250" height="210" class="fine body"/><text class="small-label" x="756" y="162">TELEMETRY + TRACKER</text>`;
+  ['ALT 12.0 m','FPS 30','t 3.60 s','Δx 20.0 m','v ≈ 5.6 m/s'].forEach((t,i)=>s+=`<text class="${i===4?'gold-label':'small-label'}" x="756" y="${194+24*i}">${t}</text>`);
+  s+=`<path class="faint" d="M866 182V330H980"/><path class="gold draw" d="M868 326C895 322 912 298 928 268S962 206 978 190"/>`;
+  [[882,321],[900,311],[918,290],[934,258],[952,226],[970,200]].forEach(p=>s+=`<circle cx="${p[0]}" cy="${p[1]}" r="3" class="goldfill"/>`);
+  s+=`<text class="small-label" x="870" y="178">x</text><text class="small-label" x="970" y="344">t</text>`;
+  return s+`<text class="small-label" x="110" y="130">THE SITE BECOMES THE CURRICULUM</text><text class="big-label" x="141" y="618">RECORD / TRACK / GRAPH</text>`+lvl(537,'∇ +2.40')}
+function sceneV(){let s=common+room();
+  s+=`<rect x="170" y="176" width="300" height="150" class="fine"/><path class="fine" d="M162 334h316"/>`;
+  ['F = ma','p = mv','v = Δx/Δt','a = Δv/Δt'].forEach((t,i)=>s+=`<text class="big-label" x="190" y="${210+32*i}">${t}</text><text class="gold-label breath" style="animation-delay:${i*.6}s" x="372" y="${210+32*i}">? → ✓</text>`);
+  s+=`<circle cx="566" cy="206" r="22" class="fine"/><path class="fine" d="M566 206h-16M566 206l2 12"/><text class="small-label" x="512" y="250">15:30 → 17:45</text>`;
+  s+=`<path class="strong" d="M200 505H335"/><path class="fine" d="M210 505V566M325 505V566"/><path class="fine" d="M162 536H212M166 536V566M208 536V566M166 536V482"/>`;
+  s+=fig(196,566,120,{pose:'sit',dress:1,hair:'long',sway:1});
+  s+=`<text class="gold-big" x="174" y="452">?</text><text class="gold-big" x="202" y="436">?</text><text class="gold-big" x="228" y="450">?</text>`;
+  s+=fig(486,566,195,{teacher:1,pose:'point',dir:-1});
+  s+=`<path class="gold flowline" d="M440 402Q340 360 246 452"/><text class="gold-label" x="282" y="372">“I’M HERE.”</text>`;
+  for(let i=0;i<7;i++)s+=`<ellipse cx="${300+i*68}" cy="560" rx="${R(3+i*1.4)}" ry="${R(1.6+i*.5)}" class="faint"/>`;
+  s+=`<rect x="790" y="182" width="130" height="384" class="strong"/><path class="faint" stroke-dasharray="4 6" d="M790 182L750 198V566"/>`;
+  s+=fig(855,566,368,{pose:'walk',dress:1,hair:'long',sway:1});
+  s+=`<path class="gold" d="M146 566V478M140 566h12M140 478h12"/><text class="gold-label" x="128" y="606">0.9 m (felt)</text>`;
+  s+=`<path class="gold" d="M954 566V198M948 566h12M948 198h12"/><text class="gold-label" x="970" y="174" text-anchor="end">3.0 m (felt)</text><text class="small-label" x="806" y="606">THRESHOLD</text>`;
+  return s+`<text class="small-label" x="140" y="164">ARRIVAL 15:30 / DEPARTURE 17:45</text><text class="big-label" x="400" y="618">THE THRESHOLD</text>`+lvl(563,'∇ −0.60')+lvl(198,'∇ +3.00')}
+
+const scenes=[
+ {key:'room',name:'THE ROOM',floor:'01 / CONTAIN',label:'The Room',title:['Nothing','to explore.'],line:'A room can be full of answers and empty of possibility.',code:'SECTION A — THE ENCLOSURE',prompt:'THE ENCLOSURE',svg:sceneI,
+  note:'One wave with nothing to meet. Without students, there is nothing to explore.',kq:'Can knowledge exist if there is no one to share it with?',
+  notes:[['A single source','One wave travelling outward with nothing to interfere with. However strong the teaching, there is amplitude but no pattern.'],['The empty chair','Seat height 450 mm, designed load: one student. Current load: zero. Every chair is a decision about who the room is for.'],['The blank board','Clean at 07:45 because nobody has asked anything yet. Questions are what fill a room.']],
+  points:[[300,430],[703,464],[725,258]],
+  icon:'<circle cx="25" cy="25" r="18"/><circle cx="25" cy="25" r="9"/><path d="M25 4V46M4 25H46" stroke-dasharray="2 5"/>'},
+ {key:'recoil',name:'THE RECOIL',floor:'02 / EXCHANGE',label:'The Recoil',title:['Every push','pushes back.'],line:'She throws the ball forward and the board rolls back. A law, felt by the whole class.',code:'SECTION B — THE EXCHANGE',prompt:'THE EXCHANGE',svg:sceneII,
+  note:'She throws the ball forward and slides backward on the board, and the whole class steps in. Conservation of momentum stopped being a formula and became something we all felt.',kq:'When a law is felt in the body, do we know it differently?',
+  notes:[['Low-friction bearings','With friction almost removed, the only story left is momentum: m₁v₁ + m₂v₂ = 0.'],['The ball','About 0.6 kg at about 5 m/s carries 3.0 kg·m/s. She is about 45 kg, so she rolls back at roughly 0.07 m/s. Small, but every student saw it.'],['The class steps in','The seating plan gave way to a ring. Everyone had a sightline, and everyone wanted a turn on the board.'],['The catch','The teacher catches the ball and is pushed back a little too. Nobody stands outside the system.']],
+  points:[[214,556],[520,291],[550,394],[793,414]],
+  icon:'<path d="M3 33Q25-21 47 33M3 42Q25-10 47 42"/><circle cx="25" cy="27" r="4"/><path d="M3 45H47"/>'},
+ {key:'return',name:'THE RETURN',floor:'03 / REVISE',label:'The Return',title:['Again,','differently.'],line:'A second attempt is not a repetition. It is a new beginning.',code:'SECTION C — THE ASCENT',prompt:'THE ASCENT',svg:sceneIII,
+  note:'The tears on the left and the 100% on the right belong to the same girl. The line between them is the resilience we built together, and I’m proud of both.',kq:'How does failure become knowledge?',
+  notes:[['The failed test','Folded twice and taken home, not thrown away. The mark mattered less than what she decided to do with it.'],['The support','The teacher stands partway up, reaching back. Each step was hers to climb, and nobody climbed it alone.'],['Six steps','Extra session, re-do, questions, small win, re-do, ready. The rise from −0.20 to +1.00 is built, not given.'],['100%','Same student, same handwriting, the same kind of paper she once folded away.']],
+  points:[[186,494],[480,300],[690,298],[930,118]],
+  icon:'<path d="M4 44H13V34H23V24H33V14H46"/><circle cx="9" cy="38" r="3"/><path d="M5 8L46 8" stroke-dasharray="2 4"/>'},
+ {key:'world',name:'THE WORLD',floor:'04 / EXPLORE',label:'The World',title:['The world','is the laboratory.'],line:'The drone recorded us running. Tracker analysis and telemetry drew our motion back to us.',code:'SECTION D — THE FIELD',prompt:'THE FIELD',svg:sceneIV,
+  note:'We took the lesson outside. The drone recorded all of us running, and that recording was the point: tracker analysis of the footage, combined with the drone’s sensor telemetry, turned our own motion into a motion graph.',kq:'What changes when the data is our own movement?',
+  notes:[['The drone recording','The point of the lesson. It records the run from twelve metres up at thirty frames a second, while its sensors log position, height and time.'],['Tracker analysis','Each runner is followed frame by frame. Every dot is a frame, and the spacing between the dots is the speed.'],['The motion graph','Telemetry fixes the distances and times, and the tracker supplies the positions. Δx = 20 m in 3.6 s, about 5.6 m/s: our own run as an x–t graph.']],
+  points:[[560,206],[614,508],[924,262]],
+  icon:'<path d="M2 33Q12 2 24 31T48 20M2 40Q12 10 24 39T48 28M2 47Q12 18 24 47T48 36"/><circle cx="38" cy="12" r="5"/>'},
+ {key:'threshold',name:'THE THRESHOLD',floor:'05 / CROSS',label:'The Threshold',title:['Who is','stopping you?'],line:'She could go home, or we could stay together until it made sense. She stayed.',code:'SECTION E — THE THRESHOLD',prompt:'THE THRESHOLD',svg:sceneV,
+  note:'She came after school, lost, with an assessment the next day and big targets. I told her she could go home, or we could stay together until the concepts made sense. I’m here, and it’s your choice. She stayed, asked question after question, and left a different person.',kq:'Is resilience something we choose?',
+  notes:[['Height on arrival','0.9 m, felt. An assessment the next day, ambitious targets, and almost no hope left. She looked smaller than she was.'],['The choice','“Who is stopping you from asking questions and learning? I’m here.” She could head home, or we could stay and work through it together. She chose to stay.'],['Questions asked','Question after question, each one worked through on the board until it made sense. The ticks are still there.'],['Height on leaving','3.0 m, felt. Same girl, two hours later. Her head reaches the door frame: confident and ready for tomorrow.']],
+  points:[[196,472],[486,420],[395,258],[900,240]],
+  icon:'<rect x="28" y="6" width="16" height="40"/><circle cx="36" cy="14" r="4"/><circle cx="10" cy="38" r="3"/><path d="M4 46H46M14 42Q22 30 28 26" stroke-dasharray="2 3"/>'}
+];
+const ROM=['I','II','III','IV','V'],N=scenes.length,pad=n=>String(n).padStart(2,'0');
+$('topNav').innerHTML=scenes.map((s,i)=>`<button data-scene="${i}" type="button" aria-label="Plate ${ROM[i]}: ${s.label}">${pad(i+1)}</button>`).join('');
+$('floor').innerHTML=scenes.map((s,i)=>`<button type="button" class="floor-button" data-scene="${i}"><div><div class="floor-number">${s.floor}</div><div class="floor-label">${s.label}</div></div><svg viewBox="0 0 50 50" fill="none" stroke="currentColor" aria-hidden="true">${s.icon}</svg></button>`).join('');
+
+function hotspot(x,y,i){return `<g class="hotspot" tabindex="0" role="button" aria-label="Signal ${i+1}" data-hotspot="${i}" transform="translate(${x},${y})"><circle r="40" fill="transparent"/><circle r="20" class="hot-ring"/><text class="hot-text" dominant-baseline="middle" text-anchor="middle">${pad(i+1)}</text></g>`}
+let current=0,first=true,drawTimer;
+function showNote(i){const s=scenes[current],n=s.notes[i];$('noteIndex').textContent=`SIGNAL ${pad(i+1)} / ${s.name}`;$('noteTitle').textContent=n[0];$('noteBody').textContent=n[1];$('signalNote').classList.add('show');
+  document.querySelectorAll('.hotspot').forEach((el,j)=>el.classList.toggle('active',j===i));document.querySelectorAll('#nSignals button').forEach((b,j)=>b.setAttribute('aria-current',String(j===i)))}
+function closeNote(){$('signalNote').classList.remove('show');document.querySelectorAll('.hotspot').forEach(el=>el.classList.remove('active'));document.querySelectorAll('#nSignals button').forEach(b=>b.setAttribute('aria-current','false'))}
+function setScene(i){
+  current=(i+N)%N;const s=scenes[current];
+  $('artboard').innerHTML=`<svg class="scene-svg" id="sceneSvg" viewBox="0 0 1100 720" role="img" aria-label="Plate ${ROM[current]}, ${s.label}: drafting drawing">${defs}${s.svg()}${s.points.map((p,j)=>hotspot(p[0],p[1],j)).join('')}</svg>`;
+  const svg=$('sceneSvg');
+  if(!first&&!reduced){clearTimeout(drawTimer);svg.querySelectorAll('.fine,.strong,.faint,.gold').forEach(el=>{if(el.closest('.hotspot')||el.matches('.dashed,.flowline,.draw,.ripple,.rotor,.breath,[stroke-dasharray]'))return;el.setAttribute('pathLength','1');el.classList.add('dl')});
+    svg.classList.add('drawin');drawTimer=setTimeout(()=>{svg.classList.remove('drawin');svg.querySelectorAll('.dl').forEach(el=>{el.classList.remove('dl');el.removeAttribute('pathLength')})},1700)}
+  first=false;
+  $('chapNumber').textContent=`${pad(current+1)} / ${pad(N)}`;$('chapCode').textContent=s.code;
+  $('headline').innerHTML=`<span>${s.title[0]}</span><span><em>${s.title[1]}</em></span>`;$('oneLine').textContent=s.line;
+  $('prompt').innerHTML=`${pad(current+1)} — ${s.prompt}<br>${s.notes.length} SIGNALS IN THIS PLATE`;
+  $('artplate').innerHTML=`PLATE ${ROM[current]} · ${s.name}<br>FIGURE 00${current+1} / ${s.code.split(' — ')[0]}`;
+  $('artindex').textContent=`${ROM[current]} / V`;$('artcoordinates').textContent=`REFERENCE PLANE 0${current} / ${s.notes.length} SIGNALS ○`;
+  $('nReflection').textContent=s.note;$('nKq').textContent=s.kq;
+  $('nSignals').innerHTML=s.notes.map((n,j)=>`<li><button type="button" data-sig="${j}" aria-current="false"><b>${pad(j+1)}</b>${n[0]}</button></li>`).join('');
+  $('nSignals').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>showNote(+b.dataset.sig)));
+  document.querySelectorAll('[data-scene]').forEach(el=>{const on=+el.dataset.scene===current;el.classList.toggle('current',on);if(el.closest('#topNav'))el.setAttribute('aria-current',String(on))});
+  closeNote();
+  svg.querySelectorAll('.hotspot').forEach(el=>{el.addEventListener('click',()=>showNote(+el.dataset.hotspot));el.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();showNote(+el.dataset.hotspot)}})});
+  try{history.replaceState(null,'','#'+s.key)}catch(e){}}
+$('closeNote').addEventListener('click',closeNote);$('nextScene').addEventListener('click',()=>setScene(current+1));
+document.querySelectorAll('[data-scene]').forEach(el=>el.addEventListener('click',()=>setScene(+el.dataset.scene)));
+$('themeSwitch').addEventListener('click',()=>{const m=document.body.classList.toggle('mono');$('themeSwitch').setAttribute('aria-pressed',String(m))});
+document.addEventListener('keydown',ev=>{if(ev.altKey||ev.ctrlKey||ev.metaKey)return;if(ev.key==='ArrowRight')setScene(current+1);if(ev.key==='ArrowLeft')setScene(current-1);if(ev.key==='Escape')closeNote()});
+$('backToTop').addEventListener('click',ev=>{ev.preventDefault();scrollTo({top:0,behavior:reduced?'auto':'smooth'})});
+let startX=null;$('artboard').addEventListener('touchstart',ev=>{startX=ev.touches[0].clientX},{passive:true});
+$('artboard').addEventListener('touchend',ev=>{if(startX===null)return;const d=ev.changedTouches[0].clientX-startX;if(Math.abs(d)>80)setScene(current+(d<0?1:-1));startX=null},{passive:true});
+const h=(location.hash||'').slice(1).toLowerCase();setScene(Math.max(0,scenes.findIndex(s=>s.key===h)));
+</script>
+
+</body>
+</html>
